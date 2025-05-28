@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Laptop8386</title>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body class="bg-gray-100 text-black">
+    <div class="flex h-screen">
+      <!-- Sidebar -->
+      <div class="w-64 bg-primary  p-4">
+        <div class="flex items-center gap-2 mb-8">
+          <i class="fas fa-laptop text-2xl"></i>
+          <h1 class="text-xl font-bold">Laptop Admin</h1>
+        </div>
+        <nav>
+          <ul class="space-y-2">
+            <li>
+              <button
+                class="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-500"
+                onclick="loadPage('../admin/dashboard.html')"
+                class="mr-2 underline"
+              >
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+              </button>
+            </li>
+            <li>
+              <button
+                class="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-500"
+                onclick="loadPage('../admin/dashboard.html')"
+                class="mr-2 underline"
+              >
+                <i class="fas fa-box"></i>
+                <span>Quản lý Sản phẩm</span>
+              </button>
+            </li>
+             <li>
+              <button
+                class="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-500"
+                onclick="loadPage('../admin/dashboard.html')"
+                class="mr-2 underline"
+              >
+                <i class="fas fa-box"></i>
+                <span>Quản lý Nhãn Hàng</span>
+              </button>
+            </li>
+             <li>
+              <button
+                class="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-500"
+                onclick="loadPage('../admin/dashboard.html')"
+                class="mr-2 underline"
+              >
+                <i class="fas fa-box"></i>
+                <span>Quản lý Loại Sản Phẩm</span>
+              </button>
+            </li>
+             <li>
+              <button
+                class="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-500"
+                onclick="loadPage('../admin/dashboard.html')"
+                class="mr-2 underline"
+              >
+                <i class="fas fa-box"></i>
+                <span>Quản lý Đơn Hàng</span>
+              </button>
+            </li>
+            <li>
+              <button
+                class="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-500"
+                onclick="loadPage('../admin/dashboard.html')"
+                class="mr-2 underline"
+              >
+                <i class="fas fa-users"></i>
+                <span>Quản lý Khách hàng</span>
+              </button>
+            </li>
+            <li>
+              <button
+                class="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-500"
+                onclick="loadPage('../admin/dashboard.html')"
+                class="mr-2 underline"
+              >
+                <i class="fas fa-chart-bar"></i>
+                <span>Thống kê</span>
+              </button>
+            </li>
+            
+          </ul>
+        </nav>
+      </div>
+
+      <!-- Main Content -->
+      <div id="app-content" class="flex-1 overflow-auto">
+        <!-- 
+        đoạn này sẽ lấy từ các file html trong forder admin của ae nhúng vào đây 
+         xử lý bằng file layout.js link ở dưới 
+        -->
+      </div>
+    </div>
+
+    <script src="../js/layout.js"></script>
+        <script >
+            loadPage("../admin/dashboard.html")
+        </script>
+
+  </body>
+</html>

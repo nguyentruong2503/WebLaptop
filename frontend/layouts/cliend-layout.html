@@ -1,0 +1,181 @@
+
+ <!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laptop8386 - Laptop & Phụ kiện chính hãng</title>
+    <base target="_self">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@preline/preline@2.0.0/dist/preline.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hero-pattern {
+            background: linear-gradient(135deg, rgba(224, 242, 254, 0.8) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+        .product-card {
+            transition: all 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .category-card {
+            transition: all 0.3s ease;
+        }
+        .category-card:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="#" class="flex items-center" onclick="event.preventDefault()">
+                        <i class="fas fa-laptop-code text-primary-500 text-2xl mr-2"></i>
+                        <span class="text-xl font-bold text-primary-600">Laptop8386</span>
+                    </a>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="hidden md:flex space-x-8">
+                        
+                    <a href="#" class="text-primary-600 font-medium hover:text-primary-800 transition-all" onclick="loadPage('../client/home.html')">Trang chủ</a>
+                    <a href="#" class="text-gray-600 hover:text-primary-600 transition-all" onclick="loadPage('../client/laptop.html')">Laptop</a>
+                    <a href="#" class="text-gray-600 hover:text-primary-600 transition-all" onclick="loadPage('../client/phukien.html')">Phụ kiện</a>
+                    <a href="#" class="text-gray-600 hover:text-primary-600 transition-all" onclick="event.preventDefault()">Khuyến mãi</a>
+                    <a href="#" class="text-gray-600 hover:text-primary-600 transition-all" onclick="event.preventDefault()">Tin tức</a>
+                </nav>
+
+                <!-- Icons -->
+                <div class="flex items-center space-x-4">
+                   <button type="button" class="p-2 text-gray-600 hover:text-primary-600 transition-all" onclick="toggleSearch()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <a href="#" class="p-2 text-gray-600 hover:text-primary-600 transition-all relative" onclick="event.preventDefault()">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="absolute -top-1 -right-1 bg-primary-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                    </a>
+                    <a href="#" class="p-2 text-gray-600 hover:text-primary-600 transition-all" onclick="event.preventDefault()">
+                        <i class="fas fa-user"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div id="searchBar" class=" hidden  border-t border-gray-200 p-4">
+            <div class="max-w-7xl mx-auto">
+                <div class="relative">
+                    <input type="text" placeholder="Tìm kiếm sản phẩm..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    <button class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-primary-600">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+ <section class="hero-pattern">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Laptop & Phụ kiện chính hãng</h1>
+                    <p class="text-lg text-gray-600 mb-8">Khám phá bộ sưu tập laptop mới nhất và các phụ kiện đi kèm với mức giá ưu đãi đặc biệt</p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#" class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-all" onclick="event.preventDefault()">Mua ngay</a>
+                        <a href="#" class="border border-primary-600 text-primary-600 hover:bg-primary-50 px-6 py-3 rounded-lg font-medium transition-all" onclick="event.preventDefault()">Khám phá</a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <img src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Laptop" class="rounded-lg shadow-lg w-full">
+                </div>
+            </div>
+        </div>
+    </section>
+
+  <main id="app-content">
+
+  </main>
+
+      <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-12 pb-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">TechHub</h3>
+                    <p class="text-gray-400">Chuyên cung cấp laptop và phụ kiện chính hãng với giá tốt nhất thị trường.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Liên kết nhanh</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all" onclick="event.preventDefault()">Trang chủ</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all" onclick="event.preventDefault()">Sản phẩm</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all" onclick="event.preventDefault()">Khuyến mãi</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all" onclick="event.preventDefault()">Tin tức</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all" onclick="event.preventDefault()">Liên hệ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Chính sách</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all" onclick="event.preventDefault()">Chính sách bảo mật</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all" onclick="event.preventDefault()">Chính sách đổi trả</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all" onclick="event.preventDefault()">Chính sách vận chuyển</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-all" onclick="event.preventDefault()">Điều khoản dịch vụ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Liên hệ</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center text-gray-400"><i class="fas fa-map-marker-alt mr-2"></i> 123 Đường ABC, Quận 1, TP.HCM</li>
+                        <li class="flex items-center text-gray-400"><i class="fas fa-phone-alt mr-2"></i> 1900 1234</li>
+                        <li class="flex items-center text-gray-400"><i class="fas fa-envelope mr-2"></i> info@techhub.vn</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm mb-4 md:mb-0">© 2023 TechHub. All rights reserved.</p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition-all" onclick="event.preventDefault()"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-all" onclick="event.preventDefault()"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-all" onclick="event.preventDefault()"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-all" onclick="event.preventDefault()"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+  <script src="../js/layout.js"></script>
+  <script>
+    // Load trang mặc định
+    loadPage('../client/home.html');
+  </script>
+</body>
+</html>
+
+
+
