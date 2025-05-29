@@ -24,7 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::post('/upload', [UploadController    ::class, 'upload']);
 
-
+//Quản lý loại sản phẩm
 Route::apiResource('product_types', ProductTypesController::class);
 
 //Giỏ hàng  trang chủ
