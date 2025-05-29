@@ -1,1 +1,304 @@
-<h1>dslaptop</h1>
+   <!-- Featured Products -->
+    <section class="py-12 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-900">Laptop nổi bật</h2>
+                <a href="#" class="text-primary-600 hover:text-primary-800 font-medium" onclick="event.preventDefault()">Xem tất cả <i class="fas fa-arrow-right ml-1"></i></a>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="laptop-list-one">
+    <script>
+   
+  fetch('http://127.0.0.1:8000/api/products')
+    .then(response => response.json())
+    .then(data => {
+      const listContainer = document.getElementById("laptop-list-one");
+      
+      const laptops = data.data;  // Lấy mảng data từ API
+      
+      if (!Array.isArray(laptops)) {
+        console.error("'data' không phải là mảng");
+        return;
+      }
+      
+      laptops.forEach(laptop => {
+        const product = laptop.product;
+        
+        const card = `
+          <div class="product-card bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+            <div class="relative">
+              <img src="${product.img || 'https://via.placeholder.com/300'}" alt="${product.productName}" class="w-full h-48 object-cover">
+              <div class="absolute top-2 right-2 bg-primary-500 text-white text-xs font-medium px-2 py-1 rounded-full">Mới</div>
+            </div>
+            <div class="p-4">
+              <h3 class="font-medium text-gray-900 mb-1">${product.productName}</h3>
+              <div class="flex items-center mb-2">
+                <div class="flex text-yellow-400">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="far fa-star"></i>
+                </div>
+                <span class="text-gray-500 text-xs ml-1">(42)</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-primary-600 font-bold">${Number(product.price).toLocaleString('vi-VN')}đ</span>
+              </div>
+            </div>
+            <div class="px-4 pb-4">
+              <button class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg font-medium transition-all">Thêm vào giỏ</button>
+            </div>
+          </div>
+        `;
+        
+        listContainer.insertAdjacentHTML("beforeend", card);
+      });
+    })
+    .catch(error => {
+      console.error("Lỗi khi lấy danh sách laptop:", error);
+    });
+
+
+  </script>
+    </section>
+   <!-- Featured Products -->
+    <section class="py-12 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-900">Laptop bán chạy</h2>
+                <a href="#" class="text-primary-600 hover:text-primary-800 font-medium" onclick="event.preventDefault()">Xem tất cả <i class="fas fa-arrow-right ml-1"></i></a>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Product 1 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="MacBook Pro" class="w-full h-48 object-cover">
+                        <div class="absolute top-2 right-2 bg-primary-500 text-white text-xs font-medium px-2 py-1 rounded-full">Mới</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-medium text-gray-900 mb-1">MacBook Pro M2 2023</h3>
+                        <div class="flex items-center mb-2">
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span class="text-gray-500 text-xs ml-1">(42)</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-primary-600 font-bold">32.990.000đ</span>
+                            <span class="text-gray-500 text-sm line-through">35.990.000đ</span>
+                        </div>
+                    </div>
+                    <div class="px-4 pb-4">
+                        <button class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg font-medium transition-all" onclick="event.preventDefault()">Thêm vào giỏ</button>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1618410322568-8a35d8567c82?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Dell XPS 15" class="w-full h-48 object-cover">
+                        <div class="absolute top-2 right-2 bg-red-500 text-white text-xs font-medium px-2 py-1 rounded-full">Giảm 15%</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-medium text-gray-900 mb-1">Dell XPS 15 9520</h3>
+                        <div class="flex items-center mb-2">
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <span class="text-gray-500 text-xs ml-1">(36)</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-primary-600 font-bold">28.990.000đ</span>
+                            <span class="text-gray-500 text-sm line-through">34.990.000đ</span>
+                        </div>
+                    </div>
+                    <div class="px-4 pb-4">
+                        <button class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg font-medium transition-all" onclick="event.preventDefault()">Thêm vào giỏ</button>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1629131726699-ade15f97a90b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Asus ROG Zephyrus" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-medium text-gray-900 mb-1">Asus ROG Zephyrus G14</h3>
+                        <div class="flex items-center mb-2">
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span class="text-gray-500 text-xs ml-1">(58)</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-primary-600 font-bold">34.990.000đ</span>
+                        </div>
+                    </div>
+                    <div class="px-4 pb-4">
+                        <button class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg font-medium transition-all" onclick="event.preventDefault()">Thêm vào giỏ</button>
+                    </div>
+                </div>
+
+                <!-- Product 4 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1629131726696-ade15f97a90b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="HP Spectre x360" class="w-full h-48 object-cover">
+                        <div class="absolute top-2 right-2 bg-green-500 text-white text-xs font-medium px-2 py-1 rounded-full">Bán chạy</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-medium text-gray-900 mb-1">HP Spectre x360 14</h3>
+                        <div class="flex items-center mb-2">
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span class="text-gray-500 text-xs ml-1">(47)</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-primary-600 font-bold">29.990.000đ</span>
+                        </div>
+                    </div>
+                    <div class="px-4 pb-4">
+                        <button class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg font-medium transition-all" onclick="event.preventDefault()">Thêm vào giỏ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+   <!-- Featured Products -->
+    <section class="py-12 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-900">Khác</h2>
+                <a href="#" class="text-primary-600 hover:text-primary-800 font-medium" onclick="event.preventDefault()">Xem tất cả <i class="fas fa-arrow-right ml-1"></i></a>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Product 1 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="MacBook Pro" class="w-full h-48 object-cover">
+                        <div class="absolute top-2 right-2 bg-primary-500 text-white text-xs font-medium px-2 py-1 rounded-full">Mới</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-medium text-gray-900 mb-1">MacBook Pro M2 2023</h3>
+                        <div class="flex items-center mb-2">
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span class="text-gray-500 text-xs ml-1">(42)</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-primary-600 font-bold">32.990.000đ</span>
+                            <span class="text-gray-500 text-sm line-through">35.990.000đ</span>
+                        </div>
+                    </div>
+                    <div class="px-4 pb-4">
+                        <button class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg font-medium transition-all" onclick="event.preventDefault()">Thêm vào giỏ</button>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1618410322568-8a35d8567c82?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Dell XPS 15" class="w-full h-48 object-cover">
+                        <div class="absolute top-2 right-2 bg-red-500 text-white text-xs font-medium px-2 py-1 rounded-full">Giảm 15%</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-medium text-gray-900 mb-1">Dell XPS 15 9520</h3>
+                        <div class="flex items-center mb-2">
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <span class="text-gray-500 text-xs ml-1">(36)</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-primary-600 font-bold">28.990.000đ</span>
+                            <span class="text-gray-500 text-sm line-through">34.990.000đ</span>
+                        </div>
+                    </div>
+                    <div class="px-4 pb-4">
+                        <button class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg font-medium transition-all" onclick="event.preventDefault()">Thêm vào giỏ</button>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1629131726699-ade15f97a90b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Asus ROG Zephyrus" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-medium text-gray-900 mb-1">Asus ROG Zephyrus G14</h3>
+                        <div class="flex items-center mb-2">
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span class="text-gray-500 text-xs ml-1">(58)</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-primary-600 font-bold">34.990.000đ</span>
+                        </div>
+                    </div>
+                    <div class="px-4 pb-4">
+                        <button class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg font-medium transition-all" onclick="event.preventDefault()">Thêm vào giỏ</button>
+                    </div>
+                </div>
+
+                <!-- Product 4 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1629131726696-ade15f97a90b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="HP Spectre x360" class="w-full h-48 object-cover">
+                        <div class="absolute top-2 right-2 bg-green-500 text-white text-xs font-medium px-2 py-1 rounded-full">Bán chạy</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-medium text-gray-900 mb-1">HP Spectre x360 14</h3>
+                        <div class="flex items-center mb-2">
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span class="text-gray-500 text-xs ml-1">(47)</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-primary-600 font-bold">29.990.000đ</span>
+                        </div>
+                    </div>
+                    <div class="px-4 pb-4">
+                        <button class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg font-medium transition-all" onclick="event.preventDefault()">Thêm vào giỏ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
