@@ -21,15 +21,15 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::post('/upload', [UploadController::class, 'upload']);
+Route::post('/upload', [UploadController    ::class, 'upload']);
 //Giỏ hàng  trang chủ
 Route::get('/products', [Home_client::class, 'getByLoai']);
 Route::get('/products_mouse', [Home_client::class, 'getAccessory']);
 Route::get('/laptops/{id}', [Home_client::class, 'getLaptopById']);
 Route::get('/accessory/{id}', [Home_client::class, 'getAccessoryById']);
+
 Route::post('/cart/add', [CartController::class, 'addToCart']);
 Route::get('/cart/{userId}', [CartController::class, 'getCartByUser']);
 Route::put('/cart/{cartId}', [CartController::class, 'updateCart']);
 Route::delete('/cart/{cartId}', [CartController::class, 'deleteCart']);
 Route::post('/orders', [OrderController::class, 'store']);
-//=============
