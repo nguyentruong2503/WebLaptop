@@ -94,33 +94,11 @@
           </table>
         </div>
 
-        <!-- Pagination -->
-        <!-- <div class="px-6 py-3 border-t border-gray-200 flex justify-center">
-          <div class="flex gap-1">
-            <button
-              class="px-3 py-1.5 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition flex items-center gap-1"
-            >
-              <i class="fas fa-chevron-left text-xs"></i>
-              <span>Previous</span>
-            </button>
-            <button
-              class="px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition"
-            >
-              1
-            </button>
-            <button
-              class="px-3 py-1.5 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition"
-            >
-              2
-            </button>
-            <button
-              class="px-3 py-1.5 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition flex items-center gap-1"
-            >
-              <span>Next</span>
-              <i class="fas fa-chevron-right text-xs"></i>
-            </button>
-          </div>
-        </div> -->
+        <!-- Phân trang -->
+        <div
+          id="paginationContainer"
+          class="px-6 py-3 border-t border-gray-200 flex justify-center gap-1"
+        ></div>
       </div>
     </div>
 
@@ -245,9 +223,10 @@
         fetchProductTypes();
       });
 
-      function fetchProductTypes(keyword = "") {
+      function fetchProductTypes(keyword = "", page = 1) {
         const url = new URL("http://127.0.0.1:8000/api/product_types");
         if (keyword) url.searchParams.append("keyword", keyword);
+        url.searchParams.append("page", page);
 
         fetch(url)
           .then((response) => {
@@ -260,7 +239,7 @@
             const tbody = document.getElementById("productTypeTableBody");
             tbody.innerHTML = "";
 
-            data.forEach((item) => {
+            data.data.forEach((item) => {
               const row = document.createElement("tr");
               row.classList.add("hover:bg-gray-50", "transition");
 
@@ -333,6 +312,7 @@
                 }
               });
             });
+            renderPagination(data.current_page, data.last_page, keyword);
           })
           .catch((error) => {
             console.error("Lỗi khi lấy loại sản phẩm:", error);
@@ -374,12 +354,46 @@
           .classList.remove("hidden");
       }
 
+      //Phân trang
+      function renderPagination(currentPage, lastPage, keyword) {
+        const container = document.getElementById("paginationContainer");
+        container.innerHTML = "";
+
+        const prevBtn = document.createElement("button");
+        prevBtn.innerHTML = `<i class="fas fa-chevron-left"></i> Prev`;
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.className = "px-3 py-1.5 bg-gray-200 rounded";
+        prevBtn.onclick = () => fetchProductTypes(keyword, currentPage - 1);
+
+        container.appendChild(prevBtn);
+
+        for (let i = 1; i <= lastPage; i++) {
+          const pageBtn = document.createElement("button");
+          pageBtn.textContent = i;
+          pageBtn.className =
+            "px-3 py-1.5 rounded " +
+            (i === currentPage
+              ? "bg-blue-600 text-white"
+              : "bg-gray-200 text-gray-700");
+          pageBtn.onclick = () => fetchProductTypes(keyword, i);
+          container.appendChild(pageBtn);
+        }
+
+        const nextBtn = document.createElement("button");
+        nextBtn.innerHTML = `Next <i class="fas fa-chevron-right"></i>`;
+        nextBtn.disabled = currentPage === lastPage;
+        nextBtn.className = "px-3 py-1.5 bg-gray-200 rounded";
+        nextBtn.onclick = () => fetchProductTypes(keyword, currentPage + 1);
+
+        container.appendChild(nextBtn);
+      }
+
       //Tìm kiếm
       document
         .getElementById("searchInput")
         .addEventListener("input", function () {
           const keyword = this.value.trim();
-          fetchProductTypes(keyword);
+          fetchProductTypes(keyword, 1);
         });
 
       //Gửi data về BE để update loại sản phẩm

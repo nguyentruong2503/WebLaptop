@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Tracking System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      .order-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+      .status-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+      }
+      .order-details {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease;
+      }
+      .order-details.active {
+        max-height: 500px;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto px-4 py-6">
+      <!-- Header -->
+      <header class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">Đơn hàng</h1>
+        <p class="text-gray-600">Xem đơn hàng</p>
+      </header>
+
+      <!-- Search and Filter -->
+      <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <div
+          class="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+        >
+          <div class="relative flex-grow">
+            <input
+              type="text"
+              placeholder="Search by order ID or product..."
+              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <select
+              class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Trạng thái</option>
+              <option value="processing">Processing</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+            <button
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              Apply Filters
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary Cards -->
+      <div class="grid grid-cols-1 gap-6">
+        <!-- Order Card -->
+        <!-- Order Card -->
+        <div
+          class="order-card bg-white rounded-lg shadow transition-all duration-300"
+        >
+          <div class="p-6 cursor-pointer">
+            <div
+              class="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+            >
+              <div>
+                <div class="flex items-center mb-2">
+                  <span class="status-dot bg-yellow-500"></span>
+                  <!-- màu thay đổi theo status -->
+                  <span class="font-medium text-yellow-600">Chờ xác nhận</span>
+                  <span class="mx-2 text-gray-400">|</span>
+                  <span class="text-gray-500">Mã đơn: #ORD-0001</span>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800">
+                  Tổng tiền:
+                  <span class="text-blue-600 font-bold">342.534₫</span>
+                </h3>
+                <p class="text-gray-600">Ngày đặt: 31/05/2025</p>
+              </div>
+              <div class="text-right">
+                <p class="text-sm text-gray-500">Click để xem chi tiết</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script></script>
+  </body>
+</html>
