@@ -7,7 +7,7 @@ use App\Http\Controllers\UploadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProductTypesController;
-
+use App\Http\Controllers\BrandsController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -39,3 +39,4 @@ Route::put('/cart/{cartId}', [CartController::class, 'updateCart']);
 Route::delete('/cart/{cartId}', [CartController::class, 'deleteCart']);
 Route::post('/orders', [OrderController::class, 'store']);
 
+Route::apiResource('brands', App\Http\Controllers\BrandsController::class);
