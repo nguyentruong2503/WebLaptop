@@ -17,6 +17,6 @@ class Order extends Model
         'address',
     ];
     public function details() {
-    return $this->hasMany(Order_detail::class);
+    return $this->hasMany(Order_detail::class, 'orderID');
 }
 }

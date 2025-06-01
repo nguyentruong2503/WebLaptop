@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Home_client;
-use App\Http\Controllers\OrderController;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\UploadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -38,4 +38,14 @@ Route::get('/cart/{userId}', [CartController::class, 'getCartByUser']);
 Route::put('/cart/{cartId}', [CartController::class, 'updateCart']);
 Route::delete('/cart/{cartId}', [CartController::class, 'deleteCart']);
 Route::post('/orders', [OrderController::class, 'store']);
+
+//Quản lý đơn hàng
+//Admin (tất cả đơn hàng)
+Route::get('/orders', [OrderController::class, 'index']);
+//Client (đơn hàng theo userID)
+Route::get('/orders/user/{userId}', [OrderController::class, 'getOrderByUser']);
+Route::get('/orders/{id}', [OrderController::class, 'getOrderDetailByOrderId']);
+//Hủy đơn hàng 
+Route::put('/orders/{id}', [OrderController::class, 'updateStatus']);
+
 
