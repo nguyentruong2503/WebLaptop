@@ -27,6 +27,8 @@ Route::post('/upload', [UploadController    ::class, 'upload']);
 //Quản lý loại sản phẩm
 Route::apiResource('product_types', ProductTypesController::class);
 
+
+
 //Giỏ hàng  trang chủ
 Route::get('/products', [Home_client::class, 'getByLoai']);
 Route::get('/products_mouse', [Home_client::class, 'getAccessory']);
@@ -40,3 +42,8 @@ Route::delete('/cart/{cartId}', [CartController::class, 'deleteCart']);
 Route::post('/orders', [OrderController::class, 'store']);
 
 Route::apiResource('brands', App\Http\Controllers\BrandsController::class);
+// API cập nhật trạng thái đơn hàng cho admin
+Route::put('/admin/orders/{id}/status', [OrderAdminController::class, 'updateStatus']);
+// API đơn hàng cho admin
+use App\Http\Controllers\OrderAdminController;
+Route::get('/admin/orders', [OrderAdminController::class, 'index']);
