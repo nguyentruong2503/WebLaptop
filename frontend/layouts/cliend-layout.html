@@ -66,7 +66,7 @@
                 <!-- Navigation -->
                 <nav class="hidden md:flex space-x-8">
                         
-                    <a href="#" class="text-primary-600 font-medium hover:text-primary-800 transition-all" onclick="loadPage('../client/home.html')">Trang chủ</a>
+                    <a href="#"  class="text-primary-600 font-medium hover:text-primary-800 transition-all" onclick="loadPage('../client/home.html')">Trang chủ</a>
                     <a href="#" class="text-gray-600 hover:text-primary-600 transition-all" onclick="loadPage('../client/laptop.html')">Laptop</a>
                     <a href="#" class="text-gray-600 hover:text-primary-600 transition-all" onclick="loadPage('../client/phukien.html')">Phụ kiện</a>
                     <a href="#" class="text-gray-600 hover:text-primary-600 transition-all" onclick="event.preventDefault()">Khuyến mãi</a>
@@ -78,7 +78,7 @@
                    <button type="button" class="p-2 text-gray-600 hover:text-primary-600 transition-all" onclick="toggleSearch()">
                         <i class="fas fa-search"></i>
                     </button>
-                    <a href="#" class="p-2 text-gray-600 hover:text-primary-600 transition-all relative" onclick="event.preventDefault()">
+                    <a href="#" class="p-2 text-gray-600 hover:text-primary-600 transition-all relative" onclick="loadPage('../client/cart.html')">
                         <i class="fas fa-shopping-cart"></i>
                         <span class="absolute -top-1 -right-1 bg-primary-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
                     </a>
@@ -173,7 +173,13 @@
   <script>
     // Load trang mặc định
     loadPage('../client/home.html');
+          function toggleSearch() {
+            const searchBar = document.getElementById('searchBar');
+            searchBar.classList.toggle('hidden');
+        }
+
   </script>
+  
 </body>
 </html>
 

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chi tiết đơn hàng</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      .bg-yellow-200 {
+        background-color: #fef3c7;
+      }
+      .text-yellow-800 {
+        color: #78350f;
+      }
+      .bg-blue-200 {
+        background-color: #bfdbfe;
+      }
+      .text-blue-800 {
+        color: #1e40af;
+      }
+      .bg-green-200 {
+        background-color: #bbf7d0;
+      }
+      .text-green-800 {
+        color: #166534;
+      }
+      .bg-green-500 {
+        background-color: #22c55e;
+      }
+      .text-green-100 {
+        color: #d1fae5;
+      }
+      .bg-red-500 {
+        background-color: #ef4444;
+      }
+      .text-red-100 {
+        color: #fee2e2;
+      }
+
+      /* CSS giữ nguyên */
+      :root {
+        --primary-color: #3498db;
+        --secondary-color: #f8f9fa;
+        --success-color: #28a745;
+        --warning-color: #ffc107;
+        --danger-color: #dc3545;
+        --info-color: #17a2b8;
+      }
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: #f5f5f5;
+      }
+      .order-header,
+      .info-card {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+      .order-status {
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+      .status-processing {
+        background-color: var(--warning-color);
+        color: #000;
+      }
+      .status-shipping {
+        background-color: var(--info-color);
+        color: white;
+      }
+      .status-delivered {
+        background-color: var(--success-color);
+        color: white;
+      }
+      .status-cancelled {
+        background-color: var(--danger-color);
+        color: white;
+      }
+      .info-card-header {
+        padding: 12px 20px;
+        border-bottom: 1px solid #eee;
+        font-weight: 600;
+        color: var(--primary-color);
+      }
+      .info-card-body {
+        padding: 20px;
+      }
+      .product-img,
+      .product-image {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 5px;
+      }
+      .summary-table {
+        width: 100%;
+      }
+      .summary-table tr:last-child td {
+        font-weight: 600;
+        font-size: 1.1rem;
+        border-top: 2px solid #eee;
+        padding-top: 10px;
+      }
+      .action-btn {
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+      .fixed-table {
+        table-layout: fixed;
+      }
+      .fixed-table th,
+      .fixed-table td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .image-col {
+        width: 80px;
+      }
+      .product-col {
+        width: 200px;
+      }
+      .quantity-col,
+      .price-col {
+        width: 100px;
+        text-align: right !important;
+        padding-right: 20px !important;
+      }
+      .text-right {
+        text-align: right;
+      }
+      .text-end {
+        text-align: right !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container py-5">
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+          <i class="fas fa-receipt me-2"></i>Chi tiết đơn hàng #<span
+            id="order-id"
+            >...</span
+          >
+        </h2>
+        <a href="javascript:history.back()" class="btn btn-outline-secondary"
+          ><i class="fas fa-arrow-left me-2"></i>Quay lại</a
+        >
+      </div>
+
+      <!-- Thông tin chung -->
+      <div class="order-header p-4 mb-4">
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-2">
+              <i class="far fa-calendar-alt me-2"></i
+              ><strong>Ngày đặt:</strong> <span id="order-date">...</span>
+            </p>
+            <p class="mb-2">
+              <i class="fas fa-tag me-2"></i><strong>Trạng thái:</strong>
+              <span id="order-status" class="order-status status-shipping"
+                >...</span
+              >
+            </p>
+          </div>
+          <div class="col-md-6">
+            <p class="mb-2">
+              <i class="fas fa-wallet me-2"></i
+              ><strong>Phương thức thanh toán:</strong> Trả tiền khi nhận hàng
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Thông tin khách hàng -->
+        <div class="col-lg-4">
+          <div class="info-card">
+            <div class="info-card-header">
+              <i class="fas fa-user me-2"></i>Thông tin khách hàng
+            </div>
+            <div class="info-card-body">
+              <p class="mb-2">
+                <strong>Họ tên:</strong> <span id="customer-name">...</span>
+              </p>
+              <p class="mb-2">
+                <strong>Số điện thoại:</strong>
+                <span id="customer-phone">...</span>
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="info-cards-container"
+            style="display: flex; flex-direction: column"
+          >
+            <div class="info-card">
+              <div class="info-card-header">
+                <i class="fas fa-truck me-2"></i>Địa chỉ giao hàng
+              </div>
+              <div class="info-card-body">
+                <p id="shipping-address" class="mb-0">...</p>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <div class="info-card-header">
+                <i class="fas fa-receipt me-2"></i>Tổng thanh toán
+              </div>
+              <div class="info-card-body">
+                <table class="summary-table">
+                  <tr>
+                    <td>Tạm tính:</td>
+                    <td id="subtotal" class="text-end">...₫</td>
+                  </tr>
+                  <tr>
+                    <td>Tổng cộng:</td>
+                    <td id="total" class="text-end">...₫</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chi tiết sản phẩm -->
+        <div class="col-lg-8">
+          <div class="info-card mb-4">
+            <div class="info-card-body text-start">
+              <div class="info-card-header">
+                <i class="fas fa-box-open me-2"></i>Sản phẩm đã đặt
+              </div>
+              <div class="info-card-body p-0">
+                <div class="table-responsive">
+                  <table class="table table-hover mb-0 fixed-table">
+                    <thead>
+                      <tr>
+                        <th class="image-col">Ảnh</th>
+                        <th class="product-col">Sản phẩm</th>
+                        <th class="quantity-col text-right">Số lượng</th>
+                        <th class="price-col text-right">Thành tiền</th>
+                      </tr>
+                    </thead>
+                    <tbody id="products-tbody">
+                      <!-- Lặp qua các sản phẩm ở đây -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      // Lấy id từ URL
+      const params = new URLSearchParams(window.location.search);
+      const orderId = params.get("id");
+
+      function formatCurrency(amount) {
+        if (!amount) return "0 ₫";
+        return parseFloat(amount).toLocaleString("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        });
+      }
+
+      const statusClasses = {
+        Pending: "bg-yellow-200 text-yellow-800",
+        Confirmed: "bg-blue-200 text-blue-800",
+        Shipped: "bg-green-200 text-green-800",
+        Delivered: "bg-green-500 text-green-100",
+        Cancelled: "bg-red-500 text-red-100",
+      };
+
+      if (orderId) {
+        fetch(`http://127.0.0.1:8000/api/orders/${orderId}`)
+          .then((res) => {
+            if (!res.ok) throw new Error("Không lấy được dữ liệu đơn hàng");
+            return res.json();
+          })
+          .then((data) => {
+            // Gán dữ liệu vào HTML
+            document.getElementById("order-id").textContent = data.id;
+            document.getElementById("order-date").textContent = new Date(
+              data.created_at
+            ).toLocaleString("vi-VN", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+
+            const statusEl = document.getElementById("order-status");
+            const status = data.orderstatus;
+
+            statusEl.className = "order-status";
+
+            if (statusClasses[status]) {
+              statusEl.classList.add(...statusClasses[status].split(" "));
+            }
+
+            statusEl.textContent = status;
+
+            document.getElementById("customer-name").textContent =
+              data.fullName;
+            document.getElementById("customer-phone").textContent = data.phone;
+            document.getElementById("shipping-address").textContent =
+              data.address;
+
+            const tbody = document.getElementById("products-tbody");
+            tbody.innerHTML = "";
+
+            data.details.forEach((item) => {
+              const price = parseFloat(item.price);
+              const quantity = item.quantity;
+
+              const tr = document.createElement("tr");
+              tr.innerHTML = `
+                <td class="image-col">
+                  <img src="${item.product.img}" alt="${
+                item.product.productName
+              }" class="product-image" />
+                </td>
+                <td class="product-col">
+                  <p class="mb-1"><strong>${
+                    item.product.productName
+                  }</strong></p>
+                </td>
+                <td class="quantity-col text-end">${quantity}</td>
+                <td class="price-col text-end">${formatCurrency(price)}</td>
+              `;
+              tbody.appendChild(tr);
+            });
+
+            document.getElementById("subtotal").textContent = formatCurrency(
+              data.totalAmount
+            );
+            document.getElementById("total").textContent = formatCurrency(
+              data.totalAmount
+            );
+          })
+          .catch((err) => {
+            console.error(err);
+            alert("Lỗi khi tải dữ liệu đơn hàng.");
+          });
+      } else {
+        alert("Không tìm thấy ID đơn hàng trong URL.");
+      }
+    </script>
+  </body>
+</html>
