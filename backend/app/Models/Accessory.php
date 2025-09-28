@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Accessory extends Model
 {
     use HasFactory;
+    protected $fillable = ['productID', 'des'];
         public function product()
 {
     return $this->belongsTo(Product::class, 'productID', 'id');

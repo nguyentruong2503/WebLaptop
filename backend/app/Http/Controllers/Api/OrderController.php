@@ -8,16 +8,16 @@ use App\Models\Order;
 
 class OrderController extends Controller
 {
-    //Lấy hết đơn hàng (T định nghĩa phần này rồi Nghĩa nhé , có trong api.php rồi)
-    public function index()
-    {
-        $orders = Order::all();
-        return response()->json($orders);
-    }
 
     //Lấy đơn theo theo userId 
-    public function getOrderByUser(Request $request, $userId)
+    public function getOrderByUser(Request $request)
     {
+         
+
+             $user=request()->user();
+
+        $userId = $user->id;
+
         $keyword = $request->query('keyword'); 
         $status = $request->query('status');   
 
@@ -71,5 +71,4 @@ class OrderController extends Controller
 
         return response()->json(['message' => 'Order status updated', 'order' => $order]);
     }
-
 }

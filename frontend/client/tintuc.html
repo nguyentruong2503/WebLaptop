@@ -1,0 +1,183 @@
+   
+   
+    <style>
+        /* Custom CSS for elements that need more styling than Tailwind provides */
+        .promo-card {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .promo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .news-card {
+            transition: all 0.3s ease;
+        }
+        
+        .news-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+        
+        .tab-button.active {
+            border-bottom-width: 3px;
+        }
+        
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .countdown-timer {
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+       <div  class="container mx-auto px-4 py-8">
+  <!-- News Page -->
+     <div  id='target' class="mb-6 opacity-0" >
+                <h2  class="text-3xl font-bold text-gray-800 mb-4">TT</h2>
+            </div>
+        <div id="newsPage" class="tab-content ">
+            <div  class="mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Tin tức công nghệ</h2>
+                <p class="text-gray-600">Cập nhật những tin tức mới nhất về thế giới laptop và công nghệ</p>
+            </div>
+
+            <!-- Featured News -->
+            <div  class="mb-10">
+                <div class="bg-white rounded-xl overflow-hidden shadow-md">
+                    <div class="flex flex-col md:flex-row">
+                        <div class="md:w-1/2">
+                            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Tech News" class="w-full h-full object-cover">
+                        </div>
+                        <div class="md:w-1/2 p-6">
+                            <div class="flex items-center mb-4">
+                                <span class="bg-blue-100 text-blue-600 text-xs font-medium px-2 py-1 rounded">Mới nhất</span>
+                                <span class="text-gray-500 text-sm ml-3">13 giờ trước</span>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-4">Intel công bố thế hệ chip mới - Hiệu năng tăng 40%</h3>
+                            <p class="text-gray-600 mb-6">Intel vừa giới thiệu thế hệ chip Intel Core thế hệ 14 với nhiều cải tiến về hiệu năng và tiết kiệm điện năng cho laptop...</p>
+                            <div class="flex items-center">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Author" class="w-8 h-8 rounded-full mr-2">
+                                <span class="text-sm font-medium">Nguyễn Văn A</span>
+                                <button class="ml-auto bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">Xem chi tiết</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- News Grid -->
+            <h3 class="text-xl font-bold text-gray-800 mb-6">Tin tức mới</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                <!-- News Card 1 -->
+                <div class="news-card bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
+                        <img src="https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Dell XPS" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                        <div class="flex items-center mb-3">
+                            <span class="bg-green-100 text-green-600 text-xs font-medium px-2 py-1 rounded">Giải pháp</span>
+                            <span class="text-gray-500 text-sm ml-3">2 ngày trước</span>
+                        </div>
+                        <h4 class="font-bold text-lg mb-2">Lựa chọn laptop phù hợp cho nhân viên văn phòng</h4>
+                        <p class="text-gray-600 text-sm mb-4">Bài viết sẽ giúp bạn lựa chọn laptop phù hợp với nhu cầu công việc văn phòng với ngân sách hợp lý...</p>
+                        <button class="text-blue-600 text-sm font-medium hover:text-blue-800">Đọc tiếp →</button>
+                    </div>
+                </div>
+
+                <!-- News Card 2 -->
+                <div class="news-card bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
+                        <img src="https://images.unsplash.com/photo-1593642634524-b40b5baae6bb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="ASUS ROG" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <div class="flex items-center mb-3">
+                            <span class="bg-red-100 text-red-600 text-xs font-medium px-2 py-1 rounded">Đánh giá</span>
+                            <span class="text-gray-500 text-sm ml-3">5 ngày trước</span>
+                        </div>
+                        <h4 class="font-bold text-lg mb-2">Đánh giá chi tiết về chiếc laptop MacBook Air M2 2023</h4>
+                        <p class="text-gray-600 text-sm mb-4">Chúng tôi đã trải nghiệm MacBook Air M2 2023 trong 2 tuần và đây là những cảm nhận chi tiết về sản phẩm...</p>
+                        <button class="text-blue-600 text-sm font-medium hover:text-blue-800">Đọc tiếp →</button>
+                    </div>
+                </div>
+
+                <!-- News Card 3 -->
+                <div class="news-card bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
+                    <img src="https://images.unsplash.com/photo-1530893609608-32a9af3aa95c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="News" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <div class="flex items-center mb-3">
+                            <span class="bg-purple-100 text-purple-600 text-xs font-medium px-2 py-1 rounded">Mẹo hay</span>
+                            <span class="text-gray-500 text-sm ml-3">1 tuần trước</span>
+                        </div>
+                        <h4 class="font-bold text-lg mb-2">7 cách tối ưu pin laptop giúp kéo dài tuổi thọ</h4>
+                        <p class="text-gray-600 text-sm mb-4">Bảo vệ pin laptop không chỉ giúp tăng tuổi thọ thiết bị mà còn tiết kiệm chi phí cho người dùng...</p>
+                        <button class="text-blue-600 text-sm font-medium hover:text-blue-800">Đọc tiếp →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- News Categories -->
+            <h3 class="text-xl font-bold text-gray-800 mb-6">Danh mục tin tức</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-12">
+                <a href="#" class="bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition border border-gray-100">
+                    <div class="flex justify-center mb-2">
+                        <i class="fas fa-newspaper text-2xl text-blue-600"></i>
+                    </div>
+                    <span class="text-sm font-medium">Tin mới</span>
+                </a>
+                <a href="#" class="bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition border border-gray-100">
+                    <div class="flex justify-center mb-2">
+                        <i class="fas fa-star text-2xl text-yellow-600"></i>
+                    </div>
+                    <span class="text-sm font-medium">Đánh giá</span>
+                </a>
+                <a href="#" class="bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition border border-gray-100">
+                    <div class="flex justify-center mb-2">
+                        <i class="fas fa-question-circle text-2xl text-green-600"></i>
+                    </div>
+                    <span class="text-sm font-medium">Hỏi đáp</span>
+                </a>
+                <a href="#" class="bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition border border-gray-100">
+                    <div class="flex justify-center mb-2">
+                        <i class="fas fa-wrench text-2xl text-red-600"></i>
+                    </div>
+                    <span class="text-sm font-medium">Sửa chữa</span>
+                </a>
+                <a href="#" class="bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition border border-gray-100">
+                    <div class="flex justify-center mb-2">
+                        <i class="fas fa-lightbulb text-2xl text-purple-600"></i>
+                    </div>
+                    <span class="text-sm font-medium">Mẹo hay</span>
+                </a>
+                <a href="#" class="bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition border border-gray-100">
+                    <div class="flex justify-center mb-2">
+                        <i class="fas fa-list text-2xl text-pink-600"></i>
+                    </div>
+                    <span class="text-sm font-medium">Tất cả</span>
+                </a>
+            </div>
+
+            <!-- Newsletter Subscription -->
+            <div class="bg-blue-50 rounded-xl p-8 mb-12">
+                <div class="text-center max-w-2xl mx-auto">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">Đăng ký nhận tin mới nhất</h3>
+                    <p class="text-gray-600 mb-6">Nhận thông tin khuyến mãi và tin tức công nghệ mới nhất qua email</p>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="email" placeholder="Nhập email của bạn" class="flex-grow px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition">Đăng ký</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </divv>
+ <script>
+             document.getElementById('target')?.scrollIntoView({ behavior: 'smooth' });
+
+ </script>

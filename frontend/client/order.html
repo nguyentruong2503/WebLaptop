@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -35,9 +34,40 @@
     <div class="max-w-4xl mx-auto px-4 py-6">
       <!-- Header -->
       <header class="mb-6">
-        <h1 class="text-3xl font-bold text-gray-800">Đơn hàng</h1>
-        <p class="text-gray-600">Xem đơn hàng</p>
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-800">Đơn hàng</h1>
+            <p class="text-gray-600">Xem đơn hàng</p>
+          </div>
+          <a
+            href="http://127.0.0.1:5501/frontend/layouts/cliend-layout.html#"
+            class="inline-flex items-center px-4 py-2 border border-blue-500 text-blue-600 text-sm font-medium rounded hover:bg-blue-50"
+          >
+            <i class="fas fa-arrow-left mr-2"></i> Quay lại
+          </a>
+        </div>
       </header>
+
+      <!-- Thống kê đơn hàng -->
+      <div id="userSummary" class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">
+          Tổng quan đơn hàng của bạn
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-blue-100 text-blue-800 p-4 rounded-lg">
+            <p class="text-sm">Số đơn hàng</p>
+            <p class="text-2xl font-bold" id="userTotalOrders">0</p>
+          </div>
+          <div class="bg-green-100 text-green-800 p-4 rounded-lg">
+            <p class="text-sm">Tổng tiền đã mua</p>
+            <p class="text-2xl font-bold" id="userTotalAmount">0 Đ</p>
+          </div>
+          <div class="bg-yellow-100 text-yellow-800 p-4 rounded-lg">
+            <p class="text-sm">Số đơn đang xử lý</p>
+            <p class="text-2xl font-bold" id="userPendingOrders">0</p>
+          </div>
+        </div>
+      </div>
 
       <!-- Search and Filter -->
       <div class="bg-white rounded-lg shadow p-6 mb-6">
@@ -75,10 +105,12 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 gap-6"></div>
+      <div id="orderGrid" class="grid grid-cols-1 gap-6"></div>
     </div>
 
-    <script>
+    <script type="module">
+      import { fetchWithTokenRetry } from "http://127.0.0.1:5501/frontend/js/authFetch.js";
+
       const statusColors = {
         Pending: "bg-yellow-200 text-yellow-800",
         Confirmed: "bg-blue-200 text-blue-800",
@@ -96,8 +128,6 @@
         return Number(amount).toLocaleString("vi-VN") + " Đ";
       }
 
-      const userId = 1; // gán cứng
-
       document
         .getElementById("btnFilter")
         .addEventListener("click", function () {
@@ -112,12 +142,12 @@
           if (keyword) params.append("keyword", keyword);
           if (status) params.append("status", status);
 
-          const response = await fetch(
-            `http://localhost:8000/api/orders/user/${userId}?${params.toString()}`
+          const response = await fetchWithTokenRetry(
+            `http://localhost:8000/api/orders/user?${params.toString()}`
           );
           const orders = await response.json();
 
-          const container = document.querySelector(".grid");
+          const container = document.getElementById("orderGrid");
           container.innerHTML = "";
 
           orders.forEach((order) => {
@@ -150,8 +180,8 @@
               )}</p>
             </div>
             <div class="text-right flex flex-col items-end gap-2">
-          <button 
-            class="btnCancel bg-red-600 text-white px-3 py-1 rounded disabled:opacity-50" 
+          <button
+            class="btnCancel bg-red-600 text-white px-3 py-1 rounded disabled:opacity-50"
             ${order.orderstatus === "Pending" ? "" : "disabled"}>
             Hủy đơn hàng
           </button>
@@ -178,7 +208,7 @@
               if (!confirmed) return;
 
               try {
-                const response = await fetch(
+                const response = await fetchWithTokenRetry(
                   `http://localhost:8000/api/orders/${orderId}`,
                   {
                     method: "PUT",
@@ -216,9 +246,42 @@
           console.error("Lỗi khi load đơn hàng:", error);
         }
       }
+
+      async function loadUserSummary() {
+        try {
+          const response = await fetchWithTokenRetry(
+            "http://localhost:8000/api/orders/user"
+          );
+          const allOrders = await response.json();
+
+          let totalOrders = allOrders.length;
+          let totalAmount = 0;
+          let pendingOrders = 0;
+
+          allOrders.forEach((order) => {
+            if (order.orderstatus === "Delivered") {
+              totalAmount += Number(order.totalAmount);
+            }
+            if (order.orderstatus === "Pending") {
+              pendingOrders++;
+            }
+          });
+
+          document.getElementById("userTotalOrders").textContent = totalOrders;
+          document.getElementById("userTotalAmount").textContent =
+            formatCurrency(totalAmount);
+          document.getElementById("userPendingOrders").textContent =
+            pendingOrders;
+        } catch (error) {
+          console.error("Lỗi khi load thống kê đơn hàng:", error);
+        }
+      }
       window.addEventListener("DOMContentLoaded", () => {
         loadOrders("", "");
+        loadUserSummary();
       });
     </script>
+
+    <!-- <script src="../js/order.js"></script> -->
   </body>
 </html>

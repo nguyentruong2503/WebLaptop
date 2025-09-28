@@ -11,10 +11,11 @@ class CartController extends Controller
 {
     //
     public function addToCart(Request $request)
-    {
+    { 
+        $user=request()->user();
         // Validate dữ liệu đầu vào
         $validator = Validator::make($request->all(), [
-            'idUser' => 'required',
+           
             'idProduct' => 'required',
             'quantity' => 'required|min:1',
         ]);
@@ -26,7 +27,7 @@ class CartController extends Controller
             ], 422);
         }
 
-        $idUser = $request->idUser;
+        $idUser =  $user->id;
         $idProduct = $request->idProduct;
         $quantity = $request->quantity;
 
@@ -52,10 +53,11 @@ class CartController extends Controller
             'message' => 'Thêm vào giỏ hàng thành công',
         ], 200);
     }
-    public function getCartByUser($userId)
+    public function getCartByUser(Request $request)
     {
+        $user=request()->user();
         $cartItems = Cart::with('product')
-            ->where('userID', $userId)
+            ->where('userID', $user->id)
             ->get()->map(function ($item) {
                 return [
                     'id'        => $item->id,

@@ -1,4 +1,4 @@
-<main class="container mx-auto px-4 py-8">
+<main id="target" class="container mx-auto px-4 py-8">
   <div
     class="bg-white rounded-xl shadow-md overflow-hidden p-6 md:p-8 lg:flex gap-8"
   >
@@ -99,14 +99,19 @@
     </div>
   </div>
 </main>
-<script>
+
+<script type="module">  
+       document.getElementById('target')?.scrollIntoView({ behavior: 'smooth' });
+
+   import { fetchWithTokenRetry } from 'http://127.0.0.1:5501/frontend/js/authFetch.js';
+
   (() => {
   (async () => {
     const productId = localStorage.getItem("selectedProductId");
     if (!productId) return alert("Không tìm thấy sản phẩm!");
 
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/laptops/${productId}`);
+      const res = await fetchWithTokenRetry(`http://127.0.0.1:8000/api/laptops/${productId}`);
       if (!res.ok) throw new Error("Lỗi khi lấy dữ liệu sản phẩm");
 
       const result = await res.json();
@@ -165,7 +170,7 @@ document.getElementById("btn-add-to-cart").addEventListener("click", async () =>
   if (quantity < 1) return alert("Số lượng phải lớn hơn hoặc bằng 1!");
 
   try {
-    const response = await fetch("http://127.0.0.1:8000/api/cart/add", {
+    const response = await fetchWithTokenRetry("http://127.0.0.1:8000/api/cart/add", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

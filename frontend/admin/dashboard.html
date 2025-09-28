@@ -1,7 +1,210 @@
-   <div class="bg-white shadow p-4 flex justify-between items-center">
-                <h2 class="text-xl font-semibold">Dashboard</h2>
-                <div class="flex items-center gap-2">
-                    <span>Xin chào, Admin</span>
-                  
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thống kê Laptop</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #orderStatusChart {
+            max-width: 320px;
+            max-height: 320px;
+        }
+        #revenueChart {
+            max-height: 320px;
+        }
+        @media (min-width: 1024px) {
+            .charts-flex {
+                display: flex;
+                gap: 2rem;
+                align-items: flex-start;
+                justify-content: center;
+            }
+            .chart-container {
+                flex: 1 1 0;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="bg-white shadow p-4 flex justify-between items-center">
+        <h2 class="text-xl font-semibold">Dashboard</h2>
+        <div class="flex items-center gap-2">
+            <span>Xin chào, Admin</span>
+        </div>
+    </div>
+    <div class="container mx-auto py-8">
+        <h1 class="text-3xl font-bold text-blue-700 mb-8 left">Thống kê tổng quan</h1>
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Bảng tổng hợp</h2>
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Chỉ số</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tháng này</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tháng trước</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tăng/giảm</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="px-4 py-2">Tổng doanh thu</td>
+                        <td class="px-4 py-2">0₫</td>
+                        <td class="px-4 py-2">0₫</td>
+                        <td class="px-4 py-2 text-green-600 font-bold">+0.0%</td>
+                    </tr>
+                    <tr>
+                        <td class="px-4 py-2">Số đơn hàng</td>
+                        <td class="px-4 py-2">0</td>
+                        <td class="px-4 py-2">0</td>
+                        <td class="px-4 py-2 text-green-600 font-bold">+0.0%</td>
+                    </tr>
+                    <tr>
+                        <td class="px-4 py-2">Khách hàng mới</td>
+                        <td class="px-4 py-2">0</td>
+                        <td class="px-4 py-2">0</td>
+                        <td class="px-4 py-2 text-green-600 font-bold">+0.0%</td>
+                    </tr>
+                    <tr>
+                        <td class="px-4 py-2">Đơn bị hủy</td>
+                        <td class="px-4 py-2">0</td>
+                        <td class="px-4 py-2">0</td>
+                        <td class="px-4 py-2 text-red-600 font-bold">0.0%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="charts-flex mb-8">
+            <div class="bg-white rounded-lg shadow p-6 mb-8 chart-container">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Biểu đồ doanh thu 6 tháng gần nhất</h2>
+                <canvas id="revenueChart" width="600" height="320"></canvas>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6 mb-8 chart-container">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Tỉ lệ trạng thái đơn hàng tháng này</h2>
+                <div class="flex justify-center">
+                    <canvas id="orderStatusChart" width="320" height="320"></canvas>
                 </div>
             </div>
+        </div>
+    </div>
+    <script type="module">
+    import { fetchWithTokenRetry } from '/frontend/js/authFetch.js';
+
+    async function fetchDashboard() {
+        try {
+            const res = await fetchWithTokenRetry('http://localhost:8000/api/thongke');
+            const data = await res.json();
+
+            const summary = data.summary;
+            const formatMoney = n => Number(n).toLocaleString('vi-VN') + '₫';
+            const percent = (now, prev) => prev == 0 ? 'N/A' : ((now - prev) / prev * 100).toFixed(1) + '%';
+            const percentClass = (now, prev) => now >= prev ? 'text-green-600' : 'text-red-600';
+
+            const tbody = document.querySelector('table tbody');
+            tbody.innerHTML = `
+                <tr>
+                    <td class="px-4 py-2">Tổng doanh thu</td>
+                    <td class="px-4 py-2">${formatMoney(summary.revenue_now)}</td>
+                    <td class="px-4 py-2">${formatMoney(summary.revenue_prev)}</td>
+                    <td class="px-4 py-2 font-bold ${percentClass(summary.revenue_now, summary.revenue_prev)}">
+                        ${(summary.revenue_prev == 0) ? 'N/A' : ((summary.revenue_now - summary.revenue_prev) / summary.revenue_prev * 100 > 0 ? '+' : '') + percent(summary.revenue_now, summary.revenue_prev)}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="px-4 py-2">Số đơn hàng</td>
+                    <td class="px-4 py-2">${summary.orders_now}</td>
+                    <td class="px-4 py-2">${summary.orders_prev}</td>
+                    <td class="px-4 py-2 font-bold ${percentClass(summary.orders_now, summary.orders_prev)}">
+                        ${(summary.orders_prev == 0) ? 'N/A' : ((summary.orders_now - summary.orders_prev) / summary.orders_prev * 100 > 0 ? '+' : '') + percent(summary.orders_now, summary.orders_prev)}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="px-4 py-2">Khách hàng mới</td>
+                    <td class="px-4 py-2">${summary.customers_now}</td>
+                    <td class="px-4 py-2">${summary.customers_prev}</td>
+                    <td class="px-4 py-2 font-bold ${percentClass(summary.customers_now, summary.customers_prev)}">
+                        ${(summary.customers_prev == 0) ? 'N/A' : ((summary.customers_now - summary.customers_prev) / summary.customers_prev * 100 > 0 ? '+' : '') + percent(summary.customers_now, summary.customers_prev)}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="px-4 py-2">Đơn bị hủy</td>
+                    <td class="px-4 py-2">${summary.cancel_now}</td>
+                    <td class="px-4 py-2">${summary.cancel_prev}</td>
+                    <td class="px-4 py-2 font-bold ${percentClass(summary.cancel_now, summary.cancel_prev)}">
+                        ${(summary.cancel_prev == 0) ? 'N/A' : ((summary.cancel_now - summary.cancel_prev) / summary.cancel_prev * 100 > 0 ? '+' : '') + percent(summary.cancel_now, summary.cancel_prev)}
+                    </td>
+                </tr>
+            `;
+
+            const revenueCanvas = document.getElementById('revenueChart');
+            if (revenueCanvas) {
+                const revenueCtx = revenueCanvas.getContext('2d');
+                new Chart(revenueCtx, {
+                    type: 'line',
+                    data: {
+                        labels: data.revenue_chart.labels,
+                        datasets: [{
+                            label: 'Doanh thu (triệu đồng)',
+                            data: data.revenue_chart.data.map(Number),
+                            borderColor: '#2563eb',
+                            backgroundColor: 'rgba(37,99,235,0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { callback: value => value + 'tr' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const orderStatusCanvas = document.getElementById('orderStatusChart');
+            if (orderStatusCanvas) {
+                const orderStatusCtx = orderStatusCanvas.getContext('2d');
+                new Chart(orderStatusCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Đã xác nhận', 'Đang giao', 'Đã giao', 'Đã hủy'],
+                        datasets: [{
+                            data: data.order_status_chart.data.map(Number),
+                            backgroundColor: [
+                                '#2563eb', 
+                                '#fbbf24', 
+                                '#22c55e', 
+                                '#6b7280', 
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+            }
+        } catch (e) {
+            alert('Không thể tải dữ liệu thống kê!');
+            console.error(e);
+        }
+    }
+
+    fetchDashboard();
+    </script>
+</body>
+</html>

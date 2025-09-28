@@ -217,33 +217,34 @@
       </div>
     </div>
 
-    <script>
+    <script type="module">
+      import { fetchWithTokenRetry } from "http://127.0.0.1:5501/frontend/js/authFetch.js";
+
       //load dữ liệu từ BE lên
-      document.addEventListener("DOMContentLoaded", function () {
+      (() => {
         fetchProductTypes();
-      });
 
-      function fetchProductTypes(keyword = "", page = 1) {
-        const url = new URL("http://127.0.0.1:8000/api/product_types");
-        if (keyword) url.searchParams.append("keyword", keyword);
-        url.searchParams.append("page", page);
+        function fetchProductTypes(keyword = "", page = 1) {
+          const url = new URL("http://127.0.0.1:8000/api/product_types");
+          if (keyword) url.searchParams.append("keyword", keyword);
+          url.searchParams.append("page", page);
 
-        fetch(url)
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Server response: " + response.status);
-            }
-            return response.json();
-          })
-          .then((data) => {
-            const tbody = document.getElementById("productTypeTableBody");
-            tbody.innerHTML = "";
+          fetchWithTokenRetry(url)
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Server response: " + response.status);
+              }
+              return response.json();
+            })
+            .then((data) => {
+              const tbody = document.getElementById("productTypeTableBody");
+              tbody.innerHTML = "";
 
-            data.data.forEach((item) => {
-              const row = document.createElement("tr");
-              row.classList.add("hover:bg-gray-50", "transition");
+              data.data.forEach((item) => {
+                const row = document.createElement("tr");
+                row.classList.add("hover:bg-gray-50", "transition");
 
-              row.innerHTML = `
+                row.innerHTML = `
           <td class="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
             ${item.id}
           </td>
@@ -271,245 +272,248 @@
           </td>
         `;
 
-              tbody.appendChild(row);
-            });
-            document.querySelectorAll(".edit-btn").forEach((btn) => {
-              btn.addEventListener("click", function () {
-                const id = this.getAttribute("data-id");
-                const name = this.getAttribute("data-name");
-
-                openEditModal(id, name);
+                tbody.appendChild(row);
               });
-            });
+              document.querySelectorAll(".edit-btn").forEach((btn) => {
+                btn.addEventListener("click", function () {
+                  const id = this.getAttribute("data-id");
+                  const name = this.getAttribute("data-name");
 
-            document.querySelectorAll(".delete-btn").forEach((btn) => {
-              btn.addEventListener("click", function () {
-                const id = this.getAttribute("data-id");
+                  openEditModal(id, name);
+                });
+              });
 
-                if (
-                  confirm("Bạn có chắc chắn muốn xóa loại sản phẩm này không?")
-                ) {
-                  fetch(`http://127.0.0.1:8000/api/product_types/${id}`, {
-                    method: "DELETE",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                  })
-                    .then((response) => {
-                      if (!response.ok) {
-                        throw new Error("Lỗi khi xóa: " + response.status);
+              document.querySelectorAll(".delete-btn").forEach((btn) => {
+                btn.addEventListener("click", function () {
+                  const id = this.getAttribute("data-id");
+
+                  if (
+                    confirm(
+                      "Nếu bạn xóa , những sản phẩm liên quan cũng bị vô hiệu hóa. Bạn có chắc chắn muốn xóa không?"
+                    )
+                  ) {
+                    fetchWithTokenRetry(
+                      `http://127.0.0.1:8000/api/product_types/${id}`,
+                      {
+                        method: "DELETE",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
                       }
-                      return response.json();
-                    })
-                    .then(() => {
-                      alert("Xóa thành công!");
-                      fetchProductTypes();
-                    })
-                    .catch((error) => {
-                      console.error("Lỗi khi xóa loại sản phẩm:", error);
-                      alert("Xóa thất bại. Kiểm tra lại kết nối hoặc API.");
-                    });
-                }
+                    )
+                      .then((response) => {
+                        return response.json().then((data) => {
+                          if (!response.ok) {
+                            throw new Error(data.message);
+                          }
+                          return data;
+                        });
+                      })
+                      .then((data) => {
+                        alert(data.message);
+                        fetchProductTypes();
+                      })
+                      .catch((error) => {
+                        alert(error.message);
+                        console.error("Lỗi khi xóa loại sản phẩm:", error);
+                      });
+                  }
+                });
               });
+              renderPagination(data.current_page, data.last_page, keyword);
+            })
+            .catch((error) => {
+              console.error("Lỗi khi lấy loại sản phẩm:", error);
+              alert(
+                "Không thể tải loại sản phẩm. Kiểm tra kết nối tới API hoặc backend."
+              );
             });
-            renderPagination(data.current_page, data.last_page, keyword);
-          })
-          .catch((error) => {
-            console.error("Lỗi khi lấy loại sản phẩm:", error);
-            alert(
-              "Không thể tải loại sản phẩm. Kiểm tra kết nối tới API hoặc backend."
-            );
-          });
-      }
+        }
 
-      // Modal functionality
-      const addNewBtn = document.getElementById("addNewBtn");
-      const addProductTypeModal = document.getElementById(
-        "addProductTypeModal"
-      );
-      const editProductTypeModal = document.getElementById(
-        "editProductTypeModal"
-      );
-      const cancelAddProductType = document.getElementById(
-        "cancelAddProductType"
-      );
-      const closeAddModal = document.getElementById("closeAddModal");
-      const cancelEditProductType = document.getElementById(
-        "cancelEditProductType"
-      );
-      const closeEditModal = document.getElementById("closeEditModal");
+        const addNewBtn = document.getElementById("addNewBtn");
+        const addProductTypeModal = document.getElementById(
+          "addProductTypeModal"
+        );
+        const editProductTypeModal = document.getElementById(
+          "editProductTypeModal"
+        );
+        const cancelAddProductType = document.getElementById(
+          "cancelAddProductType"
+        );
+        const closeAddModal = document.getElementById("closeAddModal");
+        const cancelEditProductType = document.getElementById(
+          "cancelEditProductType"
+        );
+        const closeEditModal = document.getElementById("closeEditModal");
 
-      // Hiện modal thêm mới
-      addNewBtn.addEventListener("click", () => {
-        addProductTypeModal.classList.remove("hidden");
-        document.body.style.overflow = "hidden";
-      });
+        addNewBtn.addEventListener("click", () => {
+          addProductTypeModal.classList.remove("hidden");
+          document.body.style.overflow = "hidden";
+        });
 
-      // Hiện modal sửa
-      function openEditModal(id, tenLoai) {
-        document.getElementById("editProductTypeId").value = id;
-        document.getElementById("editProductTypeName").value = tenLoai;
+        function openEditModal(id, tenLoai) {
+          document.getElementById("editProductTypeId").value = id;
+          document.getElementById("editProductTypeName").value = tenLoai;
+          document
+            .getElementById("editProductTypeModal")
+            .classList.remove("hidden");
+        }
+
+        function renderPagination(currentPage, lastPage, keyword) {
+          const container = document.getElementById("paginationContainer");
+          container.innerHTML = "";
+
+          const prevBtn = document.createElement("button");
+          prevBtn.innerHTML = `<i class="fas fa-chevron-left"></i> Prev`;
+          prevBtn.disabled = currentPage === 1;
+          prevBtn.className = "px-3 py-1.5 bg-gray-200 rounded";
+          prevBtn.onclick = () => fetchProductTypes(keyword, currentPage - 1);
+
+          container.appendChild(prevBtn);
+
+          for (let i = 1; i <= lastPage; i++) {
+            const pageBtn = document.createElement("button");
+            pageBtn.textContent = i;
+            pageBtn.className =
+              "px-3 py-1.5 rounded " +
+              (i === currentPage
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700");
+            pageBtn.onclick = () => fetchProductTypes(keyword, i);
+            container.appendChild(pageBtn);
+          }
+
+          const nextBtn = document.createElement("button");
+          nextBtn.innerHTML = `Next <i class="fas fa-chevron-right"></i>`;
+          nextBtn.disabled = currentPage === lastPage;
+          nextBtn.className = "px-3 py-1.5 bg-gray-200 rounded";
+          nextBtn.onclick = () => fetchProductTypes(keyword, currentPage + 1);
+
+          container.appendChild(nextBtn);
+        }
+
         document
-          .getElementById("editProductTypeModal")
-          .classList.remove("hidden");
-      }
+          .getElementById("searchInput")
+          .addEventListener("input", function () {
+            const keyword = this.value.trim();
+            fetchProductTypes(keyword, 1);
+          });
 
-      //Phân trang
-      function renderPagination(currentPage, lastPage, keyword) {
-        const container = document.getElementById("paginationContainer");
-        container.innerHTML = "";
+        document
+          .getElementById("submitEditProductType")
+          .addEventListener("click", function () {
+            const id = document.getElementById("editProductTypeId").value;
+            const typeName = document
+              .getElementById("editProductTypeName")
+              .value.trim();
 
-        const prevBtn = document.createElement("button");
-        prevBtn.innerHTML = `<i class="fas fa-chevron-left"></i> Prev`;
-        prevBtn.disabled = currentPage === 1;
-        prevBtn.className = "px-3 py-1.5 bg-gray-200 rounded";
-        prevBtn.onclick = () => fetchProductTypes(keyword, currentPage - 1);
+            if (!typeName) {
+              alert("Vui lòng nhập tên loại sản phẩm!");
+              return;
+            }
 
-        container.appendChild(prevBtn);
-
-        for (let i = 1; i <= lastPage; i++) {
-          const pageBtn = document.createElement("button");
-          pageBtn.textContent = i;
-          pageBtn.className =
-            "px-3 py-1.5 rounded " +
-            (i === currentPage
-              ? "bg-blue-600 text-white"
-              : "bg-gray-200 text-gray-700");
-          pageBtn.onclick = () => fetchProductTypes(keyword, i);
-          container.appendChild(pageBtn);
-        }
-
-        const nextBtn = document.createElement("button");
-        nextBtn.innerHTML = `Next <i class="fas fa-chevron-right"></i>`;
-        nextBtn.disabled = currentPage === lastPage;
-        nextBtn.className = "px-3 py-1.5 bg-gray-200 rounded";
-        nextBtn.onclick = () => fetchProductTypes(keyword, currentPage + 1);
-
-        container.appendChild(nextBtn);
-      }
-
-      //Tìm kiếm
-      document
-        .getElementById("searchInput")
-        .addEventListener("input", function () {
-          const keyword = this.value.trim();
-          fetchProductTypes(keyword, 1);
-        });
-
-      //Gửi data về BE để update loại sản phẩm
-      document
-        .getElementById("submitEditProductType")
-        .addEventListener("click", function () {
-          const id = document.getElementById("editProductTypeId").value;
-          const typeName = document
-            .getElementById("editProductTypeName")
-            .value.trim();
-
-          if (!typeName) {
-            alert("Vui lòng nhập tên loại sản phẩm!");
-            return;
-          }
-
-          fetch(`http://localhost:8000/api/product_types/${id}`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-            body: JSON.stringify({ typeName: typeName }),
-          })
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error("Cập nhật thất bại!");
+            fetchWithTokenRetry(
+              `http://localhost:8000/api/product_types/${id}`,
+              {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                  Accept: "application/json",
+                },
+                body: JSON.stringify({ typeName: typeName }),
               }
-              return response.json();
+            )
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("Cập nhật thất bại!");
+                }
+                return response.json();
+              })
+              .then((data) => {
+                alert("Cập nhật thành công!");
+                document
+                  .getElementById("editProductTypeModal")
+                  .classList.add("hidden");
+
+                fetchProductTypes();
+              })
+              .catch((error) => {
+                console.error(error);
+                alert("Đã xảy ra lỗi khi cập nhật!");
+              });
+          });
+
+        const hideAddModal = () => {
+          addProductTypeModal.classList.add("hidden");
+          document.body.style.overflow = "";
+        };
+
+        const hideEditModal = () => {
+          editProductTypeModal.classList.add("hidden");
+          document.body.style.overflow = "";
+        };
+
+        //Gửi json về BE
+        document
+          .getElementById("submitAddProductType")
+          .addEventListener("click", function () {
+            const productTypeName = document
+              .getElementById("productTypeName")
+              .value.trim();
+
+            if (!productTypeName) {
+              alert("Vui lòng nhập tên loại sản phẩm!");
+              return;
+            }
+
+            fetchWithTokenRetry("http://localhost:8000/api/product_types", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+              body: JSON.stringify({
+                typeName: productTypeName,
+              }),
             })
-            .then((data) => {
-              alert("Cập nhật thành công!");
-              document
-                .getElementById("editProductTypeModal")
-                .classList.add("hidden");
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("Lỗi khi thêm loại sản phẩm!");
+                }
+                return response.json();
+              })
+              .then((data) => {
+                alert("Thêm loại sản phẩm thành công!");
+                document.getElementById("productTypeName").value = "";
+                document
+                  .getElementById("addProductTypeModal")
+                  .classList.add("hidden");
 
-              fetchProductTypes();
-            })
-            .catch((error) => {
-              console.error(error);
-              alert("Đã xảy ra lỗi khi cập nhật!");
-            });
-        });
+                fetchProductTypes();
+              })
+              .catch((error) => {
+                console.error(error);
+                alert("Đã xảy ra lỗi!");
+              });
+          });
 
-      // Đóng modal
-      const hideAddModal = () => {
-        addProductTypeModal.classList.add("hidden");
-        document.body.style.overflow = "";
-      };
+        cancelAddProductType.addEventListener("click", hideAddModal);
+        closeAddModal.addEventListener("click", hideAddModal);
+        cancelEditProductType.addEventListener("click", hideEditModal);
+        closeEditModal.addEventListener("click", hideEditModal);
 
-      const hideEditModal = () => {
-        editProductTypeModal.classList.add("hidden");
-        document.body.style.overflow = "";
-      };
-
-      //Gửi json về BE
-      document
-        .getElementById("submitAddProductType")
-        .addEventListener("click", function () {
-          const productTypeName = document
-            .getElementById("productTypeName")
-            .value.trim();
-
-          if (!productTypeName) {
-            alert("Vui lòng nhập tên loại sản phẩm!");
-            return;
+        addProductTypeModal.addEventListener("click", (e) => {
+          if (e.target === addProductTypeModal) {
+            hideAddModal();
           }
-
-          fetch("http://localhost:8000/api/product_types", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-            body: JSON.stringify({
-              typeName: productTypeName,
-            }),
-          })
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error("Lỗi khi thêm loại sản phẩm!");
-              }
-              return response.json();
-            })
-            .then((data) => {
-              alert("Thêm loại sản phẩm thành công!");
-              document.getElementById("productTypeName").value = "";
-              document
-                .getElementById("addProductTypeModal")
-                .classList.add("hidden");
-
-              fetchProductTypes();
-            })
-            .catch((error) => {
-              console.error(error);
-              alert("Đã xảy ra lỗi!");
-            });
         });
 
-      cancelAddProductType.addEventListener("click", hideAddModal);
-      closeAddModal.addEventListener("click", hideAddModal);
-      cancelEditProductType.addEventListener("click", hideEditModal);
-      closeEditModal.addEventListener("click", hideEditModal);
-
-      // Đóng model khi ấn ra vùng trống
-      addProductTypeModal.addEventListener("click", (e) => {
-        if (e.target === addProductTypeModal) {
-          hideAddModal();
-        }
-      });
-
-      editProductTypeModal.addEventListener("click", (e) => {
-        if (e.target === editProductTypeModal) {
-          hideEditModal();
-        }
-      });
+        editProductTypeModal.addEventListener("click", (e) => {
+          if (e.target === editProductTypeModal) {
+            hideEditModal();
+          }
+        });
+      })();
     </script>
   </body>
 </html>

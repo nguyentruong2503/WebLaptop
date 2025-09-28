@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laptop8386</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        .bg-animate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            background: linear-gradient(120deg, #1e293b, #334155, #64748b, #334155, #1e293b);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease-in-out infinite;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .form-animate.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .btn-animate, .btn-register-animate {
+            transition: 
+                background 0.4s cubic-bezier(.4,0,.2,1),
+                box-shadow 0.3s cubic-bezier(.4,0,.2,1),
+                transform 0.2s cubic-bezier(.4,0,.2,1);
+        }
+        .btn-animate:hover {
+            box-shadow: 0 8px 24px 0 rgba(59,130,246,0.25), 0 1.5px 4px 0 rgba(0,0,0,0.10);
+            transform: translateY(-2px) scale(1.03);
+            filter: brightness(1.1) saturate(1.2);
+        }
+        .btn-register-animate:hover {
+            box-shadow: 0 8px 24px 0 rgba(16,185,129,0.18), 0 1.5px 4px 0 rgba(0,0,0,0.10);
+            transform: translateY(-2px) scale(1.03);
+            filter: brightness(1.1) saturate(1.2);
+        }
+    </style>
+    <script src="../js/layout.js"></script>
+</head>
+<body class="bg-gray-900 min-h-screen flex items-center justify-center">
+    <div class="bg-animate"></div>
+    <div id="app-content" class="relative z-10 w-full flex justify-center items-center"></div>
+    <script>
+      window.onload = function() {
+        loadPage('auth/login.html');
+      };
+    </script>
+</body>
+</html>

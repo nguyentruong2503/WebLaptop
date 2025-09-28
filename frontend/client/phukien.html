@@ -1,1 +1,208 @@
-<h1>Phụ kiện</h1>
+
+
+   <!-- Featured Products -->
+  <div  id="target" class="flex justify-between items-center mb-8 opacity-0">
+                -
+            </div>
+   <section class="my-12 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+             
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-900">Phụ kiện nổi bật</h2>
+                <a href="#" class="text-primary-600 hover:text-primary-800 font-medium" onclick="event.preventDefault()">Xem tất cả <i class="fas fa-arrow-right ml-1"></i></a>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="accesory-list-one"></div>
+        </div>
+    </section>
+       <!-- Featured Products -->
+    <section class="py-12 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-900">Phụ kiện bán chạy</h2>
+                <a href="#" class="text-primary-600 hover:text-primary-800 font-medium" onclick="event.preventDefault()">Xem tất cả <i class="fas fa-arrow-right ml-1"></i></a>
+            </div>
+            
+                       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="accesory-list-two"></div>
+
+        </div>
+    </section>
+   <!-- Featured Products -->
+    <section class="py-12 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-900">Khác</h2>
+                <a href="#" class="text-primary-600 hover:text-primary-800 font-medium" onclick="event.preventDefault()">Xem tất cả <i class="fas fa-arrow-right ml-1"></i></a>
+            </div>
+                                   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="accesory-list-three"></div>
+
+        
+        </div>
+    </section>
+    <script>
+  function selectProduct(id) {
+    localStorage.setItem("selectedProductId", id);
+    loadPage("../client/detail_laptop.html");
+  }
+  function selectProduct1(id) {
+    localStorage.setItem("selectedProductId", id);
+    loadPage("../client/detail_accessory.html");
+  }
+</script>
+
+<script type="module">
+    
+         document.getElementById('target')?.scrollIntoView({ behavior: 'smooth' });
+
+
+ import { fetchWithTokenRetry } from "http://127.0.0.1:5501/frontend/js/authFetch.js";
+    fetchWithTokenRetry("http://127.0.0.1:8000/api/products_mouse")
+    .then((response) => response.json())
+    .then((data) => {
+      let listContainer = document.getElementById("accesory-list-one");
+
+      const laptops = data.data; // Lấy mảng data từ API
+   const total = laptops.length;
+const size = Math.ceil(total / 3); // Kích thước mỗi phần (làm tròn lên)
+
+const laptops1 = laptops.slice(0, size);
+const laptops2 = laptops.slice(size, size * 2);
+const laptops3 = laptops.slice(size * 2);
+
+      if (!Array.isArray(laptops)) {
+        console.error("'data' không phải là mảng");
+        return;
+      }
+
+      laptops1.forEach((laptop) => {
+        const product = laptop.product;
+        const param = product.id;
+
+        const html = `
+                      <div onclick="selectProduct1(${param})" class="flex flex-col justify-between product-card bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                          <div class="relative">
+                              <img src="${
+                                product.img || "https://via.placeholder.com/300"
+                              }" alt="${
+          product.productName
+        }" class="w-full h-48 object-cover">
+                          </div>
+                          <div class="p-4">
+                              <h3 class="font-medium text-gray-900 mb-1">${
+                                product.productName
+                              }</h3>
+                              <div class="flex items-center mb-2">
+                                  <div class="flex text-yellow-400">
+                                      <i class="fas fa-star"></i>
+                                      <i class="fas fa-star"></i>
+                                      <i class="fas fa-star"></i>
+                                      <i class="fas fa-star"></i>
+                                      <i class="fas fa-star-half-alt"></i>
+                                  </div>
+                                  <span class="text-gray-500 text-xs ml-1">(76)</span>
+                              </div>
+                              <div class="flex items-center justify-between">
+                                  <span class="text-primary-600 font-bold">${Number(
+                                    product.price
+                                  ).toLocaleString("vi-VN")}đ</span>
+                              </div>
+                          </div>
+                          <div class="px-4 pb-4">
+                              <button class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg font-medium transition-all" onclick="event.preventDefault()">Xem chi tiết</button>
+                          </div>
+                      </div>
+                  `;
+
+        listContainer.insertAdjacentHTML("beforeend", html);
+      });
+listContainer = document.getElementById("accesory-list-two");
+          laptops2.forEach((laptop) => {
+        const product = laptop.product;
+        const param = product.id;
+
+        const html = `
+                      <div onclick="selectProduct1(${param})" class="flex flex-col justify-between product-card bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                          <div class="relative">
+                              <img src="${
+                                product.img || "https://via.placeholder.com/300"
+                              }" alt="${
+          product.productName
+        }" class="w-full h-48 object-cover">
+                          </div>
+                          <div class="p-4">
+                              <h3 class="font-medium text-gray-900 mb-1">${
+                                product.productName
+                              }</h3>
+                              <div class="flex items-center mb-2">
+                                  <div class="flex text-yellow-400">
+                                      <i class="fas fa-star"></i>
+                                      <i class="fas fa-star"></i>
+                                      <i class="fas fa-star"></i>
+                                      <i class="fas fa-star"></i>
+                                      <i class="fas fa-star-half-alt"></i>
+                                  </div>
+                                  <span class="text-gray-500 text-xs ml-1">(76)</span>
+                              </div>
+                              <div class="flex items-center justify-between">
+                                  <span class="text-primary-600 font-bold">${Number(
+                                    product.price
+                                  ).toLocaleString("vi-VN")}đ</span>
+                              </div>
+                          </div>
+                          <div class="px-4 pb-4">
+                              <button class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg font-medium transition-all" onclick="event.preventDefault()">Xem chi tiết</button>
+                          </div>
+                      </div>
+                  `;
+
+        listContainer.insertAdjacentHTML("beforeend", html);
+      });
+
+      ///
+      listContainer = document.getElementById("accesory-list-three");
+          laptops3.forEach((laptop) => {
+        const product = laptop.product;
+        const param = product.id;
+
+        const html = `
+                      <div onclick="selectProduct1(${param})" class="flex flex-col justify-between product-card bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+                          <div class="relative">
+                              <img src="${
+                                product.img || "https://via.placeholder.com/300"
+                              }" alt="${
+          product.productName
+        }" class="w-full h-48 object-cover">
+                          </div>
+                          <div class="p-4">
+                              <h3 class="font-medium text-gray-900 mb-1">${
+                                product.productName
+                              }</h3>
+                              <div class="flex items-center mb-2">
+                                  <div class="flex text-yellow-400">
+                                      <i class="fas fa-star"></i>
+                                      <i class="fas fa-star"></i>
+                                      <i class="fas fa-star"></i>
+                                      <i class="fas fa-star"></i>
+                                      <i class="fas fa-star-half-alt"></i>
+                                  </div>
+                                  <span class="text-gray-500 text-xs ml-1">(76)</span>
+                              </div>
+                              <div class="flex items-center justify-between">
+                                  <span class="text-primary-600 font-bold">${Number(
+                                    product.price
+                                  ).toLocaleString("vi-VN")}đ</span>
+                              </div>
+                          </div>
+                          <div class="px-4 pb-4">
+                              <button class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg font-medium transition-all" onclick="event.preventDefault()">Xem chi tiết</button>
+                          </div>
+                      </div>
+                  `;
+
+        listContainer.insertAdjacentHTML("beforeend", html);
+      });
+    })
+    .catch((error) => {
+      console.error("Lỗi khi lấy danh sách laptop:", error);
+    });
+</script>

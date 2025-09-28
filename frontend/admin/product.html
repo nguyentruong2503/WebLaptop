@@ -1,0 +1,678 @@
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+  rel="stylesheet"
+/>
+
+<style>
+  .container {
+    max-width: 95%;
+    margin: 50px auto;
+  }
+  .container h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 1rem;
+  }
+  .header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 10px;
+  }
+  .header-actions select,
+  .header-actions input {
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.9rem;
+  }
+  .header-actions button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+  .header-actions button:hover {
+    background: #0056b3;
+  }
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  th,
+  td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  th {
+    background: #007bff;
+    color: #fff;
+    font-weight: 500;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+  }
+  td {
+    font-size: 0.9rem;
+    color: #2d3748;
+  }
+  tr:hover {
+    background: #f8fafc;
+  }
+  .product-img {
+    max-width: 60px;
+    max-height: 60px;
+    border-radius: 4px;
+    object-fit: cover;
+  }
+  .actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #007bff;
+    margin-right: 10px;
+  }
+  .actions button:hover {
+    color: #0056b3;
+  }
+  .actions .delete {
+    color: #dc3545;
+  }
+  .actions .delete:hover {
+    color: #b02a37;
+  }
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .modal-content label {
+    display: block;
+    margin: 10px 0 5px;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  .modal-content input,
+  .modal-content select,
+  .modal-content textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+  .modal-content input[readonly] {
+    background: #f8fafc;
+    cursor: pointer;
+  }
+  .modal-content textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  .modal-content button {
+    margin-top: 1rem;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  .modal-content .save {
+    background: #007bff;
+    color: white;
+  }
+  .modal-content .cancel {
+    background: #6b7280;
+    color: white;
+    margin-left: 10px;
+  }
+  .loading,
+  .error,
+  .empty {
+    text-align: center;
+    padding: 20px;
+    color: #718096;
+  }
+  .error {
+    color: #dc3545;
+  }
+  .spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+  }
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  @media (max-width: 768px) {
+    table {
+      display: block;
+      overflow-x: auto;
+    }
+    th,
+    td {
+      min-width: 100px;
+    }
+    .header-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .modal-content {
+      width: 95%;
+    }
+  }
+</style>
+<div class="container">
+  <h1>Quản lý sản phẩm Laptop & Phụ kiện</h1>
+  <div class="header-actions">
+    <div>
+      <select id="typeFilter">
+        <option value="">Tất cả loại</option>
+      </select>
+      <select id="brandFilter">
+        <option value="">Tất cả nhãn hàng</option>
+      </select>
+      <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm..." />
+    </div>
+    <div>
+      <button onclick="openAddModal()">
+        <i class="fas fa-plus"></i> Thêm sản phẩm
+      </button>
+      <button onclick="fetchProducts()">
+        <i class="fas fa-sync-alt"></i> Làm mới
+      </button>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Hình ảnh</th>
+        <th>Tên sản phẩm</th>
+        <th>Loại</th>
+        <th>Nhãn hàng</th>
+        <th>Giá</th>
+        <th>Số lượng</th>
+        <th>Thông số/Mô tả</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody id="productTableBody">
+      <tr>
+        <td colspan="9" class="loading"><div class="spinner"></div></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Modal Thêm/Sửa -->
+  <div id="productModal" class="modal">
+    <div class="modal-content">
+      <h2 id="modalTitle">Thêm sản phẩm</h2>
+      <form id="productForm">
+        <label for="productName">Tên sản phẩm</label>
+        <input type="text" id="productName" required />
+        <label for="id_type">Loại sản phẩm</label>
+        <select id="id_type" required>
+          <option value="">Chọn loại</option>
+        </select>
+        <label for="id_branch">Nhãn hàng</label>
+        <select id="id_branch" required>
+          <option value="">Chọn nhãn hàng</option>
+        </select>
+        <label for="price">Giá (VND)</label>
+        <input type="number" id="price" step="0.01" min="0" required />
+        <label for="quality">Số lượng</label>
+        <input type="number" id="quality" min="0" required />
+
+        <label for="img">Hình ảnh (URL)</label>
+        <input type="text" id="img" readonly onclick="openUploadWindow()" />
+        
+        <div id="laptopFields" style="display: none">
+          <label for="screenSpecs">Màn hình</label>
+          <input type="text" id="screenSpecs" />
+          <label for="CPU">CPU</label>
+          <input type="text" id="CPU" />
+          <label for="RAM">RAM</label>
+          <input type="text" id="RAM" />
+          <label for="SSD">SSD</label>
+          <input type="text" id="SSD" />
+          <label for="GPU">GPU</label>
+          <input type="text" id="GPU" />
+          <label for="laptopDes">Mô tả</label>
+          <textarea id="laptopDes"></textarea>
+        </div>
+        <div id="accessoryFields" style="display: none">
+          <label for="accessoryDes">Mô tả</label>
+          <textarea id="accessoryDes"></textarea>
+        </div>
+        <button type="submit" class="save">Lưu</button>
+        <button type="button" class="cancel" onclick="closeModal()">Hủy</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+// jwt
+ async function fetchWithTokenRetry(url, options = {}) {
+      let token = localStorage.getItem('token');
+      options.headers = { ...options.headers, Authorization: `Bearer ${token}` };
+      let response = await fetch(url, options);
+
+      if (response.status === 401) {
+        const refreshRes = await fetch(`${API_BASE_URL}/refresh`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (refreshRes.ok) {
+          const data = await refreshRes.json();
+          localStorage.setItem('token', data.access_token);
+          options.headers['Authorization'] = `Bearer ${data.access_token}`;
+          response = await fetch(url, options);
+        } else {
+          localStorage.removeItem('token');
+          alert('Hết phiên đăng nhập, vui lòng đăng nhập lại.');
+          window.location.href = '/frontend/layouts/login-layout.html';
+        }
+      }
+
+      return response;
+    }
+//
+  var currentProductId = null;
+
+  // Mở cửa sổ upload
+  function openUploadWindow() {
+    window.open(
+      "http://127.0.0.1:8000/upload-form",
+      "UploadWindow",
+      "width=600,height=400"
+    );
+  }
+
+  // Nhận URL ảnh từ cửa sổ upload
+  window.addEventListener("message", function (event) {
+    if (event.data.imageUrl) {
+      document.getElementById("img").value = event.data.imageUrl;
+    }
+  });
+
+  // Lấy danh sách loại sản phẩm và nhãn hàng
+  async function loadFilters() {
+    try {
+      const [typesRes, brandsRes] = await Promise.all([
+        fetchWithTokenRetry("http://127.0.0.1:8000/api/product_types"),
+        fetchWithTokenRetry("http://127.0.0.1:8000/api/brands"),
+      ]);
+      if (!typesRes.ok || !brandsRes.ok) throw new Error("Lỗi khi tải bộ lọc");
+      const types = await typesRes.json();
+      const brands = await brandsRes.json();
+
+      const typeSelect = document.getElementById("id_type");
+      const typeFilter = document.getElementById("typeFilter");
+      typeSelect.innerHTML = '<option value="">Chọn loại</option>';
+      typeFilter.innerHTML = '<option value="">Tất cả loại</option>';
+      const allowedTypes = ['Laptop', 'Phụ kiện'];
+      types.data
+      .filter(type => allowedTypes.includes(type.typeName))
+      .forEach((type) => {
+        const option = document.createElement("option");
+        option.value = type.id;
+        option.textContent = type.typeName;
+        typeSelect.appendChild(option);
+        typeFilter.appendChild(option.cloneNode(true));
+      });
+
+      const brandSelect = document.getElementById("id_branch");
+      const brandFilter = document.getElementById("brandFilter");
+      brandSelect.innerHTML = '<option value="">Chọn nhãn hàng</option>';
+      brandFilter.innerHTML = '<option value="">Tất cả nhãn hàng</option>';
+      brands.forEach((brand) => {
+        const option = document.createElement("option");
+        option.value = brand.id;
+        option.textContent = brand.nameOfBranch;
+        brandSelect.appendChild(option);
+        brandFilter.appendChild(option.cloneNode(true));
+      });
+    } catch (error) {
+      console.error("Lỗi khi tải bộ lọc:", error);
+      alert("Không thể tải bộ lọc: " + error.message);
+    }
+  }
+
+  // Lấy danh sách sản phẩm
+ async function fetchProducts() {
+  const tbody = document.getElementById("productTableBody");
+  tbody.innerHTML =
+    '<tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr>';
+
+  try {
+    const response = await fetchWithTokenRetry("http://127.0.0.1:8000/api/products");
+    if (!response.ok) throw new Error("Lỗi server: " + response.status);
+    const products = await response.json();
+
+    tbody.innerHTML = "";
+    if (!products || !Array.isArray(products) || products.length === 0) {
+      tbody.innerHTML =
+        '<tr><td colspan="9" class="empty">Không có sản phẩm nào</td></tr>';
+      return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    products.forEach((prod) => {
+      // Chỉ hiển thị sản phẩm có isActive = 1
+      if (prod.isActive === 0) return;
+      
+      const details = prod.laptop || prod.accessory || {};
+      const specs =
+        prod.id_type == 1
+          ? [ 
+              details.des,
+            ]
+              .filter(Boolean)
+              .join(", ")
+          : details.des || "N/A";
+      const tr = document.createElement("tr");
+      // Thoát ký tự đặc biệt trong productName để tránh lỗi XSS
+      const safeProductName = prod.productName
+        ? prod.productName.replace(/'/g, "\\'").replace(/"/g, "")
+        : "Sản phẩm";
+      tr.innerHTML = `
+          <td>${prod.id ?? "N/A"}</td>
+          <td>${
+            prod.img
+              ? `<img src="${prod.img}" class="product-img" alt="${safeProductName}">`
+              : "N/A"
+          }</td>
+          <td>${safeProductName}</td>
+          <td>${prod.type?.typeName ?? "N/A"}</td>
+          <td>${prod.branch?.nameOfBranch ?? "N/A"}</td>
+          <td>${formatPrice(prod.price)}</td>
+          <td>${prod.quality ?? "N/A"}</td>
+          <td>${specs}</td>
+          <td class="actions">
+            <button title="Sửa" onclick="openEditModal(${
+              prod.id
+            }, '${encodeURIComponent(
+        JSON.stringify(prod)
+      )}')"><i class="fas fa-edit"></i></button>
+            <button class="delete" title="Xóa" onclick="deleteProduct(${
+              prod.id
+            })"><i class="fas fa-trash-alt"></i></button>
+          </td>
+        `;
+      fragment.appendChild(tr);
+    });
+    tbody.appendChild(fragment);
+  } catch (error) {
+    console.error("Lỗi khi tải sản phẩm:", error);
+    tbody.innerHTML = `<tr><td colspan="9" class="error">${error.message}<br><small>Vui lòng kiểm tra console</small></td></tr>`;
+  }
+}
+  // Định dạng giá
+  function formatPrice(price) {
+    const num = parseFloat(price);
+    return Number.isNaN(num)
+      ? "Giá không hợp lệ"
+      : num.toLocaleString("vi-VN") + " ₫";
+  }
+
+  // Mở modal thêm sản phẩm
+  function openAddModal() {
+    currentProductId = null;
+    document.getElementById("modalTitle").textContent = "Thêm sản phẩm";
+    document.getElementById("productForm").reset();
+    document.getElementById("id_type").value = "";
+    document.getElementById("laptopFields").style.display = "none";
+    document.getElementById("accessoryFields").style.display = "none";
+    document.getElementById("productModal").style.display = "flex";
+  }
+
+  // Mở modal sửa sản phẩm
+  function openEditModal(id, encodedProduct) {
+    try {
+      const product = JSON.parse(decodeURIComponent(encodedProduct));
+      console.log("Opening edit modal for product:", product); // Debug log
+      currentProductId = id;
+      document.getElementById("modalTitle").textContent = "Sửa sản phẩm";
+
+      // Gán giá trị vào form
+      document.getElementById("productName").value = product.productName || "";
+      document.getElementById("id_type").value = product.id_type || "";
+      document.getElementById("id_branch").value = product.id_branch || "";
+      document.getElementById("price").value = product.price || "";
+      document.getElementById("quality").value = product.quality || "";
+      document.getElementById("img").value = product.img || "";
+
+      const laptopFields = document.getElementById("laptopFields");
+      const accessoryFields = document.getElementById("accessoryFields");
+      if (product.id_type == 1) {
+        laptopFields.style.display = "block";
+        accessoryFields.style.display = "none";
+        document.getElementById("screenSpecs").value =
+          product.laptop?.screenSpecs || "";
+        document.getElementById("CPU").value = product.laptop?.CPU || "";
+        document.getElementById("RAM").value = product.laptop?.RAM || "";
+        document.getElementById("SSD").value = product.laptop?.SSD || "";
+        document.getElementById("GPU").value = product.laptop?.GPU || "";
+        document.getElementById("laptopDes").value = product.laptop?.des || "";
+      } else if (product.id_type == 2) {
+        laptopFields.style.display = "none";
+        accessoryFields.style.display = "block";
+        document.getElementById("accessoryDes").value =
+          product.accessory?.des || "";
+      } else {
+        laptopFields.style.display = "none";
+        accessoryFields.style.display = "none";
+      }
+
+      document.getElementById("productModal").style.display = "flex";
+    } catch (error) {
+      console.error("Lỗi khi mở modal sửa:", error);
+      alert("Không thể mở modal sửa: " + error.message);
+    }
+  }
+
+  // Đóng modal
+  function closeModal() {
+    document.getElementById("productModal").style.display = "none";
+    document.getElementById("productForm").reset();
+    currentProductId = null;
+  }
+
+  // Xử lý submit form
+  document
+  .getElementById("productForm")
+  .addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const data = {
+      productName: document.getElementById("productName").value,
+      id_type: parseInt(document.getElementById("id_type").value),
+      id_branch: parseInt(document.getElementById("id_branch").value),
+      price: parseFloat(document.getElementById("price").value),
+      quality: parseInt(document.getElementById("quality").value),
+      img: document.getElementById("img").value || null,
+      isActive: currentProductId ? undefined : 1, // Chỉ gửi isActive khi thêm mới
+    };
+
+    if (data.id_type === 1) {
+      data.laptop = {
+        screenSpecs: document.getElementById("screenSpecs").value || null,
+        CPU: document.getElementById("CPU").value || null,
+        RAM: document.getElementById("RAM").value || null,
+        SSD: document.getElementById("SSD").value || null,
+        GPU: document.getElementById("GPU").value || null,
+        des: document.getElementById("laptopDes").value || null,
+      };
+      data.accessory = null;
+    } else if (data.id_type === 2) {
+      data.laptop = null;
+      data.accessory = {
+        des: document.getElementById("accessoryDes").value || null,
+      };
+    } else {
+      data.laptop = null;
+      data.accessory = null;
+    }
+
+    try {
+      const url = currentProductId
+        ? `http://127.0.0.1:8000/api/products/${currentProductId}`
+        : "http://127.0.0.1:8000/api/products";
+      const method = currentProductId ? "PUT" : "POST";
+      const response = await fetchWithTokenRetry(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      let errorMessage = "Lỗi server: " + response.status;
+      if (!response.ok) {
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } else {
+          const text = await response.text();
+          console.error("Phản hồi không phải JSON:", text);
+          errorMessage = "Lỗi server, phản hồi không phải JSON";
+        }
+        throw new Error(errorMessage);
+      }
+
+      closeModal();
+      fetchProducts();
+      alert(
+        currentProductId
+          ? "Cập nhật sản phẩm thành công"
+          : "Thêm sản phẩm thành công"
+      );
+    } catch (error) {
+      console.error("Lỗi:", error);
+      alert("Lỗi: " + error.message);
+    }
+  });
+
+  // Xóa sản phẩm
+ // Xóa sản phẩm
+async function deleteProduct(id) {
+  if (confirm("Bạn có chắc muốn xóa sản phẩm này? Sản phẩm sẽ được ẩn thay vì xóa hoàn toàn.")) {
+    try {
+      const response = await fetchWithTokenRetry(`http://127.0.0.1:8000/api/products/${id}`, {
+        method: "DELETE", // Sử dụng DELETE thay vì PUT
+        headers: { "Content-Type": "application/json" },
+        // Không cần body vì destroy không yêu cầu payload
+      });
+      if (!response.ok) {
+        let errorMessage = "Lỗi server: " + response.status;
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } else {
+          const text = await response.text();
+          console.error("Phản hồi không phải JSON:", text);
+          errorMessage = "Lỗi server, phản hồi không phải JSON: " + text;
+        }
+        throw new Error(errorMessage);
+      }
+      fetchProducts();
+      alert("Sản phẩm đã được ẩn thành công");
+    } catch (error) {
+      console.error("Lỗi:", error);
+      alert("Lỗi: " + error.message);
+    }
+  }
+}
+
+  // Lọc và tìm kiếm
+  function applyFilters() {
+    const typeFilter = document.getElementById("typeFilter").value;
+    const brandFilter = document.getElementById("brandFilter").value;
+    const search = document.getElementById("searchInput").value.toLowerCase();
+    const rows = document.querySelectorAll("#productTableBody tr");
+    rows.forEach((row) => {
+      const type = row.cells[3].textContent;
+      const brand = row.cells[4].textContent;
+      const name = row.cells[2].textContent.toLowerCase();
+      const show =
+        (!typeFilter ||
+          type ===
+            document.querySelector(`#typeFilter option[value="${typeFilter}"]`)
+              ?.textContent) &&
+        (!brandFilter ||
+          brand ===
+            document.querySelector(
+              `#brandFilter option[value="${brandFilter}"]`
+            )?.textContent) &&
+        (!search || name.includes(search));
+      row.style.display = show ? "" : "none";
+    });
+  }
+
+  document
+    .getElementById("typeFilter")
+    .addEventListener("change", applyFilters);
+  document
+    .getElementById("brandFilter")
+    .addEventListener("change", applyFilters);
+  document
+    .getElementById("searchInput")
+    .addEventListener("input", applyFilters);
+
+  // Hiển thị/ẩn trường theo loại sản phẩm
+  document.getElementById("id_type").addEventListener("change", function () {
+    const laptopFields = document.getElementById("laptopFields");
+    const accessoryFields = document.getElementById("accessoryFields");
+    laptopFields.style.display = this.value == "1" ? "block" : "none";
+    accessoryFields.style.display = this.value == "2" ? "block" : "none";
+  });
+
+  // Tải dữ liệu ban đầu
+
+  loadFilters();
+  fetchProducts();
+</script>

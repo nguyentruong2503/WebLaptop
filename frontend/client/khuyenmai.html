@@ -1,0 +1,180 @@
+
+    <style>
+        /* Custom CSS for elements that need more styling than Tailwind provides */
+        .promo-card {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .promo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .news-card {
+            transition: all 0.3s ease;
+        }
+        
+        .news-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+        
+        .tab-button.active {
+            border-bottom-width: 3px;
+        }
+        
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .countdown-timer {
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+
+    <!-- Main Content -->
+    <main  class="container mx-auto px-4 py-12">
+     
+  <div  id='target' class="mb-12 opacity-0" >
+                <h2  class="text-3xl font-bold text-gray-800 mb-4">Khuyến mãi hấp dẫn</h2>
+
+            </div>
+
+        <!-- Promotions Page -->
+        <div id="promotionsPage" class="tab-content">
+            <div class="mb-8">
+                <h2  class="text-3xl font-bold text-gray-800 mb-4">Khuyến mãi hấp dẫn</h2>
+                <p class="text-gray-600">Nhiều ưu đãi giá sốc dành cho các dòng laptop từ các thương hiệu hàng đầu</p>
+            </div>
+
+            <!-- Featured Promotion -->
+            <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 mb-10 text-white">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/2 mb-6 md:mb-0">
+                        <span class="bg-white text-blue-600 text-sm font-bold px-3 py-1 rounded-full mb-4 inline-block">ƯU ĐÃI ĐẶC BIỆT</span>
+                        <h3 class="text-2xl md:text-3xl font-bold mb-4">Giảm giá lên đến 40% các dòng laptop gaming</h3>
+                        <p class="mb-6">Áp dụng từ ngày 01/06/2025 đến 31/08/2025. Số lượng có hạn.</p>
+                    
+                        <button class="bg-white text-blue-600 px-6 py-3 rounded-lg font-bold hover:bg-gray-100 transition">Mua ngay</button>
+                    </div>
+                    <div class="md:w-1/2 flex justify-center">
+                        <img src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Laptop Gaming" class="rounded-lg shadow-xl w-full max-w-md">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Promotions Grid -->
+            <h3 class="text-xl font-bold text-gray-800 mb-6">Khuyến mãi khác</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                <!-- Promotion Card 1 -->
+                <div class="promo-card bg-white rounded-xl overflow-hidden border border-gray-200">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="MacBook Pro" class="w-full h-48 object-cover">
+                        <div class="absolute top-3 left-3 bg-red-500 text-white text-sm font-bold px-2 py-1 rounded">-30%</div>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-bold text-lg mb-2">MacBook Pro M2 giảm sốc</h4>
+                        <p class="text-gray-600 text-sm mb-4">Tiết kiệm đến 12 triệu đồng khi mua MacBook Pro M2</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-blue-600 font-bold">Từ 28.990.000đ</span>
+                            <span class="text-gray-400 text-sm line-through">40.990.000đ</span>
+                        </div>
+                        <button class="w-full mt-4 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">Xem chi tiết</button>
+                    </div>
+                </div>
+
+                <!-- Promotion Card 2 -->
+                <div class="promo-card bg-white rounded-xl overflow-hidden border border-gray-200">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Dell XPS" class="w-full h-48 object-cover">
+                        <div class="absolute top-3 left-3 bg-yellow-500 text-white text-sm font-bold px-2 py-1 rounded">Trả góp 0%</div>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-bold text-lg mb-2">Trả góp 0% Dell XPS</h4>
+                        <p class="text-gray-600 text-sm mb-4">Trả góp lãi suất 0% với thẻ tín dụng tại cửa hàng</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-blue-600 font-bold">24.990.000đ</span>
+                            <span class="text-gray-400 text-sm"></span>
+                        </div>
+                        <button class="w-full mt-4 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">Xem chi tiết</button>
+                    </div>
+                </div>
+
+                <!-- Promotion Card 3 -->
+                <div class="promo-card bg-white rounded-xl overflow-hidden border border-gray-200">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1593642634524-b40b5baae6bb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="ASUS ROG" class="w-full h-48 object-cover">
+                        <div class="absolute top-3 left-3 bg-green-500 text-white text-sm font-bold px-2 py-1 rounded">Quà tặng</div>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-bold text-lg mb-2">Mua ASUS ROG nhận quà</h4>
+                        <p class="text-gray-600 text-sm mb-4">Tặng balo gaming + chuột + bàn phím trị giá 3 triệu đồng</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-blue-600 font-bold">35.990.000đ</span>
+                            <span class="text-gray-400 text-sm"></span>
+                        </div>
+                        <button class="w-full mt-4 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">Xem chi tiết</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Promotion Categories -->
+            <h3 class="text-xl font-bold text-gray-800 mb-6">Danh mục khuyến mãi</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-12">
+                <a href="#" class="bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition border border-gray-100">
+                    <div class="flex justify-center mb-2">
+                        <i class="fas fa-gamepad text-2xl text-purple-600"></i>
+                    </div>
+                    <span class="text-sm font-medium">Laptop Gaming</span>
+                </a>
+                <a href="#" class="bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition border border-gray-100">
+                    <div class="flex justify-center mb-2">
+                        <i class="fas fa-business-time text-2xl text-blue-600"></i>
+                    </div>
+                    <span class="text-sm font-medium">Doanh nhân</span>
+                </a>
+                <a href="#" class="bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition border border-gray-100">
+                    <div class="flex justify-center mb-2">
+                        <i class="fas fa-pencil-ruler text-2xl text-green-600"></i>
+                    </div>
+                    <span class="text-sm font-medium">Đồ họa</span>
+                </a>
+                <a href="#" class="bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition border border-gray-100">
+                    <div class="flex justify-center mb-2">
+                        <i class="fas fa-graduation-cap text-2xl text-yellow-600"></i>
+                    </div>
+                    <span class="text-sm font-medium">Sinh viên</span>
+                </a>
+                <a href="#" class="bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition border border-gray-100">
+                    <div class="flex justify-center mb-2">
+                        <i class="fas fa-bolt text-2xl text-red-600"></i>
+                    </div>
+                    <span class="text-sm font-medium">Phụ kiện</span>
+                </a>
+                <a href="#" class="bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition border border-gray-100">
+                    <div class="flex justify-center mb-2">
+                        <i class="fas fa-tags text-2xl text-pink-600"></i>
+                    </div>
+                    <span class="text-sm font-medium">Tất cả</span>
+                </a>
+            </div>
+        </div>
+
+      
+    </main>
+
+
+
+<script>
+             document.getElementById('target')?.scrollIntoView({ behavior: 'smooth' });
+
+ </script>

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
+use App\Models\Cart;
 use App\Models\Brands;
 use Illuminate\Http\Request;
 
@@ -42,7 +44,7 @@ class BrandsController extends Controller
     {
         $brand = Brands::find($id);
         if (!$brand) {
-            return response()->json(['message' => 'Không tìm thấy chi nhánh'], 404);
+            return response()->json(['message' => 'Không tìm thấy nhãn hàng'], 404);
         }
         return response()->json($brand);
     }
@@ -54,7 +56,7 @@ class BrandsController extends Controller
     {
         $brand = Brands::find($id);
         if (!$brand) {
-            return response()->json(['message' => 'Không tìm thấy chi nhánh'], 404);
+            return response()->json(['message' => 'Không tìm thấy nhãn hàng'], 404);
         }
         $validated = $request->validate([
             'nameOfBranch' => 'required|string|max:255',
@@ -73,10 +75,22 @@ class BrandsController extends Controller
     {
         $brand = Brands::find($id);
         if (!$brand) {
-            return response()->json(['message' => 'Không tìm thấy chi nhánh'], 404);
+            return response()->json(['message' => 'Không tìm thấy nhãn hàng'], 404);
         }
-        $brand->delete();
-        return response()->json(['message' => 'Xóa thành công']);
+        try {
+        $products = $brand->products;
+
+        foreach ($products as $product) {
+            Cart::where('productID', $product->id)->delete();
+            $product->isActive = 0;
+            $product->id_branch = null; // Đúng tên trường khóa ngoại
+            $product->save();
+        }
+            $brand->delete();
+            return response()->json(['message' => 'Xóa thành công']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Không thể xóa nhãn hàng vì có sản phẩm liên quan'], 400);
+        }
     }
 }
 

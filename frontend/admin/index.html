@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quản lý sản phẩm</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="container my-4">
+    <h2>Danh sách sản phẩm</h2>
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#productModal" onclick="openAddModal()">Thêm sản phẩm</button>
+    <table class="table table-bordered table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Tên sản phẩm</th>
+          <th>Loại</th>
+          <th>Hãng</th>
+          <th>Giá</th>
+          <th>Số lượng</th>
+          <th>Ảnh</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody id="productTableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Modal thêm/sửa sản phẩm -->
+  <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form id="productForm" class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="productModalLabel">Thêm sản phẩm</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="resetForm()"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="productId" />
+          <div class="mb-3">
+            <label for="productName" class="form-label">Tên sản phẩm</label>
+            <input type="text" id="productName" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label for="id_type" class="form-label">Loại sản phẩm</label>
+            <select id="id_type" class="form-select" required></select>
+          </div>
+          <div class="mb-3">
+            <label for="id_branch" class="form-label">Hãng</label>
+            <select id="id_branch" class="form-select" required></select>
+          </div>
+          <div class="mb-3">
+            <label for="price" class="form-label">Giá</label>
+            <input type="number" step="0.01" id="price" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label for="quality" class="form-label">Số lượng</label>
+            <input type="number" id="quality" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label for="img" class="form-label">Ảnh (URL)</label>
+            <input type="text" id="img" class="form-control" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="resetForm()">Hủy</button>
+          <button type="submit" class="btn btn-primary" id="saveBtn">Lưu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const apiBase = 'http://localhost:8000/api/products'; // sửa thành đúng backend của bạn
+    const apiTypes = 'http://localhost:8000/api/product_types';
+    const apiBrands = 'http://localhost:8000/api/brands';
+
+    let productModal = new bootstrap.Modal(document.getElementById('productModal'));
+    const productForm = document.getElementById('productForm');
+
+    // Load danh sách sản phẩm từ API
+    async function loadProducts() {
+      try {
+        const res = await fetch(apiBase);
+        const products = await res.json();
+        const tbody = document.getElementById('productTableBody');
+        tbody.innerHTML = '';
+        products.forEach(p => {
+          tbody.innerHTML += `
+            <tr>
+              <td>${p.id}</td>
+              <td>${p.productName}</td>
+              <td>${p.type?.typeName || ''}</td>
+              <td>${p.brand?.nameOfBranch || ''}</td>
+              <td>${p.price.toFixed(2)}</td>
+              <td>${p.quality}</td>
+              <td>${p.img ? `<img src="${p.img}" style="width: 50px; height: auto;">` : ''}</td>
+              <td>
+                <button class="btn btn-sm btn-warning" onclick="openEditModal(${p.id})">Sửa</button>
+                <button class="btn btn-sm btn-danger" onclick="deleteProduct(${p.id})">Xóa</button>
+              </td>
+            </tr>`;
+        });
+      } catch (err) {
+        alert('Lỗi tải dữ liệu sản phẩm: ' + err);
+      }
+    }
+
+    // Load danh sách loại sản phẩm cho dropdown
+    async function loadTypes() {
+      try {
+        const res = await fetch(apiTypes);
+        const types = await res.json();
+        const select = document.getElementById('id_type');
+        select.innerHTML = '';
+        types.forEach(t => {
+          select.innerHTML += `<option value="${t.id}">${t.typeName}</option>`;
+        });
+      } catch (err) {
+        alert('Lỗi tải loại sản phẩm: ' + err);
+      }
+    }
+
+    // Load danh sách hãng cho dropdown
+    async function loadBrands() {
+      try {
+        const res = await fetch(apiBrands);
+        const brands = await res.json();
+        const select = document.getElementById('id_branch');
+        select.innerHTML = '';
+        brands.forEach(b => {
+          select.innerHTML += `<option value="${b.id}">${b.nameOfBranch}</option>`;
+        });
+      } catch (err) {
+        alert('Lỗi tải hãng: ' + err);
+      }
+    }
+
+    // Mở modal thêm mới
+    function openAddModal() {
+      document.getElementById('productModalLabel').textContent = 'Thêm sản phẩm';
+      productForm.reset();
+      document.getElementById('productId').value = '';
+      productModal.show();
+    }
+
+    // Mở modal sửa, load dữ liệu của sản phẩm
+    async function openEditModal(id) {
+      try {
+        const res = await fetch(`${apiBase}/${id}`);
+        const product = await res.json();
+        document.getElementById('productModalLabel').textContent = 'Sửa sản phẩm';
+        document.getElementById('productId').value = product.id;
+        document.getElementById('productName').value = product.productName;
+        document.getElementById('id_type').value = product.id_type;
+        document.getElementById('id_branch').value = product.id_branch;
+        document.getElementById('price').value = product.price;
+        document.getElementById('quality').value = product.quality;
+        document.getElementById('img').value = product.img || '';
+        productModal.show();
+      } catch (err) {
+        alert('Lỗi tải sản phẩm: ' + err);
+      }
+    }
+
+    // Xóa sản phẩm
+    async function deleteProduct(id) {
+      if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) return;
+      try {
+        const res = await fetch(`${apiBase}/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          alert('Xóa sản phẩm thành công');
+          loadProducts();
+        } else {
+          const data = await res.json();
+          alert('Lỗi: ' + (data.message || 'Không xóa được'));
+        }
+      } catch (err) {
+        alert('Lỗi xóa sản phẩm: ' + err);
+      }
+    }
+
+    // Xử lý submit form thêm/sửa
+    productForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const id = document.getElementById('productId').value;
+      const data = {
+        productName: document.getElementById('productName').value,
+        id_type: document.getElementById('id_type').value,
+        id_branch: document.getElementById('id_branch').value,
+        price: parseFloat(document.getElementById('price').value),
+        quality: parseInt(document.getElementById('quality').value),
+        img: document.getElementById('img').value || null,
+      };
+
+      try {
+        let res;
+        if (id) {
+          // Update
+          res = await fetch(`${apiBase}/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+        } else {
+          // Create
+          res = await fetch(apiBase, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+        }
+
+        if (res.ok) {
+          alert('Lưu sản phẩm thành công');
+          productModal.hide();
+          loadProducts();
+          resetForm();
+        } else {
+          const errData = await res.json();
+          alert('Lỗi lưu sản phẩm: ' + JSON.stringify(errData));
+        }
+      } catch (err) {
+        alert('Lỗi lưu sản phẩm: ' + err);
+      }
+    });
+
+    function resetForm() {
+      productForm.reset();
+      document.getElementById('productId').value = '';
+    }
+
+    // Khởi động trang
+    async function init() {
+      await loadTypes();
+      await loadBrands();
+      await loadProducts();
+    }
+
+    init();
+  </script>
+</body>
+</html>

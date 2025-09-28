@@ -1,463 +1,761 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quản lý đơn hàng</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: '#f0fdf4',
-                            100: '#dcfce7',
-                            200: '#bbf7d0',
-                            300: '#86efac',
-                            400: '#4ade80',
-                            500: '#22c55e',
-                            600: '#16a34a',
-                            700: '#15803d',
-                            800: '#166534',
-                            900: '#14532d',
-                        }
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: "#f0fdf4",
+                100: "#dcfce7",
+                200: "#bbf7d0",
+                300: "#86efac",
+                400: "#4ade80",
+                500: "#22c55e",
+                600: "#16a34a",
+                700: "#15803d",
+                800: "#166534",
+                900: "#14532d",
+              },
+            },
+          },
+        },
+      };
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-        }
-        
-       
-        
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f8fafc;
+      }
+
+      .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .status-pending {
+        background-color: #fef3c7;
+        color: #92400e;
+      }
+
+      .status-confirmed {
+        background-color: #d1fae5;
+        color: #065f46;
+      }
+
+      .status-shipped {
+        background-color: #dbeafe;
+        color: #1e40af;
+      }
+
+      .status-delivered {
+        background-color: #dcfce7;
+        color: #166534;
+      }
+
+      .status-cancelled {
+        background-color: #fee2e2;
+        color: #991b1b;
+      }
+
+      .status-unknown {
+        background-color: #f3f4f6;
+        color: #374151;
+      }
+
+      .search-input {
+        padding: 0.75rem 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        outline: none;
+        transition: all 0.2s;
+      }
+
+      .search-input:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      .filter-select {
+        padding: 0.75rem 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        background-color: white;
+        outline: none;
+        transition: all 0.2s;
+      }
+
+      .filter-select:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        color: #64748b;
+        transition: all 0.2s;
+        gap: 0.5rem;
+      }
+
+      .back-btn:hover {
+        background-color: #f1f5f9;
+        border-color: #cbd5e1;
+      }
+
+      .view-btn {
+        color: #3b82f6;
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      .view-btn:hover {
+        color: #1d4ed8;
+      }
+
+      .amount-cell {
+        font-weight: 600;
+        color: #059669;
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      /* Đảm bảo nút lọc luôn hiển thị rõ ràng */
+      .filter-select,
+      .search-input,
+      button[type="submit"] {
+        min-width: 120px;
+        min-height: 44px;
+        font-size: 1rem;
+        box-shadow: none;
+        outline: none;
+      }
+      button[type="submit"] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        background-color: #22c55e;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      button[type="submit"]:hover {
+        background-color: #16a34a;
+      }
     </style>
-</head>
-<body class="min-h-screen">
+  </head>
+  <body class="min-h-screen">
     <div class="container mx-auto px-4 py-8 max-w-7xl">
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Quản lý đơn hàng</h1>
-                <p class="text-gray-500 mt-1">Tổng quan và quản lý tất cả đơn hàng của cửa hàng</p>
-            </div>
-            <a href="" class="back-btn">
-                <i class="fas fa-arrow-left"></i>
-                <span>Quay lại</span>
-            </a>
+      <!-- Header -->
+      <div
+        class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8"
+      >
+        <div>
+          <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
+            Quản lý đơn hàng
+          </h1>
+          <p class="text-gray-500 mt-1">
+            Tổng quan và quản lý tất cả đơn hàng của cửa hàng
+          </p>
         </div>
-        
-        <!-- Search and Filter -->
-        <form id="searchForm" action="" method="get" class="bg-white rounded-xl shadow-sm p-4 mb-6 cursor-pointer">
-            <div class="flex flex-col md:flex-row gap-4">
-                <div class="flex-1">
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-search text-gray-400"></i>
-                        </div>
-                        <input 
-                            type="text" 
-                            id="searchInput"
-                            class="search-input pl-10 w-full" 
-                            placeholder="Tìm kiếm đơn hàng..."
-                            name="search" 
-                            autocomplete="off"
-                        >
-                    </div>
-                </div>
-                <div class="flex gap-4">
-                    <select name="status" id="statusSelect" class="filter-select">
-                        <option value="ALL">Tất cả trạng thái</option>
-                        <option value="Pending">Đang xử lý</option>
-                        <option value="Confirmed">Đã xác nhận</option>
-                        <option value="Shipped">Đang giao hàng</option>
-                        <option value="Delivered">Đã giao hàng</option>
-                        <option value="Cancelled">Đã hủy</option>
-                    </select>
-                    <button type="submit" class="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors duration-200">
-                        <i class="fas fa-filter mr-2"></i> Lọc
-                    </button>
-                </div>
-            </div>
-        </form>
+        <a href="" class="back-btn">
+          <i class="fas fa-arrow-left"></i>
+          <span>Quay lại</span>
+        </a>
+      </div>
 
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-blue-500">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <p class="text-sm text-gray-500">Tổng đơn hàng</p>
-                        <h3 id="total-orders" class="text-2xl font-bold text-gray-800">0</h3>
-                    </div>
-                    <div class="p-3 rounded-full bg-blue-100 text-blue-500">
-                        <i class="fas fa-shopping-cart"></i>
-                    </div>
-                </div>
+      <!-- Search and Filter -->
+      <form
+        id="searchForm"
+        action=""
+        method="get"
+        class="bg-white rounded-xl shadow-sm p-4 mb-6 cursor-pointer"
+      >
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="flex-1">
+            <div class="relative">
+              <div
+                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              >
+                <i class="fas fa-search text-gray-400"></i>
+              </div>
+              <input
+                type="text"
+                id="searchInput"
+                class="search-input pl-10 w-full"
+                placeholder="Tìm kiếm đơn hàng..."
+                name="search"
+                autocomplete="off"
+              />
             </div>
-            <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-yellow-500">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <p class="text-sm text-gray-500">Đang xử lý</p>
-                        <h3 id="pending-orders" class="text-2xl font-bold text-gray-800">0</h3>
-                    </div>
-                    <div class="p-3 rounded-full bg-yellow-100 text-yellow-500">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-green-500">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <p class="text-sm text-gray-500">Đã xác nhận</p>
-                        <h3 id="confirmed-orders" class="text-2xl font-bold text-gray-800">0</h3>
-                    </div>
-                    <div class="p-3 rounded-full bg-green-100 text-green-500">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-red-500">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <p class="text-sm text-gray-500">Đã hủy</p>
-                        <h3 id="cancelled-orders" class="text-2xl font-bold text-gray-800">0</h3>
-                    </div>
-                    <div class="p-3 rounded-full bg-red-100 text-red-500">
-                        <i class="fas fa-times-circle"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-                <!-- Sort Button -->
-        <div class="flex justify-end mb-2">
-            <button id="sortBtn" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200">
-                <i class="fas fa-sort mr-2"></i> Sắp xếp theo ngày đặt
+          </div>
+          <div class="flex gap-4">
+            <select name="status" id="statusSelect" class="filter-select">
+              <option value="ALL">Tất cả trạng thái</option>
+              <option value="Pending">Đang xử lý</option>
+              <option value="Confirmed">Đã xác nhận</option>
+              <option value="Shipped">Đang giao hàng</option>
+              <option value="Delivered">Đã giao hàng</option>
+              <option value="Cancelled">Đã hủy</option>
+            </select>
+            <select name="time" id="timeSelect" class="filter-select">
+              <option value="ALL">Tất cả thời gian</option>
+              <option value="today">Hôm nay</option>
+              <option value="last_7_days">7 ngày qua</option>
+              <option value="last_30_days">30 ngày qua</option>
+            </select>
+            <button
+              type="submit"
+              class="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg transition-colors duration-200"
+            >
+              <i class="fas fa-filter mr-2"></i> Lọc
             </button>
+          </div>
         </div>
-        <!-- Orders Table -->
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mã đơn</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khách hàng</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số điện thoại</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tổng tiền</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày đặt</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
-                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                       
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Pagination -->
-            <div class="px-6 py-4 bg-gray-50 flex items-center justify-between border-t border-gray-200">
-                <div class="flex-1 flex justify-between sm:hidden">
-                    <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                        Trước
-                    </a>
-                    <a href="#" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                        Sau
-                    </a>
-                </div>
-                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                    <div>
-                     
-                    </div>
-                    <div>
-                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+      </form>
 
-                        </nav>
-                    </div>
-                </div>
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div
+          class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-blue-500"
+        >
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-sm text-gray-500">Tổng đơn hàng</p>
+              <h3 id="total-orders" class="text-2xl font-bold text-gray-800">
+                0
+              </h3>
             </div>
+            <div class="p-3 rounded-full bg-blue-100 text-blue-500">
+              <i class="fas fa-shopping-cart"></i>
+            </div>
+          </div>
         </div>
-        
+        <div
+          class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-yellow-500"
+        >
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-sm text-gray-500">Đang xử lý</p>
+              <h3 id="pending-orders" class="text-2xl font-bold text-gray-800">
+                0
+              </h3>
+            </div>
+            <div class="p-3 rounded-full bg-yellow-100 text-yellow-500">
+              <i class="fas fa-clock"></i>
+            </div>
+          </div>
+        </div>
+        <div
+          class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-green-500"
+        >
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-sm text-gray-500">Đã xác nhận</p>
+              <h3
+                id="confirmed-orders"
+                class="text-2xl font-bold text-gray-800"
+              >
+                0
+              </h3>
+            </div>
+            <div class="p-3 rounded-full bg-green-100 text-green-500">
+              <i class="fas fa-check-circle"></i>
+            </div>
+          </div>
+        </div>
+        <div
+          class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-red-500"
+        >
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-sm text-gray-500">Đã hủy</p>
+              <h3
+                id="cancelled-orders"
+                class="text-2xl font-bold text-gray-800"
+              >
+                0
+              </h3>
+            </div>
+            <div class="p-3 rounded-full bg-red-100 text-red-500">
+              <i class="fas fa-times-circle"></i>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <script>
-        // Add some interactive elements
-        document.addEventListener('DOMContentLoaded', function() {
-            // Highlight table row on hover
-            const rows = document.querySelectorAll('.table-row-hover');
-            rows.forEach(row => {
-                row.addEventListener('mouseenter', () => {
-                    row.classList.add('bg-gray-50');
-                });
-                row.addEventListener('mouseleave', () => {
-                    row.classList.remove('bg-gray-50');
-                });
-            });
-            // Tooltip for action buttons
-            const buttons = document.querySelectorAll('.action-btn');
-            buttons.forEach(button => {
-                button.addEventListener('mouseenter', () => {
-                    const tooltip = document.createElement('div');
-                    tooltip.className = 'absolute z-10 w-auto p-2 text-sm text-white bg-gray-800 rounded-md shadow-lg';
-                    tooltip.textContent = button.getAttribute('data-tooltip');
-                    button.appendChild(tooltip);
-                });
-                button.addEventListener('mouseleave', () => {
-                    const tooltip = button.querySelector('div');
-                    if (tooltip) {
-                        button.removeChild(tooltip);
-                    }
-                });
-            });
+      <!-- Orders Table -->
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Mã đơn
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Khách hàng
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Số điện thoại
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Tổng tiền
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Ngày đặt
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Trạng thái
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Thao tác
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200"></tbody>
+          </table>
+        </div>
 
-            // Fetch orders from API and render table
-            fetch('http://localhost:8000/api/admin/orders')
-                .then(response => response.json())
-                .then(data => {
-                    const tbody = document.querySelector('tbody');
-                    tbody.innerHTML = '';
-                    if (Array.isArray(data) && data.length > 0) {
-                        data.forEach(order => {
-                            const tr = document.createElement('tr');
-                            tr.className = 'table-row-hover';
-                            // tr.onclick = () => window.location.href = `order-detail.html?id=${order.id}`;
-                            tr.innerHTML = `
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#${order.id}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">${order.fullName || ''}</div>
-                                    <div class="text-sm text-gray-500">${order.address || ''}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${order.phone || ''}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm amount-cell">${order.totalAmount ? order.totalAmount.toLocaleString('vi-VN') + '₫' : ''}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${order.created_at ? new Date(order.created_at).toLocaleDateString('vi-VN') : ''}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="status-badge status-${getStatusClass(order.status)}">
-                                        ${getStatusText(order.status)}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    ${getStatusClass(order.status) === 'pending' ? `
-                                        <a class="confirm-btn mr-2 px-3 py-1 rounded bg-green-500 hover:bg-green-600 text-white transition-colors duration-200"
-                                           onclick="return confirm('Bạn có chắc chắn muốn xác nhận đơn hàng #${order.id} không?');"
-                                           href="">
-                                           <i class="fas fa-check mr-1"></i> Xác nhận
-                                        </a>
-                                        <a class="cancel-btn px-3 py-1 rounded bg-red-500 hover:bg-red-600 text-white transition-colors duration-200"
-                                           onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng #${order.id} không?');"
-                                           href="#">
-                                           <i class="fas fa-times mr-1"></i> Hủy
-                                        </a>
-                                        <a class="view-btn ml-2" href="order-detail.html?id=${order.id}"><i class="fas fa-eye mr-1"></i> </a>
-                                    ` : `
-                                        <a class="view-btn" href="order-detail.html?id=${order.id}"><i class="fas fa-eye mr-1"></i> </a>
-                                    `}
-                                </td>
-                            `;
-                            tbody.appendChild(tr);
-                        });
-                    } else {
-                        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-gray-400">Không có đơn hàng nào.</td></tr>';
-                    }
-                })
-                .catch(err => {
-                    const tbody = document.querySelector('tbody');
-                    tbody.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-red-400">Lỗi tải dữ liệu đơn hàng.</td></tr>';
-                });
+        <!-- Pagination -->
+        <div
+          class="px-6 py-4 bg-gray-50 flex items-center justify-between border-t border-gray-200"
+        >
+          <div class="flex-1 flex justify-between sm:hidden">
+            <a
+              href="#"
+              class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+            >
+              Trước
+            </a>
+            <a
+              href="#"
+              class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+            >
+              Sau
+            </a>
+          </div>
+          <div
+            class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between"
+          >
+            <div></div>
+            <div>
+              <nav
+                class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+                aria-label="Pagination"
+              ></nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      // Biến toàn cục
+      var lastSearch = "";
+      var lastStatus = "ALL";
+      var lastTime = "ALL";
+      var ordersData = [];
+      import { fetchWithTokenRetry } from "http://127.0.0.1:5501/frontend/js/authFetch.js";
+
+      // Add some interactive elements
+      document.addEventListener("DOMContentLoaded", function () {
+        // Highlight table row on hover
+        const rows = document.querySelectorAll(".table-row-hover");
+        rows.forEach((row) => {
+          row.addEventListener("mouseenter", () => {
+            row.classList.add("bg-gray-50");
+          });
+          row.addEventListener("mouseleave", () => {
+            row.classList.remove("bg-gray-50");
+          });
         });
 
-        function getStatusText(status) {
-            switch ((status || '').toLowerCase()) {
-                case 'pending': return 'Đang xử lý';
-                case 'confirmed': return 'Đã xác nhận';
-                case 'shipped': return 'Đang giao hàng';
-                case 'delivered': return 'Đã giao hàng';
-                case 'cancelled': return 'Đã hủy';
-                default: return status || 'Không xác định';
+        // Tooltip for action buttons
+        const buttons = document.querySelectorAll(".action-btn");
+        buttons.forEach((button) => {
+          button.addEventListener("mouseenter", () => {
+            const tooltip = document.createElement("div");
+            tooltip.className =
+              "absolute z-10 w-auto p-2 text-sm text-white bg-gray-800 rounded-md shadow-lg";
+            tooltip.textContent = button.getAttribute("data-tooltip");
+            button.appendChild(tooltip);
+          });
+          button.addEventListener("mouseleave", () => {
+            const tooltip = button.querySelector("div");
+            if (tooltip) {
+              button.removeChild(tooltip);
             }
-        }
-        function getStatusClass(status) {
-            switch ((status || '').toLowerCase()) {
-                case 'pending': return 'pending';
-                case 'confirmed': return 'confirmed';
-                case 'shipped': return 'shipped';
-                case 'delivered': return 'delivered';
-                case 'cancelled': return 'cancelled';
-                default: return 'unknown';
-            }
-        }
-
-        let sortDesc = true;
-        let lastSearch = '';
-        let lastStatus = 'ALL';
-        let ordersData = [];
-
-        // Cho phép click vào bất kỳ đâu trong form để focus vào input tìm kiếm
-        document.getElementById('searchForm').addEventListener('click', function(e) {
-            if (!e.target.closest('input,select,button')) {
-                document.getElementById('searchInput').focus();
-            }
+          });
         });
-        // Giữ lại giá trị đã nhập/đã chọn sau khi lọc
-        function setFormValues(search, status) {
-            document.getElementById('searchInput').value = search || '';
-            document.getElementById('statusSelect').value = status || 'ALL';
-        }
-        document.getElementById('searchForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const search = this.search.value.trim();
-            const status = this.status.value;
-            lastSearch = search;
-            lastStatus = status;
-            setFormValues(search, status);
-            fetchOrders(search, status, sortDesc);
-        });
-        // Khi tải lại dữ liệu, giữ lại giá trị filter
-        function fetchOrders(search = '', status = 'ALL', sortDesc = true) {
-            setFormValues(search, status);
-            let url = `http://localhost:8000/api/admin/orders?`;
-            if (search) url += `search=${encodeURIComponent(search)}&`;
-            if (status && status !== 'ALL') url += `status=${encodeURIComponent(status)}&`;
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    ordersData = Array.isArray(data) ? data : [];
-                    if (!sortDesc) ordersData.reverse();
-                    renderOrders(ordersData);
-                })
-                .catch(err => {
-                    const tbody = document.querySelector('tbody');
-                    tbody.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-red-400">Lỗi tải dữ liệu đơn hàng.</td></tr>';
-                });
-        }
 
-        function renderOrders(data) {
-            // Tính toán lại số lượng theo trạng thái
-            let total = data.length;
-            let pending = 0, confirmed = 0, cancelled = 0;
-            data.forEach(order => {
-                const status = (order.status || '').toLowerCase();
-                if (status === 'pending') pending++;
-                else if (status === 'confirmed') confirmed++;
-                else if (status === 'cancelled') cancelled++;
-            });
-            document.getElementById('total-orders').textContent = total;
-            document.getElementById('pending-orders').textContent = pending;
-            document.getElementById('confirmed-orders').textContent = confirmed;
-            document.getElementById('cancelled-orders').textContent = cancelled;
-            const tbody = document.querySelector('tbody');
-            tbody.innerHTML = '';
-            if (Array.isArray(data) && data.length > 0) {
-                data.forEach(order => {
-                    const tr = document.createElement('tr');
-                    tr.className = 'table-row-hover';
-                    tr.innerHTML = `
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#${order.id}</td>
+        // Fetch orders from API and render table
+        fetchWithTokenRetry("http://localhost:8000/api/admin/orders")
+          .then((response) => response.json())
+          .then((data) => {
+            ordersData = Array.isArray(data) ? data : [];
+            renderOrders(ordersData);
+          })
+          .catch((err) => {
+            const tbody = document.querySelector("tbody");
+            tbody.innerHTML =
+              '<tr><td colspan="7" class="text-center py-12 text-red-400 text-lg">Lỗi tải dữ liệu đơn hàng.</td></tr>';
+          });
+      });
+
+      function getStatusText(status) {
+        switch ((status || "").toLowerCase()) {
+          case "pending":
+            return "Đang xử lý";
+          case "confirmed":
+            return "Đã xác nhận";
+          case "shipped":
+            return "Đang giao hàng";
+          case "delivered":
+            return "Đã giao hàng";
+          case "cancelled":
+            return "Đã hủy";
+          default:
+            return status || "Không xác định";
+        }
+      }
+
+      function getStatusClass(status) {
+        switch ((status || "").toLowerCase()) {
+          case "pending":
+            return "pending";
+          case "confirmed":
+            return "confirmed";
+          case "shipped":
+            return "shipped";
+          case "delivered":
+            return "delivered";
+          case "cancelled":
+            return "cancelled";
+          default:
+            return "unknown";
+        }
+      }
+
+      // Cho phép click vào bất kỳ đâu trong form để focus vào input tìm kiếm
+      document
+        .getElementById("searchForm")
+        .addEventListener("click", function (e) {
+          if (!e.target.closest("input,select,button")) {
+            document.getElementById("searchInput").focus();
+          }
+        });
+
+      // Giữ lại giá trị đã nhập/đã chọn sau khi lọc
+      function setFormValues(search, status, time) {
+        document.getElementById("searchInput").value = search || "";
+        document.getElementById("statusSelect").value = status || "ALL";
+        document.getElementById("timeSelect").value = time || "ALL";
+      }
+
+      document
+        .getElementById("searchForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const search = this.search.value.trim();
+          const status = this.status.value;
+          const time = this.time.value;
+          lastSearch = search;
+          lastStatus = status;
+          lastTime = time;
+          setFormValues(search, status, time);
+          fetchOrders(search, status, time);
+        });
+
+      // Khi tải lại dữ liệu, giữ lại giá trị filter
+      function fetchOrders(search = "", status = "ALL", time = "ALL") {
+        setFormValues(search, status, time);
+        let url = `http://localhost:8000/api/admin/orders?`;
+        if (search) url += `search=${encodeURIComponent(search)}&`;
+        if (status && status !== "ALL")
+          url += `status=${encodeURIComponent(status)}&`;
+        if (time && time !== "ALL") url += `time=${encodeURIComponent(time)}&`;
+
+        fetchWithTokenRetry(url)
+          .then((response) => response.json())
+          .then((data) => {
+            ordersData = Array.isArray(data) ? data : [];
+            renderOrders(ordersData);
+          })
+          .catch((err) => {
+            const tbody = document.querySelector("tbody");
+            tbody.innerHTML =
+              '<tr><td colspan="7" class="text-center py-12 text-red-400 text-lg">Lỗi tải dữ liệu đơn hàng.</td></tr>';
+          });
+      }
+
+      function renderOrders(data) {
+        // Tính toán lại số lượng theo trạng thái
+        let total = data.length;
+        let pending = 0,
+          confirmed = 0,
+          cancelled = 0;
+        data.forEach((order) => {
+          const status = (order.status || "").toLowerCase();
+          if (status === "pending") pending++;
+          else if (
+            status === "confirmed" ||
+            status === "shipped" ||
+            status === "delivered"
+          )
+            confirmed++;
+          else if (status === "cancelled") cancelled++;
+        });
+
+        document.getElementById("total-orders").textContent = total;
+        document.getElementById("pending-orders").textContent = pending;
+        document.getElementById("confirmed-orders").textContent = confirmed;
+        document.getElementById("cancelled-orders").textContent = cancelled;
+
+        const tbody = document.querySelector("tbody");
+        tbody.innerHTML = "";
+
+        if (Array.isArray(data) && data.length > 0) {
+          data.forEach((order) => {
+            const tr = document.createElement("tr");
+            tr.className = "table-row-hover";
+            let actionButtons = "";
+            const statusClass = getStatusClass(order.status);
+            if (statusClass === "pending") {
+              actionButtons = `
+                            <a class="confirm-btn mr-2 px-3 py-1 rounded bg-green-500 hover:bg-green-600 text-white transition-colors duration-200"
+                               href="#"
+                               data-id="${order.id}">
+                               <i class="fas fa-check mr-1"></i> Xác nhận
+                            </a>
+                            <a class="cancel-btn px-3 py-1 rounded bg-red-500 hover:bg-red-600 text-white transition-colors duration-200"
+                               href="#"
+                               data-id="${order.id}">
+                               <i class="fas fa-times mr-1"></i> Hủy
+                            </a>
+                            <a class="view-btn ml-2" href="../admin/orderDetails.html?id=${order.id}"><i class="fas fa-eye mr-1"></i> </a>
+                        `;
+            } else if (statusClass === "confirmed") {
+              actionButtons = `
+                            <a class="next-status-btn mr-2 px-3 py-1 rounded bg-blue-500 hover:bg-blue-600 text-white transition-colors duration-200"
+                               href="#"
+                               data-id="${order.id}" data-next="shipped">
+                               <i class="fas fa-truck mr-1"></i> Chuyển sang Đang giao hàng
+                            </a>
+                            <a class="view-btn" href="../admin/orderDetails.html?id=${order.id}"><i class="fas fa-eye mr-1"></i> </a>
+                        `;
+            } else if (statusClass === "shipped") {
+              actionButtons = `
+                            <a class="next-status-btn mr-2 px-3 py-1 rounded bg-green-500 hover:bg-green-600 text-white transition-colors duration-200"
+                               href="#"
+                               data-id="${order.id}" data-next="delivered">
+                               <i class="fas fa-check-double mr-1"></i> Đã giao hàng
+                            </a>
+                            <a class="view-btn" href="../admin/orderDetails.html?id=${order.id}"><i class="fas fa-eye mr-1"></i> </a>
+                        `;
+            } else {
+              actionButtons = `
+                            <a class="view-btn" href="../admin/orderDetails.html?id=${order.id}"><i class="fas fa-eye mr-1"></i> </a>
+                        `;
+            }
+            tr.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#${
+                          order.id
+                        }</td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">${order.fullName || ''}</div>
-                            <div class="text-sm text-gray-500">${order.address || ''}</div>
+                            <div class="text-sm text-gray-900">${
+                              order.fullName || ""
+                            }</div>
+                            <div class="text-sm text-gray-500">${
+                              order.address || ""
+                            }</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${order.phone || ''}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm amount-cell">${order.totalAmount ? order.totalAmount.toLocaleString('vi-VN') + '₫' : ''}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${order.created_at ? new Date(order.created_at).toLocaleDateString('vi-VN') : ''}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${
+                          order.phone || ""
+                        }</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm amount-cell">${
+                          order.totalAmount
+                            ? order.totalAmount.toLocaleString("vi-VN") + "₫"
+                            : ""
+                        }</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${
+                          order.created_at
+                            ? new Date(order.created_at).toLocaleDateString(
+                                "vi-VN"
+                              )
+                            : ""
+                        }</td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="status-badge status-${getStatusClass(order.status)}">
+                            <span class="status-badge status-${statusClass}">
                                 ${getStatusText(order.status)}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            ${getStatusClass(order.status) === 'pending' ? `
-                                <a class="confirm-btn mr-2 px-3 py-1 rounded bg-green-500 hover:bg-green-600 text-white transition-colors duration-200"
-                                   href="#"
-                                   data-id="${order.id}">
-                                   <i class="fas fa-check mr-1"></i> Xác nhận
-                                </a>
-                                <a class="cancel-btn px-3 py-1 rounded bg-red-500 hover:bg-red-600 text-white transition-colors duration-200"
-                                   href="#"
-                                   data-id="${order.id}">
-                                   <i class="fas fa-times mr-1"></i> Hủy
-                                </a>
-                                <a class="view-btn ml-2" href="order-detail.html?id=${order.id}"><i class="fas fa-eye mr-1"></i> </a>
-                            ` : `
-                                <a class="view-btn" href="order-detail.html?id=${order.id}"><i class="fas fa-eye mr-1"></i> </a>
-                            `}
+                            ${actionButtons}
                         </td>
                     `;
-                    tbody.appendChild(tr);
-                });
-                // Gán sự kiện cho nút xác nhận/hủy
-                tbody.querySelectorAll('.confirm-btn').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        const id = this.getAttribute('data-id');
-                        if (confirm(`Bạn có chắc chắn muốn xác nhận đơn hàng #${id} không?`)) {
-                            updateOrderStatus(id, 'Confirmed');
-                        }
-                    });
-                });
-                tbody.querySelectorAll('.cancel-btn').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        const id = this.getAttribute('data-id');
-                        if (confirm(`Bạn có chắc chắn muốn hủy đơn hàng #${id} không?`)) {
-                            updateOrderStatus(id, 'Cancelled');
-                        }
-                    });
-                });
-            } else {
-                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-gray-400">Không có đơn hàng nào.</td></tr>';
-            }
+            tbody.appendChild(tr);
+          });
+          // Gán sự kiện cho nút xác nhận/hủy
+          tbody.querySelectorAll(".confirm-btn").forEach((btn) => {
+            btn.addEventListener("click", function (e) {
+              e.preventDefault();
+              const id = this.getAttribute("data-id");
+              if (
+                confirm(`Bạn có chắc chắn muốn xác nhận đơn hàng #${id} không?`)
+              ) {
+                updateOrderStatus(id, "confirmed");
+              }
+            });
+          });
+          tbody.querySelectorAll(".cancel-btn").forEach((btn) => {
+            btn.addEventListener("click", function (e) {
+              e.preventDefault();
+              const id = this.getAttribute("data-id");
+              if (confirm(`Bạn có chắc chắn muốn hủy đơn hàng #${id} không?`)) {
+                updateOrderStatus(id, "cancelled");
+              }
+            });
+          });
+          // Gán sự kiện cho nút chuyển trạng thái tiếp theo
+          tbody.querySelectorAll(".next-status-btn").forEach((btn) => {
+            btn.addEventListener("click", function (e) {
+              e.preventDefault();
+              const id = this.getAttribute("data-id");
+              const nextStatus = this.getAttribute("data-next");
+              let confirmMsg = "";
+              if (nextStatus === "shipped") {
+                confirmMsg = `Chuyển đơn hàng #${id} sang trạng thái Đang giao hàng?`;
+              } else if (nextStatus === "delivered") {
+                confirmMsg = `Chuyển đơn hàng #${id} sang trạng thái Đã giao hàng?`;
+              }
+              if (confirm(confirmMsg)) {
+                updateOrderStatus(id, nextStatus);
+              }
+            });
+          });
+        } else {
+          tbody.innerHTML =
+            '<tr><td colspan="7" class="text-center py-12 text-gray-400 text-lg">Không có đơn hàng nào.</td></tr>';
         }
+      }
 
-        function updateOrderStatus(id, status) {
-            fetch(`http://localhost:8000/api/admin/orders/${id}/status`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ status })
-            })
-            .then(res => res.json())
-            .then(res => {
-                if (res.success) {
-                    alert('Cập nhật trạng thái thành công!');
-                    fetchOrders(lastSearch, lastStatus, sortDesc);
-                } else {
-                    alert(res.error || 'Có lỗi xảy ra!');
-                }
-            })
-            .catch(() => alert('Có lỗi xảy ra!'));
-        }
-   // Tự động submit form khi chọn trạng thái
-        document.getElementById('statusSelect').addEventListener('change', function() {
-            document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+      function updateOrderStatus(id, status) {
+        // Hiển thị loading
+        const loadingText =
+          status === "confirmed" ? "Đang xác nhận..." : "Đang hủy...";
+
+        fetchWithTokenRetry(
+          `http://localhost:8000/api/admin/orders/${id}/status`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify({ status: status.toLowerCase() }),
+          }
+        )
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log("Response:", data); // Debug log
+            if (data.success) {
+              alert(data.message || "Cập nhật trạng thái thành công!");
+              // Reload orders với filter hiện tại
+              fetchOrders(lastSearch, lastStatus, lastTime);
+            } else {
+              alert("Lỗi: " + (data.error || "Không thể cập nhật trạng thái"));
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error); // Debug log
+            alert("Có lỗi xảy ra khi cập nhật: " + error.message);
+          });
+      }
+
+      // Tự động submit form khi chọn trạng thái
+      document
+        .getElementById("statusSelect")
+        .addEventListener("change", function () {
+          document
+            .getElementById("searchForm")
+            .dispatchEvent(new Event("submit"));
+        });
+      document
+        .getElementById("timeSelect")
+        .addEventListener("change", function () {
+          document
+            .getElementById("searchForm")
+            .dispatchEvent(new Event("submit"));
         });
 
-        // Tải đơn hàng lần đầu
-        fetchOrders();
+      // Tải đơn hàng lần đầu
+      fetchOrders();
     </script>
-</body>
+  </body>
 </html>

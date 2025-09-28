@@ -1,4 +1,4 @@
-<main class="container mx-auto px-4 py-8 bg-blue-50 text-blue-900">
+<main id="target" class=" container mx-auto px-4 py-8 bg-blue-50 text-blue-900">
   <h1 class="text-3xl font-bold text-blue-700 mb-6">Giỏ hàng của bạn</h1>
 
   <div id="cart-container" class="bg-white rounded-xl shadow p-6">
@@ -81,13 +81,17 @@
     </form>
   </div>
 </div>
-<script>  function toggleModal(show) {
+<script> 
+</script>
+<script type="module"> 
+ function toggleModal(show) {
     const modal = document.getElementById("checkout-modal");
     modal.classList.toggle("hidden", !show);
   }
-</script>
-<script>
+ import { fetchWithTokenRetry } from 'http://127.0.0.1:5501/frontend/js/authFetch.js';
+
 (() => {
+
   let cart = [];
 
   const cartItemsEl = document.getElementById("cart-items");
@@ -98,7 +102,7 @@
   }
 
   function fetchCart() {
-    fetch("http://127.0.0.1:8000/api/cart/1")
+ fetchWithTokenRetry("http://127.0.0.1:8000/api/cart")
       .then((res) => res.json())
       .then((data) => {
         cart = data.data;
@@ -110,7 +114,7 @@
   }
 
   function updateQuantity(id, quantity) {
-    fetch(`http://127.0.0.1:8000/api/cart/${id}`, {
+    fetchWithTokenRetry(`http://127.0.0.1:8000/api/cart/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -122,7 +126,7 @@
   }
 
   function deleteCartItem(id) {
-    fetch(`http://127.0.0.1:8000/api/cart/${id}`, {
+    fetchWithTokenRetry(`http://127.0.0.1:8000/api/cart/${id}`, {
       method: "DELETE",
     }).catch((err) => {
       console.error("Lỗi khi xoá sản phẩm:", err);
@@ -138,7 +142,8 @@
       <tr>
         <td colspan="5" class="text-center py-6 text-gray-600">
            Giỏ hàng của bạn đang trống.<br/>
-          <a href="/" class="text-blue-500 underline">Tiếp tục mua sắm</a>
+          <a href="#"               onclick="loadPage('../client/home.html')"
+ class="text-blue-500 underline">Tiếp tục mua sắm</a>
         </td>
       </tr>
     `;
@@ -239,22 +244,21 @@
   const name = e.target.name.value.trim();
   const phone = e.target.phone.value.trim();
   const address = e.target.address.value.trim();
-  const userId = "1"; // 
 
-  if (!name || !phone || !address || !userId) {
+  if (!name || !phone || !address ) {
     alert("Vui lòng điền đầy đủ thông tin và đăng nhập!");
     return;
   }
 
   const data = {
-    user_id: userId,  // 👈 Gửi lên kèm theo
+
     name: name,
     phone: phone,
     address: address,
    
   };
 
-  fetch("http://localhost:8000/api/orders", {
+  fetchWithTokenRetry("http://localhost:8000/api/buy", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -277,6 +281,7 @@
       alert("❌ Có lỗi xảy ra khi đặt hàng!");
     });
 });
+       document.getElementById('target')?.scrollIntoView({ behavior: 'smooth' });
 
   fetchCart();
   })();

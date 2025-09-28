@@ -7,21 +7,21 @@ use App\Models\Order;
 use App\Models\Order_detail;
 use Illuminate\Http\Request;
 
-class OrderController extends Controller
+class Payment_OrderController extends Controller
 {
     //
 
     public function store(Request $request)
     {
+        $user=request()->user();
         $request->validate([
-            'user_id' => 'required',
             'name' => 'required|string',
             'phone' => 'required|string',
             'address' => 'required|string',
         ]);
 
         // ✅ Truy vấn cart từ DB
-        $cartItems = Cart::where('userID', $request->user_id)->with('product')->get();
+        $cartItems = Cart::where('userID',  $user->id)->with('product')->get();
 
         if ($cartItems->isEmpty()) {
             return response()->json(['error' => 'Giỏ hàng trống'], 400);
@@ -35,7 +35,7 @@ class OrderController extends Controller
 
         // ✅ Tạo đơn hàng
         $order = Order::create([
-            'userID' => $request->user_id,
+            'userID' => $user->id,
             'totalAmount' => $total,
             'fullName' => $request->name,
             'phone' => $request->phone,
@@ -50,7 +50,7 @@ class OrderController extends Controller
                 'quantity' => $item->quantity,
             ]);
         }
-        Cart::where('userID', $request->user_id)->delete();
+        Cart::where('userID', $user->id)->delete();
 
         return response()->json(['success' => true, 'order_id' => $order->id]);
     }

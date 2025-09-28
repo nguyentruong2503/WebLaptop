@@ -4,13 +4,15 @@
     <meta charset="UTF-8" />
     <title>Admin Laptop8386</title>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   </head>
   <body class="bg-gray-100 text-black">
     <div class="flex h-screen">
       <!-- Sidebar -->
-      <div class="w-64 bg-primary  p-4">
+      <div class="w-64 bg-primary p-4 flex flex-col h-full">
         <div class="flex items-center gap-2 mb-8">
           <i class="fas fa-laptop text-2xl"></i>
           <h1 class="text-xl font-bold">Laptop Admin</h1>
@@ -30,7 +32,7 @@
             <li>
               <button
                 class="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-500"
-                onclick="loadPage('../admin/dashboard.html')"
+                onclick="loadPage('../admin/product.html')"
                 class="mr-2 underline"
               >
                 <i class="fas fa-box"></i>
@@ -38,9 +40,9 @@
               </button>
             </li>
              <li>
-              <button
+              <button 
                 class="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-500"
-                onclick="loadPage('../admin/dashboard.html')"
+                onclick="loadPage('../admin/brands.html')"
                 class="mr-2 underline"
               >
                 <i class="fas fa-box"></i>
@@ -50,7 +52,7 @@
              <li>
               <button
                 class="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-500"
-                onclick="loadPage('../admin/dashboard.html')"
+                onclick="loadPage('../admin/product_types.html')"
                 class="mr-2 underline"
               >
                 <i class="fas fa-box"></i>
@@ -60,7 +62,7 @@
              <li>
               <button
                 class="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-500"
-                onclick="loadPage('../admin/dashboard.html')"
+                onclick="loadPage('../admin/order.html')"
                 class="mr-2 underline"
               >
                 <i class="fas fa-box"></i>
@@ -70,26 +72,33 @@
             <li>
               <button
                 class="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-500"
-                onclick="loadPage('../admin/dashboard.html')"
+                onclick="loadPage('../admin/customer.html')"
                 class="mr-2 underline"
               >
                 <i class="fas fa-users"></i>
                 <span>Quản lý Khách hàng</span>
               </button>
             </li>
-            <li>
+            <!-- <li>
               <button
                 class="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-500"
-                onclick="loadPage('../admin/dashboard.html')"
+                onclick="loadPage('../admin/thongke.html')"
                 class="mr-2 underline"
               >
                 <i class="fas fa-chart-bar"></i>
                 <span>Thống kê</span>
               </button>
-            </li>
-            
+            </li> -->
           </ul>
         </nav>
+        <!-- Nút đăng xuất luôn nằm cuối sidebar -->
+        <button
+          class="w-full flex items-center gap-2 p-2 rounded bg-red-600 text-white hover:bg-red-700 mt-auto"
+          onclick="logoutAdmin()"
+        >
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Đăng xuất</span>
+        </button>
       </div>
 
       <!-- Main Content -->
@@ -104,6 +113,14 @@
     <script src="../js/layout.js"></script>
         <script >
             loadPage("../admin/dashboard.html")
+        </script>
+        <script>
+          function logoutAdmin() {
+            if (confirm('Bạn có chắc chắn muốn đăng xuất không?')) {
+              localStorage.removeItem('token');
+              window.location.href = '/frontend/layouts/login-layout.html';
+            }
+          }
         </script>
 
   </body>

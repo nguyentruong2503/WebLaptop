@@ -33,7 +33,7 @@ class Home_client extends Controller
     }
     public function getLaptopById($id)
     {
-        $laptop = Laptop::with('product')->find($id);
+    $laptop = Laptop::with('product')->where('productID', $id)->first();
 
         if (!$laptop) {
             return response()->json([
@@ -49,7 +49,7 @@ class Home_client extends Controller
     }
     public function getAccessoryById($id)
     {
-        $laptop = Accessory::with('product')->find($id);
+    $laptop = Accessory::with('product')->where('productID', $id)->first();
 
         if (!$laptop) {
             return response()->json([

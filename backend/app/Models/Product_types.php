@@ -10,4 +10,9 @@ class Product_types extends Model
     use HasFactory;
 
     protected $fillable = ['typeName'];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'id_type');
+    }
 }

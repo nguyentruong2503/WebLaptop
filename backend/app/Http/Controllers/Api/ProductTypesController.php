@@ -1,18 +1,22 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product_types;
+use App\Models\Product;
+use App\Models\Cart;
+use App\Models\Product_Types;
 use Illuminate\Http\Request;
 
 class ProductTypesController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * 
      */
     public function index(Request $request)
     {
+
         $query = Product_types::query();
 
         if ($request->has('keyword')) {
@@ -21,10 +25,11 @@ class ProductTypesController extends Controller
         }
 
          return response()->json($query->paginate(5));
+
     }
 
     /**
-     * Store a newly created resource in storage.
+     * 
      */
     public function store(Request $request)
     {
@@ -32,7 +37,7 @@ class ProductTypesController extends Controller
             'typeName' => 'required|unique:product_types,typeName',
         ]);
 
-        $loai = Product_types::create([
+        $loai = Product_Types::create([
             'typeName' => $request->typeName,
         ]);
 
@@ -40,11 +45,11 @@ class ProductTypesController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * 
      */
     public function show($id)
     {
-        $loai = Product_types::find($id);
+        $loai = Product_Types::find($id);
         if (!$loai) {
             return response()->json(['message' => 'Không tìm thấy loại sản phẩm'], 404);
         }
@@ -52,11 +57,11 @@ class ProductTypesController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * 
      */
     public function update(Request $request, $id)
     {
-        $loai = Product_types::find($id);
+        $loai = Product_Types::find($id);
         if (!$loai) {
             return response()->json(['message' => 'Không tìm thấy loại sản phẩm'], 404);
         }
@@ -72,16 +77,28 @@ class ProductTypesController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * .
      */
-    public function destroy( $id)
+    public function destroy($id)
     {
-         $loai = Product_types::find($id);
+        $loai = Product_Types::find($id);
         if (!$loai) {
             return response()->json(['message' => 'Không tìm thấy loại sản phẩm'], 404);
         }
 
+        // Lấy tất cả sản phẩm thuộc loại sản phẩm này
+        $products = $loai->products;
+
+        foreach ($products as $product) {
+            Cart::where('productID', $product->id)->delete();
+
+            $product->isActive = 0;
+            $product->save();
+        }
+
         $loai->delete();
+
         return response()->json(['message' => 'Xóa thành công']);
     }
+
 }
