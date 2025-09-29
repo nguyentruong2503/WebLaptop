@@ -1,43 +1,63 @@
-   <!-- Featured Products -->
-  <div  id="target" class="flex justify-between items-center mb-8 opacity-0">
-                -
-            </div>
-   <section class="my-12 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-             
-            <div class="flex justify-between items-center mb-8">
-                <h2 class="text-2xl font-bold text-gray-900">Laptop nổi bật</h2>
-                <a href="#" class="text-primary-600 hover:text-primary-800 font-medium" onclick="event.preventDefault()">Xem tất cả <i class="fas fa-arrow-right ml-1"></i></a>
-            </div>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="laptop-list-one"></div>
-        </div>
-    </section>
-       <!-- Featured Products -->
-    <section class="py-12 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center mb-8">
-                <h2 class="text-2xl font-bold text-gray-900">Laptop bán chạy</h2>
-                <a href="#" class="text-primary-600 hover:text-primary-800 font-medium" onclick="event.preventDefault()">Xem tất cả <i class="fas fa-arrow-right ml-1"></i></a>
-            </div>
-            
-                       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="laptop-list-two"></div>
+<!-- Featured Products -->
+<div id="target" class="flex items-center justify-between mb-8 opacity-0">
+  -
+</div>
+<section class="my-12 bg-gray-50">
+  <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-2xl font-bold text-gray-900">Laptop nổi bật</h2>
+      <a
+        href="#"
+        class="font-medium text-primary-600 hover:text-primary-800"
+        onclick="event.preventDefault()"
+        >Xem tất cả <i class="ml-1 fas fa-arrow-right"></i
+      ></a>
+    </div>
 
-        </div>
-    </section>
-   <!-- Featured Products -->
-    <section class="py-12 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center mb-8">
-                <h2 class="text-2xl font-bold text-gray-900">Khác</h2>
-                <a href="#" class="text-primary-600 hover:text-primary-800 font-medium" onclick="event.preventDefault()">Xem tất cả <i class="fas fa-arrow-right ml-1"></i></a>
-            </div>
-                                   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="laptop-list-three"></div>
+    <div
+      class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+      id="laptop-list-one"
+    ></div>
+  </div>
+</section>
+<!-- Featured Products -->
+<section class="py-12 bg-gray-50">
+  <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-2xl font-bold text-gray-900">Laptop bán chạy</h2>
+      <a
+        href="#"
+        class="font-medium text-primary-600 hover:text-primary-800"
+        onclick="event.preventDefault()"
+        >Xem tất cả <i class="ml-1 fas fa-arrow-right"></i
+      ></a>
+    </div>
 
-        
-        </div>
-    </section>
-    <script>
+    <div
+      class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+      id="laptop-list-two"
+    ></div>
+  </div>
+</section>
+<!-- Featured Products -->
+<section class="py-12 bg-gray-50">
+  <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-2xl font-bold text-gray-900">Khác</h2>
+      <a
+        href="#"
+        class="font-medium text-primary-600 hover:text-primary-800"
+        onclick="event.preventDefault()"
+        >Xem tất cả <i class="ml-1 fas fa-arrow-right"></i
+      ></a>
+    </div>
+    <div
+      class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+      id="laptop-list-three"
+    ></div>
+  </div>
+</section>
+<script>
   function selectProduct(id) {
     localStorage.setItem("selectedProductId", id);
     loadPage("../client/detail_laptop.html");
@@ -48,12 +68,10 @@
   }
 </script>
 
-    <script type="module">
+<script type="module">
+  document.getElementById("target")?.scrollIntoView({ behavior: "smooth" });
 
-         document.getElementById('target')?.scrollIntoView({ behavior: 'smooth' });
-
-
- import { fetchWithTokenRetry } from "http://127.0.0.1:5501/frontend/js/authFetch.js";
+  import { fetchWithTokenRetry } from "http://127.0.0.1:5501/frontend/js/authFetch.js";
 
   fetchWithTokenRetry("http://127.0.0.1:8000/api/products_client")
     .then((response) => response.json())
@@ -61,12 +79,12 @@
       let listContainer = document.getElementById("laptop-list-one");
 
       const laptops = data.data; // Lấy mảng data từ API
-        const total = laptops.length;
-const size = Math.ceil(total / 3); // Kích thước mỗi phần (làm tròn lên)
+      const total = laptops.length;
+      const size = Math.ceil(total / 3); // Kích thước mỗi phần (làm tròn lên)
 
-const laptops1 = laptops.slice(0, size);
-const laptops2 = laptops.slice(size, size * 2);
-const laptops3 = laptops.slice(size * 2);
+      const laptops1 = laptops.slice(0, size);
+      const laptops2 = laptops.slice(size, size * 2);
+      const laptops3 = laptops.slice(size * 2);
 
       if (!Array.isArray(laptops)) {
         console.error("'data' không phải là mảng");
@@ -74,20 +92,20 @@ const laptops3 = laptops.slice(size * 2);
       }
 
       laptops1.forEach((laptop) => {
-        const product = laptop.product;
+        const product = laptop;
         const param = product.id;
         const card = `
-            <div onclick="selectProduct(${param})" class="flex flex-col justify-between  product-card bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+            <div onclick="selectProduct(${param})" class="flex flex-col justify-between overflow-hidden bg-white border border-gray-100 rounded-lg shadow-sm product-card">
               <div class="relative">
                 <img src="${
                   product.img || "https://via.placeholder.com/300"
                 }" alt="${
           product.productName
-        }" class="w-full h-48 object-cover">
-                <div class="absolute top-2 right-2 bg-primary-500 text-white text-xs font-medium px-2 py-1 rounded-full">Mới</div>
+        }" class="object-cover w-full h-48">
+                <div class="absolute px-2 py-1 text-xs font-medium text-white rounded-full top-2 right-2 bg-primary-500">Mới</div>
               </div>
               <div class="p-4">
-                <h3 class="font-medium text-gray-900 mb-1">${
+                <h3 class="mb-1 font-medium text-gray-900">${
                   product.productName
                 }</h3>
                 <div class="flex items-center mb-2">
@@ -98,38 +116,48 @@ const laptops3 = laptops.slice(size * 2);
                     <i class="fas fa-star"></i>
                     <i class="far fa-star"></i>
                   </div>
-                  <span class="text-gray-500 text-xs ml-1">(42)</span>
+                  <span class="ml-1 text-xs text-gray-500">(42)</span>
                 </div>
                 <div class="flex items-center justify-between">
-                  <span class="text-primary-600 font-bold">${Number(
+                  <span class="font-bold text-primary-600">${Number(
                     product.price
                   ).toLocaleString("vi-VN")}đ</span>
                 </div>
               </div>
               <div class="px-4 pb-4">
-                <button class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg font-medium transition-all">Xem chi tiết</button>
+                <button class="w-full py-2 font-medium text-white transition-all rounded-lg bg-primary-600 hover:bg-primary-700">Xem chi tiết</button>
+              </div>
+               <!-- Nút so sánh -->
+      <div class="px-4 pb-4 text-center">       
+            <button onclick="event.stopPropagation(); addToCompare(${JSON.stringify(
+              product
+            ).replace(/"/g, "&quot;")}, 'laptop')" 
+                 class="flex items-center w-full gap-2 px-6 py-3 text-blue-500 transition-colors border-2 border-blue-500 rounded-lg hover:bg-blue-50">
+                <i class="fas fa-exchange-alt"></i>
+                    <span>Thêm vào so sánh</span>
+            </button>
               </div>
             </div>
           `;
 
         listContainer.insertAdjacentHTML("beforeend", card);
       });
-listContainer = document.getElementById("laptop-list-two");
-        laptops2.forEach((laptop) => {
-        const product = laptop.product;
+      listContainer = document.getElementById("laptop-list-two");
+      laptops2.forEach((laptop) => {
+        const product = laptop;
         const param = product.id;
         const card = `
-            <div onclick="selectProduct(${param})" class="flex flex-col justify-between  product-card bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+            <div onclick="selectProduct(${param})" class="flex flex-col justify-between overflow-hidden bg-white border border-gray-100 rounded-lg shadow-sm product-card">
               <div class="relative">
                 <img src="${
                   product.img || "https://via.placeholder.com/300"
                 }" alt="${
           product.productName
-        }" class="w-full h-48 object-cover">
-                <div class="absolute top-2 right-2 bg-primary-500 text-white text-xs font-medium px-2 py-1 rounded-full">Mới</div>
+        }" class="object-cover w-full h-48">
+                <div class="absolute px-2 py-1 text-xs font-medium text-white rounded-full top-2 right-2 bg-primary-500">Mới</div>
               </div>
               <div class="p-4">
-                <h3 class="font-medium text-gray-900 mb-1">${
+                <h3 class="mb-1 font-medium text-gray-900">${
                   product.productName
                 }</h3>
                 <div class="flex items-center mb-2">
@@ -140,39 +168,49 @@ listContainer = document.getElementById("laptop-list-two");
                     <i class="fas fa-star"></i>
                     <i class="far fa-star"></i>
                   </div>
-                  <span class="text-gray-500 text-xs ml-1">(42)</span>
+                  <span class="ml-1 text-xs text-gray-500">(42)</span>
                 </div>
                 <div class="flex items-center justify-between">
-                  <span class="text-primary-600 font-bold">${Number(
+                  <span class="font-bold text-primary-600">${Number(
                     product.price
                   ).toLocaleString("vi-VN")}đ</span>
                 </div>
               </div>
               <div class="px-4 pb-4">
-                <button class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg font-medium transition-all">Xem chi tiết</button>
+                <button class="w-full py-2 font-medium text-white transition-all rounded-lg bg-primary-600 hover:bg-primary-700">Xem chi tiết</button>
+              </div>
+               <!-- Nút so sánh -->
+      <div class="px-4 pb-4 text-center">       
+            <button onclick="event.stopPropagation(); addToCompare(${JSON.stringify(
+              product
+            ).replace(/"/g, "&quot;")}, 'laptop')" 
+                 class="flex items-center w-full gap-2 px-6 py-3 text-blue-500 transition-colors border-2 border-blue-500 rounded-lg hover:bg-blue-50">
+                <i class="fas fa-exchange-alt"></i>
+                    <span>Thêm vào so sánh</span>
+            </button>
               </div>
             </div>
           `;
 
         listContainer.insertAdjacentHTML("beforeend", card);
       });
-      
- listContainer = document.getElementById("laptop-list-three");
-        laptops3.forEach((laptop) => {
-        const product = laptop.product;
+
+      listContainer = document.getElementById("laptop-list-three");
+      laptops3.forEach((laptop) => {
+        const product = laptop;
         const param = product.id;
         const card = `
-            <div onclick="selectProduct(${param})" class="flex flex-col justify-between  product-card bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
+            <div onclick="selectProduct(${param})" class="flex flex-col justify-between overflow-hidden bg-white border border-gray-100 rounded-lg shadow-sm product-card">
               <div class="relative">
                 <img src="${
                   product.img || "https://via.placeholder.com/300"
                 }" alt="${
           product.productName
-        }" class="w-full h-48 object-cover">
-                <div class="absolute top-2 right-2 bg-primary-500 text-white text-xs font-medium px-2 py-1 rounded-full">Mới</div>
+        }" class="object-cover w-full h-48">
+                <div class="absolute px-2 py-1 text-xs font-medium text-white rounded-full top-2 right-2 bg-primary-500">Mới</div>
               </div>
               <div class="p-4">
-                <h3 class="font-medium text-gray-900 mb-1">${
+                <h3 class="mb-1 font-medium text-gray-900">${
                   product.productName
                 }</h3>
                 <div class="flex items-center mb-2">
@@ -183,16 +221,26 @@ listContainer = document.getElementById("laptop-list-two");
                     <i class="fas fa-star"></i>
                     <i class="far fa-star"></i>
                   </div>
-                  <span class="text-gray-500 text-xs ml-1">(42)</span>
+                  <span class="ml-1 text-xs text-gray-500">(42)</span>
                 </div>
                 <div class="flex items-center justify-between">
-                  <span class="text-primary-600 font-bold">${Number(
+                  <span class="font-bold text-primary-600">${Number(
                     product.price
                   ).toLocaleString("vi-VN")}đ</span>
                 </div>
               </div>
               <div class="px-4 pb-4">
-                <button class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 rounded-lg font-medium transition-all">Xem chi tiết</button>
+                <button class="w-full py-2 font-medium text-white transition-all rounded-lg bg-primary-600 hover:bg-primary-700">Xem chi tiết</button>
+              </div>
+               <!-- Nút so sánh -->
+      <div class="px-4 pb-4 text-center">       
+            <button onclick="event.stopPropagation(); addToCompare(${JSON.stringify(
+              product
+            ).replace(/"/g, "&quot;")}, 'laptop')" 
+                 class="flex items-center w-full gap-2 px-6 py-3 text-blue-500 transition-colors border-2 border-blue-500 rounded-lg hover:bg-blue-50">
+                <i class="fas fa-exchange-alt"></i>
+                    <span>Thêm vào so sánh</span>
+            </button>
               </div>
             </div>
           `;
@@ -203,7 +251,4 @@ listContainer = document.getElementById("laptop-list-two");
     .catch((error) => {
       console.error("Lỗi khi lấy danh sách laptop:", error);
     });
-
-
-  </script>
-
+</script>

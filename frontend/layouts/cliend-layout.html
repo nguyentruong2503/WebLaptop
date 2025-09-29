@@ -10,6 +10,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
     />
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
       tailwind.config = {
         theme: {
@@ -58,57 +59,86 @@
       .category-card:hover {
         transform: scale(1.05);
       }
+      .compare-floating-enter {
+        transform: translateY(100px);
+        opacity: 0;
+      }
+
+      .compare-floating-enter-active {
+        transform: translateY(0);
+        opacity: 1;
+        transition: all 0.3s ease;
+      }
+
+      .toast-enter {
+        transform: translateX(100%);
+      }
+
+      .toast-enter-active {
+        transform: translateX(0);
+        transition: transform 0.3s ease;
+      }
+      .compare-floating-enter {
+        transform: translateY(100px);
+        opacity: 0;
+      }
+
+      .compare-floating-enter-active {
+        transform: translateY(0);
+        opacity: 1;
+        transition: all 0.3s ease;
+      }
     </style>
   </head>
-  <body class="bg-gray-50 text-gray-800 antialiased">
+  <body class="antialiased text-gray-800 bg-gray-50">
     <!-- Header -->
     <header
-      class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200"
+      class="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-md"
     >
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
+      <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
           <!-- Logo -->
-          <div class="flex-shrink-0 flex items-center">
+          <div class="flex items-center flex-shrink-0">
             <a
               href="#"
               class="flex items-center"
               onclick="event.preventDefault()"
             >
-              <i class="fas fa-laptop-code text-primary-500 text-2xl mr-2"></i>
+              <i class="mr-2 text-2xl fas fa-laptop-code text-primary-500"></i>
               <span class="text-xl font-bold text-primary-600">Laptop8386</span>
             </a>
           </div>
 
           <!-- Navigation -->
-          <nav class="hidden md:flex space-x-8">
+          <nav class="hidden space-x-8 md:flex">
             <a
               href="#"
-              class="text-primary-600 font-medium hover:text-primary-800 transition-all"
+              class="font-medium transition-all text-primary-600 hover:text-primary-800"
               onclick="loadPage('../client/home.html')"
               >Trang chủ</a
             >
             <a
               href="#"
-              class="text-gray-600 hover:text-primary-600 transition-all"
+              class="text-gray-600 transition-all hover:text-primary-600"
               onclick="loadPage('../client/laptop.html')"
               >Laptop</a
             >
             <a
               href="#"
-              class="text-gray-600 hover:text-primary-600 transition-all"
+              class="text-gray-600 transition-all hover:text-primary-600"
               onclick="loadPage('../client/phukien.html')"
               >Phụ kiện</a
             >
             <a
               href="#"
-              class="text-gray-600 hover:text-primary-600 transition-all"
-            onclick="loadPage('../client/khuyenmai.html')"
+              class="text-gray-600 transition-all hover:text-primary-600"
+              onclick="loadPage('../client/khuyenmai.html')"
               >Khuyến mãi</a
             >
             <a
               href="#"
-              class="text-gray-600 hover:text-primary-600 transition-all"
-             onclick="loadPage('../client/tintuc.html')"
+              class="text-gray-600 transition-all hover:text-primary-600"
+              onclick="loadPage('../client/tintuc.html')"
               >Tin tức</a
             >
           </nav>
@@ -117,49 +147,45 @@
           <div class="flex items-center space-x-4">
             <button
               type="button"
-              class="p-2 text-gray-600 hover:text-primary-600 transition-all"
+              class="p-2 text-gray-600 transition-all hover:text-primary-600"
               onclick="toggleSearch()"
             >
               <i class="fas fa-search"></i>
             </button>
             <a
               href="#"
-              class="p-2 text-gray-600 hover:text-primary-600 transition-all relative"
+              class="relative p-2 text-gray-600 transition-all hover:text-primary-600"
               onclick="loadPage('../client/cart.html')"
             >
               <i class="fas fa-shopping-cart"></i>
-            
-              
             </a>
             <a
               id="order-next"
               href="../client/order.html"
-              class="p-2 text-gray-600 hover:text-primary-600 transition-all relative"
+              class="relative p-2 text-gray-600 transition-all hover:text-primary-600"
             >
               <i class="bi bi-box2-fill"></i>
-             
-              
             </a>
             <div class="relative group">
               <a
                 href="#"
-                class="p-2 text-gray-600 hover:text-primary-600 transition-all"
+                class="p-2 text-gray-600 transition-all hover:text-primary-600"
                 onclick="event.preventDefault()"
               >
                 <i class="fas fa-user"></i>
               </a>
               <div
-                class="absolute right-0 mt-2 w-40 bg-white rounded shadow-lg border border-gray-200 z-50 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all"
+                class="absolute right-0 z-50 w-40 mt-2 transition-all bg-white border border-gray-200 rounded shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
               >
                 <button
                   onclick="showUserInfo()"
-                  class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary-700"
+                  class="block w-full px-4 py-2 text-left text-gray-700 hover:bg-primary-50 hover:text-primary-700"
                 >
                   Thông tin
                 </button>
                 <button
                   onclick="logoutUser()"
-                  class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600"
+                  class="block w-full px-4 py-2 text-left text-gray-700 hover:bg-red-50 hover:text-red-600"
                 >
                   Đăng xuất
                 </button>
@@ -168,8 +194,8 @@
           </div>
         </div>
       </div>
-      <div id="searchBar" class="hidden border-t border-gray-200 p-4">
-        <div class="max-w-7xl mx-auto">
+      <div id="searchBar" class="hidden p-4 border-t border-gray-200">
+        <div class="mx-auto max-w-7xl">
           <div class="relative">
             <input
               type="text"
@@ -177,7 +203,7 @@
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             />
             <button
-              class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-primary-600"
+              class="absolute text-gray-500 transform -translate-y-1/2 right-2 top-1/2 hover:text-primary-600"
             >
               <i class="fas fa-search"></i>
             </button>
@@ -186,26 +212,26 @@
       </div>
     </header>
     <section class="hero-pattern">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <div class="px-4 py-12 mx-auto max-w-7xl sm:px-6 lg:px-8 md:py-20">
+        <div class="grid items-center grid-cols-1 gap-8 md:grid-cols-2">
           <div>
-            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h1 class="mb-4 text-4xl font-bold text-gray-900 md:text-5xl">
               Laptop & Phụ kiện chính hãng
             </h1>
-            <p class="text-lg text-gray-600 mb-8">
+            <p class="mb-8 text-lg text-gray-600">
               Khám phá bộ sưu tập laptop mới nhất và các phụ kiện đi kèm với mức
               giá ưu đãi đặc biệt
             </p>
             <div class="flex flex-wrap gap-4">
               <a
                 href="#"
-                class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-all"
+                class="px-6 py-3 font-medium text-white transition-all rounded-lg bg-primary-600 hover:bg-primary-700"
                 onclick="event.preventDefault()"
                 >Mua ngay</a
               >
               <a
                 href="#"
-                class="border border-primary-600 text-primary-600 hover:bg-primary-50 px-6 py-3 rounded-lg font-medium transition-all"
+                class="px-6 py-3 font-medium transition-all border rounded-lg border-primary-600 text-primary-600 hover:bg-primary-50"
                 onclick="event.preventDefault()"
                 >Khám phá</a
               >
@@ -215,7 +241,7 @@
             <img
               src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
               alt="Laptop"
-              class="rounded-lg shadow-lg w-full"
+              class="w-full rounded-lg shadow-lg"
             />
           </div>
         </div>
@@ -225,23 +251,23 @@
     <main id="app-content"></main>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white pt-12 pb-6">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+    <footer class="pt-12 pb-6 text-white bg-gray-900">
+      <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 gap-8 mb-8 md:grid-cols-4">
           <div>
-            <h3 class="text-lg font-bold mb-4">TechHub</h3>
+            <h3 class="mb-4 text-lg font-bold">TechHub</h3>
             <p class="text-gray-400">
               Chuyên cung cấp laptop và phụ kiện chính hãng với giá tốt nhất thị
               trường.
             </p>
           </div>
           <div>
-            <h3 class="text-lg font-bold mb-4">Liên kết nhanh</h3>
+            <h3 class="mb-4 text-lg font-bold">Liên kết nhanh</h3>
             <ul class="space-y-2">
               <li>
                 <a
                   href="#"
-                  class="text-gray-400 hover:text-white transition-all"
+                  class="text-gray-400 transition-all hover:text-white"
                   onclick="event.preventDefault()"
                   >Trang chủ</a
                 >
@@ -249,7 +275,7 @@
               <li>
                 <a
                   href="#"
-                  class="text-gray-400 hover:text-white transition-all"
+                  class="text-gray-400 transition-all hover:text-white"
                   onclick="event.preventDefault()"
                   >Sản phẩm</a
                 >
@@ -257,7 +283,7 @@
               <li>
                 <a
                   href="#"
-                  class="text-gray-400 hover:text-white transition-all"
+                  class="text-gray-400 transition-all hover:text-white"
                   onclick="event.preventDefault()"
                   >Khuyến mãi</a
                 >
@@ -265,7 +291,7 @@
               <li>
                 <a
                   href="#"
-                  class="text-gray-400 hover:text-white transition-all"
+                  class="text-gray-400 transition-all hover:text-white"
                   onclick="event.preventDefault()"
                   >Tin tức</a
                 >
@@ -273,7 +299,7 @@
               <li>
                 <a
                   href="#"
-                  class="text-gray-400 hover:text-white transition-all"
+                  class="text-gray-400 transition-all hover:text-white"
                   onclick="event.preventDefault()"
                   >Liên hệ</a
                 >
@@ -281,12 +307,12 @@
             </ul>
           </div>
           <div>
-            <h3 class="text-lg font-bold mb-4">Chính sách</h3>
+            <h3 class="mb-4 text-lg font-bold">Chính sách</h3>
             <ul class="space-y-2">
               <li>
                 <a
                   href="#"
-                  class="text-gray-400 hover:text-white transition-all"
+                  class="text-gray-400 transition-all hover:text-white"
                   onclick="event.preventDefault()"
                   >Chính sách bảo mật</a
                 >
@@ -294,7 +320,7 @@
               <li>
                 <a
                   href="#"
-                  class="text-gray-400 hover:text-white transition-all"
+                  class="text-gray-400 transition-all hover:text-white"
                   onclick="event.preventDefault()"
                   >Chính sách đổi trả</a
                 >
@@ -302,7 +328,7 @@
               <li>
                 <a
                   href="#"
-                  class="text-gray-400 hover:text-white transition-all"
+                  class="text-gray-400 transition-all hover:text-white"
                   onclick="event.preventDefault()"
                   >Chính sách vận chuyển</a
                 >
@@ -310,7 +336,7 @@
               <li>
                 <a
                   href="#"
-                  class="text-gray-400 hover:text-white transition-all"
+                  class="text-gray-400 transition-all hover:text-white"
                   onclick="event.preventDefault()"
                   >Điều khoản dịch vụ</a
                 >
@@ -318,49 +344,49 @@
             </ul>
           </div>
           <div>
-            <h3 class="text-lg font-bold mb-4">Liên hệ</h3>
+            <h3 class="mb-4 text-lg font-bold">Liên hệ</h3>
             <ul class="space-y-2">
               <li class="flex items-center text-gray-400">
-                <i class="fas fa-map-marker-alt mr-2"></i> 123 Đường ABC, Quận
+                <i class="mr-2 fas fa-map-marker-alt"></i> 123 Đường ABC, Quận
                 1, TP.HCM
               </li>
               <li class="flex items-center text-gray-400">
-                <i class="fas fa-phone-alt mr-2"></i> 1900 1234
+                <i class="mr-2 fas fa-phone-alt"></i> 1900 1234
               </li>
               <li class="flex items-center text-gray-400">
-                <i class="fas fa-envelope mr-2"></i> info@techhub.vn
+                <i class="mr-2 fas fa-envelope"></i> info@techhub.vn
               </li>
             </ul>
           </div>
         </div>
         <div
-          class="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center"
+          class="flex flex-col items-center justify-between pt-6 border-t border-gray-800 md:flex-row"
         >
-          <p class="text-gray-400 text-sm mb-4 md:mb-0">
+          <p class="mb-4 text-sm text-gray-400 md:mb-0">
             © 2023 TechHub. All rights reserved.
           </p>
           <div class="flex space-x-4">
             <a
               href="#"
-              class="text-gray-400 hover:text-white transition-all"
+              class="text-gray-400 transition-all hover:text-white"
               onclick="event.preventDefault()"
               ><i class="fab fa-facebook-f"></i
             ></a>
             <a
               href="#"
-              class="text-gray-400 hover:text-white transition-all"
+              class="text-gray-400 transition-all hover:text-white"
               onclick="event.preventDefault()"
               ><i class="fab fa-twitter"></i
             ></a>
             <a
               href="#"
-              class="text-gray-400 hover:text-white transition-all"
+              class="text-gray-400 transition-all hover:text-white"
               onclick="event.preventDefault()"
               ><i class="fab fa-instagram"></i
             ></a>
             <a
               href="#"
-              class="text-gray-400 hover:text-white transition-all"
+              class="text-gray-400 transition-all hover:text-white"
               onclick="event.preventDefault()"
               ><i class="fab fa-youtube"></i
             ></a>
@@ -400,38 +426,38 @@
       function renderUserEditForm(user) {
         document.getElementById("userInfoContent").innerHTML = `
             <div class="mb-2">
-              <label class="block text-sm font-medium mb-1">Tên</label>
-              <input id="edit-name" type="text" class="w-full border rounded px-3 py-2" value="${
+              <label class="block mb-1 text-sm font-medium">Tên</label>
+              <input id="edit-name" type="text" class="w-full px-3 py-2 border rounded" value="${
                 user.name || ""
               }" required>
             </div>
             <div class="mb-2">
-              <label class="block text-sm font-medium mb-1">Email</label>
-              <input id="edit-email" type="email" class="w-full border rounded px-3 py-2" value="${
+              <label class="block mb-1 text-sm font-medium">Email</label>
+              <input id="edit-email" type="email" class="w-full px-3 py-2 border rounded" value="${
                 user.email || ""
               }" required disabled>
             </div>
             <div class="mb-2">
-              <label class="block text-sm font-medium mb-1">Số điện thoại</label>
-              <input id="edit-phone" type="text" class="w-full border rounded px-3 py-2" value="${
+              <label class="block mb-1 text-sm font-medium">Số điện thoại</label>
+              <input id="edit-phone" type="text" class="w-full px-3 py-2 border rounded" value="${
                 user.phone || ""
               }">
             </div>
             <div class="mb-2">
-              <label class="block text-sm font-medium mb-1">Địa chỉ</label>
-              <input id="edit-address" type="text" class="w-full border rounded px-3 py-2" value="${
+              <label class="block mb-1 text-sm font-medium">Địa chỉ</label>
+              <input id="edit-address" type="text" class="w-full px-3 py-2 border rounded" value="${
                 user.address || ""
               }">
             </div>
             <div class="mb-2">
-              <label class="block text-sm font-medium mb-1">Năm sinh</label>
-              <input id="edit-yearOfbirth" type="number" min="1900" max="2100" class="w-full border rounded px-3 py-2" value="${
+              <label class="block mb-1 text-sm font-medium">Năm sinh</label>
+              <input id="edit-yearOfbirth" type="number" min="1900" max="2100" class="w-full px-3 py-2 border rounded" value="${
                 user.yearOfbirth || ""
               }">
             </div>
             <div class="mb-2">
-              <label class="block text-sm font-medium mb-1">Mật khẩu mới (nếu muốn đổi)</label>
-              <input id="edit-password" type="password" class="w-full border rounded px-3 py-2" minlength="6" placeholder="Để trống nếu không đổi">
+              <label class="block mb-1 text-sm font-medium">Mật khẩu mới (nếu muốn đổi)</label>
+              <input id="edit-password" type="password" class="w-full px-3 py-2 border rounded" minlength="6" placeholder="Để trống nếu không đổi">
             </div>
           `;
       }
@@ -476,23 +502,23 @@
     </script>
     <div
       id="userModal"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden"
+      class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black bg-opacity-40"
     >
-      <div class="bg-white rounded-lg shadow-lg w-full max-w-sm mx-4">
+      <div class="w-full max-w-sm mx-4 bg-white rounded-lg shadow-lg">
         <form id="userEditForm" class="p-6">
-          <div class="flex justify-between items-center mb-4">
+          <div class="flex items-center justify-between mb-4">
             <h5 class="text-lg font-semibold" id="userModalLabel">
               Thông tin cá nhân
             </h5>
             <button
               type="button"
               onclick="closeUserDialog()"
-              class="text-gray-400 hover:text-red-500 text-2xl font-bold"
+              class="text-2xl font-bold text-gray-400 hover:text-red-500"
             >
               &times;
             </button>
           </div>
-          <div id="userInfoContent" class="text-gray-700 space-y-2">
+          <div id="userInfoContent" class="space-y-2 text-gray-700">
             <!-- Các trường sẽ được render ở đây -->
             <div class="text-center text-gray-400">Đang tải...</div>
           </div>
@@ -500,13 +526,13 @@
             <button
               type="button"
               onclick="closeUserDialog()"
-              class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
+              class="px-4 py-2 text-white bg-gray-400 rounded hover:bg-gray-500"
             >
               Hủy
             </button>
             <button
               type="submit"
-              class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded"
+              class="px-4 py-2 text-white rounded bg-primary-600 hover:bg-primary-700"
             >
               Lưu
             </button>
@@ -515,11 +541,11 @@
       </div>
     </div>
     <script>
-        loadPage('../client/home.html');
-          function toggleSearch() {
-            const searchBar = document.getElementById('searchBar');
-            searchBar.classList.toggle('hidden');
-        }
+      loadPage("../client/home.html");
+      function toggleSearch() {
+        const searchBar = document.getElementById("searchBar");
+        searchBar.classList.toggle("hidden");
+      }
 
       function logoutUser() {
         if (confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
@@ -527,6 +553,529 @@
           window.location.href = "/frontend/layouts/login-layout.html";
         }
       }
+    </script>
+    <!-- zalo -->
+        <a href="https://zalo.me/0346669134" target="_blank">
+      <img
+        src="https://stc-zaloprofile.zdn.vn/pc/v1/images/zalo_sharelogo.png"
+        alt="Chat Zalo"
+        style="
+          width: 60px;
+          height: 60px;
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          cursor: pointer;
+        "
+      />
+    </a>
+    <!-- Compare Modal -->
+    <div
+      id="compareModal"
+      class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black bg-opacity-50"
+    >
+      <div
+        class="w-full max-w-6xl mx-4 bg-white rounded-lg shadow-xl max-h-[90vh] overflow-scroll"
+      >
+        <div class="flex items-center justify-between p-6 border-b">
+          <h3 class="text-xl font-bold">So sánh sản phẩm</h3>
+          <button
+            onclick="closeCompareModal()"
+            class="text-2xl text-gray-500 hover:text-gray-700"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="p-6 overflow-auto">
+          <div id="compareContent" class="min-w-full">
+            <!-- Nội dung so sánh sẽ được thêm vào đây -->
+          </div>
+        </div>
+        <div class="flex justify-end gap-3 p-6 border-t">
+          <button
+            onclick="clearCompare()"
+            class="px-4 py-2 text-gray-600 border border-gray-300 rounded hover:bg-gray-50"
+          >
+            Xóa tất cả
+          </button>
+          <button
+            onclick="closeCompareModal()"
+            class="px-4 py-2 text-white rounded bg-primary-600 hover:bg-primary-700"
+          >
+            Đóng
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compare Modal -->
+    <div
+      id="compareModal"
+      class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black bg-opacity-50"
+    >
+      <div
+        class="w-full max-w-6xl mx-4 bg-white rounded-lg shadow-xl max-h-[90vh] overflow-scroll"
+      >
+        <div class="flex items-center justify-between p-6 border-b">
+          <h3 class="text-xl font-bold">So sánh sản phẩm</h3>
+          <button
+            onclick="closeCompareModal()"
+            class="text-2xl text-gray-500 hover:text-gray-700"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="p-6 overflow-auto">
+          <div id="compareContent" class="min-w-full">
+            <!-- Nội dung so sánh sẽ được thêm vào đây -->
+          </div>
+        </div>
+        <div class="flex justify-end gap-3 p-6 border-t">
+          <button
+            onclick="clearCompare()"
+            class="px-4 py-2 text-gray-600 border border-gray-300 rounded hover:bg-gray-50"
+          >
+            Xóa tất cả
+          </button>
+          <button
+            onclick="closeCompareModal()"
+            class="px-4 py-2 text-white rounded bg-primary-600 hover:bg-primary-700"
+          >
+            Đóng
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compare Floating Button -->
+    <div id="compareFloating" class="fixed hidden p-3 text-white bg-blue-500 rounded-full shadow-lg bottom-4 right-4">
+            <button onclick="openCompareModal()" class="flex items-center gap-2">
+                <i class="fas fa-exchange-alt"></i>
+                <span id="floatingCount">0</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+      // Biến lưu trữ sản phẩm so sánh
+      let compareProducts = [];
+
+      // Hàm thêm sản phẩm vào danh sách so sánh
+      function addToCompare(productData, type) {
+        // Kiểm tra xem sản phẩm đã tồn tại chưa
+        if (compareProducts.find((product) => product.id === productData.id)) {
+          showNotification(
+            "Sản phẩm đã có trong danh sách so sánh!",
+            "warning"
+          );
+          return;
+        }
+
+        // Giới hạn số lượng sản phẩm so sánh (tối đa 4)
+        if (compareProducts.length >= 4) {
+          showNotification("Chỉ có thể so sánh tối đa 4 sản phẩm!", "warning");
+          return;
+        }
+
+        // Chuẩn bị dữ liệu sản phẩm
+        let product = {
+          id: productData.id,
+          name: productData.productName,
+          price: productData.price,
+          image: productData.img || "https://via.placeholder.com/300",
+          type: type,
+          brand: getBrandName(productData.id_branch),
+          specs: {},
+        };
+
+        // Thêm thông số kỹ thuật tùy theo loại sản phẩm
+        if (type === "laptop" && productData.laptop) {
+          product.specs = {
+            screen: productData.laptop.screenSpecs,
+            cpu: productData.laptop.CPU,
+            ram: productData.laptop.RAM,
+            ssd: productData.laptop.SSD,
+            gpu: productData.laptop.GPU,
+            description: productData.laptop.des,
+          };
+        } else if (type === "accessory" && productData.accessory) {
+          product.specs = {
+            description: productData.accessory.des,
+          };
+        }
+
+        // Thêm sản phẩm vào danh sách
+        compareProducts.push(product);
+
+        // Cập nhật giao diện
+        updateCompareUI();
+
+        // Hiển thị thông báo
+        showNotification(
+          `Đã thêm "${productData.productName}" vào danh sách so sánh`,
+          "success"
+        );
+      }
+
+      // Hàm lấy tên thương hiệu từ id
+      function getBrandName(brandId) {
+        const brands = {
+          1: "Asus",
+          2: "Acer",
+          3: "Lenovo",
+          4: "Apple",
+          5: "Dell",
+          6: "Gigabyte",
+          7: "HP",
+          8: "MSI",
+        };
+        return brands[brandId] || "Unknown";
+      }
+
+      // Hàm xóa sản phẩm khỏi danh sách so sánh
+      function removeFromCompare(id) {
+        compareProducts = compareProducts.filter(
+          (product) => product.id !== id
+        );
+        updateCompareUI();
+         closeCompareModal();
+        openCompareModal();
+        showNotification("Đã xóa sản phẩm khỏi danh sách so sánh", "info");
+      }
+
+      // Hàm cập nhật giao diện so sánh
+      function updateCompareUI() {
+        const compareCount = document.getElementById("compareCount");
+        const compareFloating = document.getElementById("compareFloating");
+        const floatingCount = document.getElementById("floatingCount");
+
+        if (compareCount) {
+          compareCount.textContent = compareProducts.length;
+        }
+        
+        if (floatingCount) {
+          floatingCount.textContent = compareProducts.length;
+        }
+
+        if (compareFloating) {
+          if (compareProducts.length > 0) {
+            compareFloating.classList.remove("hidden");
+          } else {
+            compareFloating.classList.add("hidden");
+          }
+        }
+
+        // Lưu vào localStorage
+        localStorage.setItem(
+          "compareProducts",
+          JSON.stringify(compareProducts)
+        );
+       
+      }
+
+      // Hàm mở modal so sánh
+      function openCompareModal() {
+        if (compareProducts.length < 0) {
+          showNotification("Cần ít nhất sản phẩm để so sánh!", "warning");
+          return;
+        }
+
+        const modal = document.getElementById("compareModal");
+        const content = document.getElementById("compareContent");
+
+        // Tạo bảng so sánh
+        content.innerHTML = createCompareTable();
+
+        modal.classList.remove("hidden");
+      }
+
+      // Hàm đóng modal so sánh
+      function closeCompareModal() {
+        document.getElementById("compareModal").classList.add("hidden");
+      }
+
+      // Hàm xóa tất cả sản phẩm so sánh
+      function clearCompare() {
+        if (confirm("Bạn có chắc chắn muốn xóa tất cả sản phẩm so sánh?")) {
+          compareProducts = [];
+          updateCompareUI();
+          closeCompareModal();
+          showNotification("Đã xóa tất cả sản phẩm so sánh", "info");
+        }
+      }
+
+      // Hàm tạo bảng so sánh
+      function createCompareTable() {
+        if (compareProducts.length === 0) {
+          return '<p class="py-8 text-center text-gray-500">Không có sản phẩm để so sánh</p>';
+        }
+
+        // Kiểm tra xem có laptop trong danh sách không
+        const hasLaptop = compareProducts.some((p) => p.type === "laptop");
+
+        let html = `
+          <div class="overflow-x-auto">
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th class="w-1/5">Thông số</th>
+        `;
+
+        // Thêm tiêu đề cho từng sản phẩm
+        compareProducts.forEach((product) => {
+          html += `
+            <th class="w-1/${compareProducts.length + 1}">
+              <div class="product-image">
+                <img src="${product.image}" alt="${product.name}">
+              </div>
+              <div class="mt-2 font-medium">${product.name}</div>
+            </th>
+          `;
+        });
+
+        html += `
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Hàng giá -->
+                <tr class="spec-row">
+                  <td class="font-medium">Giá</td>
+        `;
+
+        compareProducts.forEach((product) => {
+          html += `
+            <td class="font-bold text-primary-600">${Number(product.price).toLocaleString("vi-VN")}đ</td>
+          `;
+        });
+
+        html += `
+                </tr>
+                
+                <!-- Hàng thương hiệu -->
+                <tr class="spec-row">
+                  <td class="font-medium">Thương hiệu</td>
+        `;
+
+        compareProducts.forEach((product) => {
+          html += `
+            <td>${product.brand}</td>
+          `;
+        });
+
+        html += `
+                </tr>
+                
+                <!-- Hàng loại -->
+                <tr class="spec-row">
+                  <td class="font-medium">Loại</td>
+        `;
+
+        compareProducts.forEach((product) => {
+          html += `
+            <td>${product.type === "laptop" ? "Laptop" : "Phụ kiện"}</td>
+          `;
+        });
+
+        // Thêm các hàng thông số kỹ thuật nếu có laptop
+        if (hasLaptop) {
+          // Hàng màn hình
+          html += `
+                </tr>
+                <tr class="spec-row">
+                  <td class="font-medium">Màn hình</td>
+          `;
+          
+          compareProducts.forEach((product) => {
+            if (product.type === "laptop") {
+              html += `
+                <td class="text-sm">${product.specs.screen || "N/A"}</td>
+              `;
+            } else {
+              html += `
+                <td class="text-center text-gray-400">-</td>
+              `;
+            }
+          });
+
+          // Hàng CPU
+          html += `
+                </tr>
+                <tr class="spec-row">
+                  <td class="font-medium">CPU</td>
+          `;
+          
+          compareProducts.forEach((product) => {
+            if (product.type === "laptop") {
+              html += `
+                <td class="text-sm">${product.specs.cpu || "N/A"}</td>
+              `;
+            } else {
+              html += `
+                <td class="text-center text-gray-400">-</td>
+              `;
+            }
+          });
+
+          // Hàng RAM
+          html += `
+                </tr>
+                <tr class="spec-row">
+                  <td class="font-medium">RAM</td>
+          `;
+          
+          compareProducts.forEach((product) => {
+            if (product.type === "laptop") {
+              html += `
+                <td class="text-sm">${product.specs.ram || "N/A"}</td>
+              `;
+            } else {
+              html += `
+                <td class="text-center text-gray-400">-</td>
+              `;
+            }
+          });
+
+          // Hàng SSD
+          html += `
+                </tr>
+                <tr class="spec-row">
+                  <td class="font-medium">SSD</td>
+          `;
+          
+          compareProducts.forEach((product) => {
+            if (product.type === "laptop") {
+              html += `
+                <td class="text-sm">${product.specs.ssd || "N/A"}</td>
+              `;
+            } else {
+              html += `
+                <td class="text-center text-gray-400">-</td>
+              `;
+            }
+          });
+
+          // Hàng GPU
+          html += `
+                </tr>
+                <tr class="spec-row">
+                  <td class="font-medium">GPU</td>
+          `;
+          
+          compareProducts.forEach((product) => {
+            if (product.type === "laptop") {
+              html += `
+                <td class="text-sm">${product.specs.gpu || "N/A"}</td>
+              `;
+            } else {
+              html += `
+                <td class="text-center text-gray-400">-</td>
+              `;
+            }
+          });
+        }
+
+        // Hàng mô tả
+        html += `
+                </tr>
+                <tr class="spec-row">
+                  <td class="font-medium">Mô tả</td>
+        `;
+
+        compareProducts.forEach((product) => {
+          html += `
+            <td class="text-sm text-gray-600">${(product.specs.description || "").substring(0, 100)}...</td>
+          `;
+        });
+
+        // Hàng thao tác
+        html += `
+                </tr>
+                <tr class="spec-row">
+                  <td class="font-medium">Thao tác</td>
+        `;
+
+        compareProducts.forEach((product) => {
+          html += `
+            <td class="text-center">
+              <button onclick="removeFromCompare(${product.id})" class="p-2 text-red-500 transition-all rounded-full hover:text-red-700 hover:bg-red-50">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          `;
+        });
+
+        html += `
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        `;
+
+        return html;
+      }
+
+      // Hàm hiển thị thông báo
+      function showNotification(message, type = "success") {
+        const colors = {
+          success: "bg-green-500",
+          warning: "bg-yellow-500",
+          error: "bg-red-500",
+          info: "bg-blue-500",
+        };
+
+        const icons = {
+          success: "fa-check-circle",
+          warning: "fa-exclamation-triangle",
+          error: "fa-times-circle",
+          info: "fa-info-circle",
+        };
+
+        // Tạo toast notification
+        const toast = document.createElement("div");
+        toast.className = `fixed top-4 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300 flex items-center gap-2`;
+        toast.innerHTML = `
+          <i class="fas ${icons[type]}"></i>
+          <span>${message}</span>
+        `;
+
+        document.body.appendChild(toast);
+
+        // Hiệu ứng hiện
+        setTimeout(() => {
+          toast.classList.remove("translate-x-full");
+        }, 100);
+
+        // Tự động ẩn sau 3 giây
+        setTimeout(() => {
+          toast.classList.add("translate-x-full");
+          setTimeout(() => {
+            if (document.body.contains(toast)) {
+              document.body.removeChild(toast);
+            }
+          }, 300);
+        }, 3000);
+      }
+
+      // Khởi tạo khi trang được load
+      document.addEventListener("DOMContentLoaded", function () {
+        // Load danh sách so sánh từ localStorage
+        const savedCompare = localStorage.getItem("compareProducts");
+        if (savedCompare) {
+          compareProducts = JSON.parse(savedCompare);
+          updateCompareUI();
+        }
+
+        // Đóng modal khi click bên ngoài
+        document
+          .getElementById("compareModal")
+          .addEventListener("click", function (e) {
+            if (e.target === this) {
+              closeCompareModal();
+            }
+          });
+          
+      
+      });
     </script>
   </body>
 </html>

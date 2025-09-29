@@ -13,7 +13,7 @@ class Home_client extends Controller
     //
     public function getByLoai()
     {
-        $laptops = Laptop::with('product')->get();
+        $laptops  = Product::has('laptop')->with('laptop')->get();
 
 
         return response()->json([
@@ -23,7 +23,7 @@ class Home_client extends Controller
     }
     public function getAccessory()
     {
-        $laptops = Accessory::with('product')->get();
+        $laptops = Product::has('accessory')->with('accessory')->get();
 
 
         return response()->json([
