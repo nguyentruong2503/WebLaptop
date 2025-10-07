@@ -38,6 +38,8 @@ Route::post('/upload', [UploadController::class, 'upload']);
 // //Register
 Route::post('/register', [RegisterController::class, 'register']);
 
+Route::get('/payment/vnpay-return', [Payment_OrderController::class, 'vnpayReturn']);
+
 // Login+Me+refresh token nhé ae
 Route::post('login', [AuthController::class, 'login']);
 Route::middleware(['jwt.auth'])->group(function () {
@@ -63,6 +65,11 @@ Route::middleware('jwt.auth')->group(function () {
     Route::put('/cart/{cartId}', [CartController::class, 'updateCart']);
     Route::delete('/cart/{cartId}', [CartController::class, 'deleteCart']);
     Route::post('/buy', [Payment_OrderController::class, 'store']);
+    // Route::post('/payment/vnpay', [Payment_OrderController::class, 'createPayment']);
+    // Route::get('/payment/vnpay-return', [Payment_OrderController::class, 'vnpayReturn']);
+    Route::post('/payment/vnpay', [Payment_OrderController::class, 'vnpay']);
+//Tính phí ship   
+//  Route::post('/shipping/fee', [ShippingController::class, 'calculateFee']);
 //Cập nhật thông tin cá nhân
     Route::put('userClient', [AuthController::class, 'updateMe']);
 });

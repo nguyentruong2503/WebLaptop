@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thanh toán đơn hàng</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#6366f1",
+              secondary: "#8b5cf6",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #f0f4ff 0%, #e6e9ff 100%);
+      }
+      .card-shadow {
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+      .product-card {
+        transition: all 0.3s ease;
+      }
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 py-8">
+      <!-- Header -->
+      <header class="flex justify-between items-center mb-12">
+        <div class="flex items-center">
+          <div
+            class="w-10 h-10 rounded-lg bg-gradient-to-r from-primary to-secondary flex items-center justify-center mr-3"
+          >
+            <i data-feather="shopping-bag" class="text-white"></i>
+          </div>
+          <h1 class="text-2xl font-bold text-gray-800">HQLap</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+          <button class="flex items-center text-gray-600 hover:text-primary">
+            <i data-feather="help-circle" class="mr-1"></i>
+            <span>Trợ giúp</span>
+          </button>
+          <button class="flex items-center text-gray-600 hover:text-primary">
+            <i data-feather="phone" class="mr-1"></i>
+            <span>Liên hệ</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="flex flex-col lg:flex-row gap-8">
+        <div class="lg:w-2/3">
+          <div class="bg-white rounded-2xl card-shadow p-6 mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-6">
+              Tóm tắt đơn hàng
+            </h2>
+
+            <div class="space-y-6">
+              <div class="product-card bg-gray-50 rounded-xl p-4 flex">
+                <img
+                  src="http://static.photos/technology/320x240/1"
+                  alt="Sản phẩm"
+                  class="w-24 h-24 object-cover rounded-lg"
+                />
+                <div class="ml-4 flex-1">
+                  <h3 class="font-semibold text-gray-800">
+                    Tai nghe Bluetooth không dây
+                  </h3>
+                  <p class="text-gray-600 text-sm">Màu: Đen | Kích cỡ: M</p>
+                  <div class="flex justify-between items-center mt-3">
+                    <div
+                      class="flex items-center border border-gray-300 rounded-lg"
+                    >
+                      <button class="px-3 py-1 text-gray-600 hover:bg-gray-100">
+                        -
+                      </button>
+                      <span class="px-3 py-1">1</span>
+                      <button class="px-3 py-1 text-gray-600 hover:bg-gray-100">
+                        +
+                      </button>
+                    </div>
+                    <p class="font-bold text-gray-800">$129.99</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Shipping Information -->
+          <div class="bg-white rounded-2xl card-shadow p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-6">
+              Thông tin giao hàng
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-gray-700 text-sm font-medium mb-2"
+                  >Họ và tên</label
+                >
+                <input
+                  type="text"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  placeholder="Tên người nhận"
+                />
+              </div>
+
+              <div>
+                <label class="block text-gray-700 text-sm font-medium mb-2"
+                  >Số điện thoại</label
+                >
+                <input
+                  type="tel"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  placeholder="Số điện thoại"
+                />
+              </div>
+
+              <div>
+                <label class="block text-gray-700 text-sm font-medium mb-2"
+                  >Tỉnh / Thành phố</label
+                >
+                <select
+                  id="city"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                >
+                  <option value="">-- Chọn tỉnh / thành phố --</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-gray-700 text-sm font-medium mb-2"
+                  >Quận / Huyện</label
+                >
+                <select
+                  id="district"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                  disabled
+                >
+                  <option value="">-- Chọn quận / huyện --</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-gray-700 text-sm font-medium mb-2"
+                  >Phường / Xã</label
+                >
+                <select
+                  id="ward"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                  disabled
+                >
+                  <option value="">-- Chọn phường / xã --</option>
+                </select>
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="block text-gray-700 text-sm font-medium mb-2"
+                  >Địa chỉ cụ thể</label
+                >
+                <textarea
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  rows="1"
+                  placeholder="Số nhà hoặc tên tòa nhà"
+                ></textarea>
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="block text-gray-700 text-sm font-medium mb-2"
+                  >Ghi chú giao hàng (Không bắt buộc)</label
+                >
+                <textarea
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  rows="3"
+                  placeholder="Ví dụ: Gọi trước khi giao..."
+                ></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column - Payment Summary -->
+        <div class="lg:w-1/3">
+          <div class="bg-white rounded-2xl card-shadow p-6 sticky top-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-6">
+              Thông tin thanh toán
+            </h2>
+
+            <div class="space-y-4 mb-6">
+              <div class="flex justify-between">
+                <span class="text-gray-600">Tạm tính</span>
+                <span class="font-medium">$379.98</span>
+              </div>
+
+              <div class="flex justify-between">
+                <span class="text-gray-600">Phí giao hàng</span>
+                <span class="font-medium">Miễn phí</span>
+              </div>
+
+              <div class="flex justify-between pt-4 border-t border-gray-200">
+                <span class="text-lg font-bold text-gray-800">Tổng cộng</span>
+                <span class="text-lg font-bold text-primary">$410.38</span>
+              </div>
+            </div>
+
+            <!-- <div class="mb-6">
+              <h3 class="font-medium text-gray-800 mb-3">Mã giảm giá</h3>
+              <div class="flex">
+                <input
+                  type="text"
+                  id="discount_code"
+                  name="no_autofill_discount"
+                  autocomplete="new-password"
+                  class="flex-1 px-4 py-3 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  placeholder="Nhập mã giảm giá"
+                />
+                <button
+                  class="bg-gray-200 hover:bg-gray-300 px-4 rounded-r-lg font-medium"
+                >
+                  Áp dụng
+                </button>
+              </div>
+            </div> -->
+
+            <!-- Payment Methods -->
+            <div class="mb-6">
+              <h3 class="font-medium text-gray-800 mb-3">
+                Phương thức thanh toán
+              </h3>
+              <div class="space-y-3">
+                <div
+                  class="flex items-center border border-gray-300 rounded-lg p-4 cursor-pointer hover:bg-gray-50"
+                >
+                  <input
+                    type="radio"
+                    name="payment"
+                    id="cod"
+                    class="mr-3"
+                    checked
+                  />
+                  <label for="cod" class="flex-1 cursor-pointer">
+                    <div class="flex items-center">
+                      <i data-feather="truck" class="mr-2 text-gray-600"></i>
+                      <span>Thanh toán khi nhận hàng</span>
+                    </div>
+                  </label>
+                </div>
+
+                <div
+                  class="flex items-center border border-gray-300 rounded-lg p-4 cursor-pointer hover:bg-gray-50"
+                >
+                  <input type="radio" name="payment" id="vnpay" class="mr-3" />
+                  <label for="vnpay" class="flex-1 cursor-pointer">
+                    <div class="flex items-center">
+                      <i
+                        data-feather="credit-card"
+                        class="mr-2 text-gray-600"
+                      ></i>
+                      <span>Thanh toán qua VNPay</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- VNPay Form -->
+            <div id="vnpay-form" class="mb-6 bg-gray-50 rounded-lg p-4 hidden">
+              <div class="grid grid-cols-1 gap-4">
+                <div>
+                  <label class="block text-gray-700 text-sm font-medium mb-2"
+                    >Tài khoản VNPay</label
+                  >
+                  <input
+                    type="text"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="Nhập tài khoản VNPay của bạn"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-gray-700 text-sm font-medium mb-2"
+                    >Mật khẩu</label
+                  >
+                  <input
+                    type="password"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="Nhập mật khẩu"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <button
+              id="btnCheckout"
+              class="w-full bg-gradient-to-r from-primary to-secondary text-white font-bold py-4 rounded-lg hover:opacity-90 transition duration-300 mb-4"
+            >
+              Hoàn tất thanh toán
+            </button>
+          </div>
+
+          <!-- Need Help -->
+          <div
+            class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl card-shadow p-6 mt-6"
+          >
+            <h3 class="font-bold text-gray-800 mb-3">Cần hỗ trợ?</h3>
+            <p class="text-gray-600 text-sm mb-4">
+              Đội ngũ hỗ trợ khách hàng của chúng tôi sẵn sàng 24/7 để giúp bạn.
+            </p>
+            <button class="flex items-center text-primary font-medium">
+              <i data-feather="message-circle" class="mr-2"></i>
+              Liên hệ hỗ trợ
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      feather.replace();
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const items = JSON.parse(localStorage.getItem("checkoutItems") || "[]");
+        const productContainer = document.querySelector(".space-y-6");
+        const summarySection = document.querySelector(".space-y-4.mb-6");
+
+        if (items.length === 0) {
+          productContainer.innerHTML = `
+        <p class="text-center text-gray-600">Không có sản phẩm nào được chọn để thanh toán.</p>
+      `;
+          return;
+        }
+
+        // Xóa nội dung cũ
+        productContainer.innerHTML = "";
+
+        // Render từng sản phẩm
+        let subtotal = 0;
+        items.forEach((item) => {
+          subtotal += item.price * item.quantity;
+
+          const div = document.createElement("div");
+          div.className = "product-card bg-gray-50 rounded-xl p-4 flex";
+
+          div.innerHTML = `
+        <img src="${item.image}" alt="${item.name}"
+          class="w-24 h-24 object-cover rounded-lg" />
+        <div class="ml-4 flex-1">
+          <h3 class="font-semibold text-gray-800">${item.name}</h3>
+          <p class="text-gray-600 text-sm">Số lượng: ${item.quantity}</p>
+          <div class="flex justify-between items-center mt-3">
+            <span class="text-gray-600 text-sm">Đơn giá:</span>
+            <p class="font-bold text-gray-800">${item.price.toLocaleString()} ₫</p>
+          </div>
+        </div>
+      `;
+          productContainer.appendChild(div);
+        });
+
+        const total = subtotal;
+
+        summarySection.innerHTML = `
+      <div class="flex justify-between">
+        <span class="text-gray-600">Tạm tính</span>
+        <span class="font-medium">${subtotal.toLocaleString()} ₫</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-600">Phí giao hàng</span>
+        <span class="font-medium">Miễn phí</span>
+      </div>
+      <div class="flex justify-between pt-4 border-t border-gray-200">
+        <span class="text-lg font-bold text-gray-800">Tổng cộng</span>
+        <span class="text-lg font-bold text-primary">${total.toLocaleString()} ₫</span>
+      </div>
+    `;
+      });
+
+      document
+        .getElementById("btnCheckout")
+        .addEventListener("click", async () => {
+          const selectedPayment = document.querySelector(
+            'input[name="payment"]:checked'
+          ).id;
+
+          const items = JSON.parse(
+            localStorage.getItem("checkoutItems") || "[]"
+          );
+          if (items.length === 0) {
+            alert("Không có sản phẩm nào để thanh toán.");
+            return;
+          }
+
+          //debug
+          console.log("🛒 Sản phẩm thanh toán:", items);
+          console.log(
+            "🆔 Danh sách product_ids:",
+            items.map((i) => i.id)
+          );
+
+          const subtotal = items.reduce(
+            (sum, item) => sum + item.price * item.quantity,
+            0
+          );
+          const tax = subtotal * 0.08;
+          const total = subtotal + tax;
+
+          const btn = document.getElementById("btnCheckout");
+          btn.disabled = true;
+          btn.textContent = "Đang khởi tạo thanh toán...";
+
+          try {
+            const token =
+              localStorage.getItem("token") || sessionStorage.getItem("token");
+
+            const name = document
+              .querySelector('input[type="text"]')
+              .value.trim();
+            const phone = document
+              .querySelector('input[type="tel"]')
+              .value.trim();
+            const addressDetail = document
+              .querySelector("textarea[placeholder='Số nhà hoặc tên tòa nhà']")
+              .value.trim();
+
+            const city =
+              document.querySelector("#city option:checked")?.textContent || "";
+            const district =
+              document.querySelector("#district option:checked")?.textContent ||
+              "";
+            const ward =
+              document.querySelector("#ward option:checked")?.textContent || "";
+
+            const fullAddress = `${addressDetail}, ${ward}, ${district}, ${city}`;
+
+            // ⚙️ Nếu chọn VNPay
+            if (selectedPayment === "vnpay") {
+              const res = await fetch(
+                "http://127.0.0.1:8000/api/payment/vnpay",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                  },
+                  body: JSON.stringify({
+                    amount: total,
+                    order_id: Date.now(),
+                    bank_code: "NCB",
+                    name: name,
+                    phone: phone,
+                    address: fullAddress,
+                    product_ids: items.map((item) => item.id),
+                  }),
+                }
+              );
+
+              const data = await res.json();
+
+              if (res.ok && data.payment_url) {
+                window.location.href = data.payment_url;
+              } else {
+                console.error("VNPay API error:", data);
+                alert(
+                  "Không thể tạo liên kết thanh toán VNPay. Vui lòng thử lại."
+                );
+              }
+            }
+
+            // 💵 Nếu chọn COD
+            else if (selectedPayment === "cod") {
+              alert("Đặt hàng thành công! Vui lòng thanh toán khi nhận hàng.");
+              // 👉 Có thể redirect về trang 'order.html'
+              window.location.href = "/order.html";
+            }
+          } catch (error) {
+            console.error("Lỗi khi gọi VNPay API:", error);
+            alert("Có lỗi xảy ra khi khởi tạo thanh toán VNPay.");
+          } finally {
+            btn.disabled = false;
+            btn.textContent = "Hoàn tất thanh toán";
+          }
+        });
+    </script>
+
+    <script>
+      const citySelect = document.getElementById("city");
+      const districtSelect = document.getElementById("district");
+      const wardSelect = document.getElementById("ward");
+
+      // 🏙️ Lấy danh sách tỉnh / thành
+      fetch("https://provinces.open-api.vn/api/p/")
+        .then((res) => res.json())
+        .then((cities) => {
+          cities.forEach((city) => {
+            const option = document.createElement("option");
+            option.value = city.code;
+            option.textContent = city.name;
+            citySelect.appendChild(option);
+          });
+        });
+
+      // 🏘️ Khi chọn tỉnh -> load quận / huyện
+      citySelect.addEventListener("change", () => {
+        const cityCode = citySelect.value;
+        districtSelect.innerHTML =
+          '<option value="">-- Chọn quận / huyện --</option>';
+        wardSelect.innerHTML =
+          '<option value="">-- Chọn phường / xã --</option>';
+        wardSelect.disabled = true;
+
+        if (cityCode) {
+          fetch(`https://provinces.open-api.vn/api/p/${cityCode}?depth=2`)
+            .then((res) => res.json())
+            .then((data) => {
+              districtSelect.disabled = false;
+              data.districts.forEach((district) => {
+                const option = document.createElement("option");
+                option.value = district.code;
+                option.textContent = district.name;
+                districtSelect.appendChild(option);
+              });
+            });
+        } else {
+          districtSelect.disabled = true;
+        }
+      });
+
+      // 🏡 Khi chọn quận / huyện -> load phường / xã
+      districtSelect.addEventListener("change", () => {
+        const districtCode = districtSelect.value;
+        wardSelect.innerHTML =
+          '<option value="">-- Chọn phường / xã --</option>';
+
+        if (districtCode) {
+          fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`)
+            .then((res) => res.json())
+            .then((data) => {
+              wardSelect.disabled = false;
+              data.wards.forEach((ward) => {
+                const option = document.createElement("option");
+                option.value = ward.code;
+                option.textContent = ward.name;
+                wardSelect.appendChild(option);
+              });
+            });
+        } else {
+          wardSelect.disabled = true;
+        }
+      });
+    </script>
+  </body>
+</html>

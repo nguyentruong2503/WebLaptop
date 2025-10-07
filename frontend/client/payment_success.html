@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đặt hàng thành công - ShopEase</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#6366f1",
+              secondary: "#8b5cf6",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #f0f4ff 0%, #e6e9ff 100%);
+      }
+      .card-shadow {
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+      .step-active {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white;
+      }
+      .step-inactive {
+        background-color: #e5e7eb;
+        color: #6b7280;
+      }
+      @keyframes checkmark {
+        0% {
+          stroke-dashoffset: 50;
+        }
+        100% {
+          stroke-dashoffset: 0;
+        }
+      }
+      .checkmark-circle {
+        stroke-dasharray: 50;
+        stroke-dashoffset: 50;
+        animation: checkmark 0.6s ease-in-out forwards;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 py-8">
+      <!-- Header -->
+      <header class="flex justify-between items-center mb-12">
+        <div class="flex items-center">
+          <div
+            class="w-10 h-10 rounded-lg bg-gradient-to-r from-primary to-secondary flex items-center justify-center mr-3"
+          >
+            <i data-feather="shopping-bag" class="text-white"></i>
+          </div>
+          <h1 class="text-2xl font-bold text-gray-800">HQ Lap</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+          <button class="flex items-center text-gray-600 hover:text-primary">
+            <i data-feather="help-circle" class="mr-1"></i>
+            <span>Trợ giúp</span>
+          </button>
+          <button class="flex items-center text-gray-600 hover:text-primary">
+            <i data-feather="phone" class="mr-1"></i>
+            <span>Liên hệ</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Success Content -->
+      <div class="flex flex-col items-center justify-center py-12">
+        <div
+          class="bg-white rounded-2xl card-shadow p-8 text-center max-w-2xl w-full"
+        >
+          <!-- Success Icon -->
+          <div class="flex justify-center mb-6">
+            <svg
+              width="80"
+              height="80"
+              viewBox="0 0 24 24"
+              class="text-green-500"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              />
+              <path
+                class="checkmark-circle"
+                d="M7 12l3 3l6-6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+
+          <h1 class="text-3xl font-bold text-gray-800 mb-4">
+            Đặt hàng thành công!
+          </h1>
+          <p class="text-gray-600 mb-2">
+            Cảm ơn bạn đã mua sắm. Đơn hàng của bạn đã được ghi nhận và đang
+            được xử lý.
+          </p>
+          <p class="text-gray-600 mb-8">
+            Một email xác nhận đã được gửi đến
+            <span id="user-email" class="font-medium"
+              >john.doe@example.com</span
+            >
+          </p>
+
+          <!-- Order Details -->
+          <div class="bg-gray-50 rounded-xl p-6 mb-8 text-left">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">
+              Tóm tắt đơn hàng
+            </h2>
+
+            <div class="flex justify-between mb-3">
+              <span class="text-gray-600">Mã đơn hàng:</span>
+              <span id="order-id" class="font-medium">#ORD-784512</span>
+            </div>
+
+            <div class="flex justify-between mb-3">
+              <span class="text-gray-600">Ngày đặt:</span>
+              <span id="order-date" class="font-medium">27 tháng 10, 2023</span>
+            </div>
+
+            <div class="flex justify-between mb-3">
+              <span class="text-gray-600">Tổng tiền:</span>
+              <span id="order-amount" class="font-medium text-primary"
+                >$410.38</span
+              >
+            </div>
+
+            <div class="flex justify-between">
+              <span class="text-gray-600">Phương thức thanh toán:</span>
+              <span id="order-payment" class="font-medium"
+                >Thanh toán khi nhận hàng</span
+              >
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href="http://127.0.0.1:5501/frontend/layouts/cliend-layout.html#"
+              class="text-blue-500 underline"
+            >
+              <button
+                class="border border-primary text-primary font-bold py-3 px-6 rounded-lg hover:bg-primary hover:text-white transition duration-300"
+              >
+                Tiếp tục mua sắm
+              </button>
+            </a>
+          </div>
+        </div>
+
+        <!-- Need Help? -->
+        <div
+          class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl card-shadow p-6 mt-8 max-w-2xl w-full"
+        >
+          <h3 class="font-bold text-gray-800 mb-3">Cần hỗ trợ?</h3>
+          <p class="text-gray-600 text-sm mb-4">
+            Đội ngũ chăm sóc khách hàng của chúng tôi hoạt động 24/7 để hỗ trợ
+            bạn về đơn hàng.
+          </p>
+          <button class="flex items-center text-primary font-medium">
+            <i data-feather="message-circle" class="mr-2"></i>
+            Liên hệ hỗ trợ
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      feather.replace();
+
+      // Lấy dữ liệu từ URL
+      const params = new URLSearchParams(window.location.search);
+      const orderId = params.get("order_id");
+      const amount = params.get("amount");
+      const time = params.get("time");
+      const message = params.get("message");
+      const email = params.get("email");
+
+      if (orderId && amount && time && message) {
+        document.getElementById("user-email").textContent = email;
+        document.getElementById("order-id").textContent = "#" + orderId;
+        document.getElementById("order-date").textContent = new Date(
+          time
+        ).toLocaleString("vi-VN");
+        document.getElementById("order-amount").textContent =
+          Number(amount).toLocaleString("vi-VN") + " ₫";
+        document.getElementById("order-payment").textContent = message;
+      } else {
+        document.querySelector(".text-3xl").textContent =
+          "Không tìm thấy thông tin đơn hàng";
+      }
+    </script>
+  </body>
+</html>
