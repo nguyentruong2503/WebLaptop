@@ -20,6 +20,19 @@ return new class extends Migration
             $table->string('SSD')->nullable();
             $table->string('GPU')->nullable();
             $table->text('des')->nullable();
+            $table->enum('GPU_type', ['Tích hợp','Rời'])->nullable();
+            $table->string('expandable_slots')->nullable();
+            $table->integer('battery_capacity_wh')->nullable();
+            $table->integer('charging_watt')->nullable();
+            $table->integer('USB_A_ports')->nullable();
+            $table->integer('USB_C_ports')->nullable();
+            $table->integer('HDMI_ports')->nullable();
+            $table->boolean('LAN_port')->default(false);
+            $table->integer('Thunderbolt_ports')->nullable();
+            $table->boolean('jack_3_5mm')->default(false);
+            $table->text('special_features')->nullable();
+            $table->string('dimensions')->nullable();
+            $table->decimal('weight_kg', 5, 2)->nullable();
             $table->timestamps();
 
             $table->foreign('productID')->references('id')->on('products')->onDelete('cascade');
