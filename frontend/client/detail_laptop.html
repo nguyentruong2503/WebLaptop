@@ -98,12 +98,69 @@
       </div>
     </div>
   </div>
+
+  <!-- Phần đánh giá -->
+  <div class="bg-white rounded-xl shadow-md mt-8 overflow-hidden">
+    <div class="border-b border-gray-200">
+      <nav class="flex -mb-px">
+        <button class="py-4 px-6 text-center border-b-2 font-medium text-blue-600 border-blue-600">
+          Đánh giá sản phẩm
+        </button>
+      </nav>
+    </div>
+    
+    <div class="p-6">
+      <!-- Form đánh giá -->
+      <div class="mb-8 p-4 border border-gray-200 rounded-lg">
+        <h3 class="text-lg font-semibold mb-4">Gửi đánh giá của bạn</h3>
+        <form id="review-form">
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-medium mb-2" for="rating">
+              Đánh giá
+            </label>
+            <div class="flex items-center space-x-1 mb-2">
+              <i class="far fa-star text-2xl cursor-pointer text-yellow-400" data-rating="1"></i>
+              <i class="far fa-star text-2xl cursor-pointer text-yellow-400" data-rating="2"></i>
+              <i class="far fa-star text-2xl cursor-pointer text-yellow-400" data-rating="3"></i>
+              <i class="far fa-star text-2xl cursor-pointer text-yellow-400" data-rating="4"></i>
+              <i class="far fa-star text-2xl cursor-pointer text-yellow-400" data-rating="5"></i>
+              <input type="hidden" id="rating" name="rating" value="5">
+              <span class="ml-2 text-gray-600"><span id="rating-value">5</span>/5</span>
+            </div>
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-medium mb-2" for="comment">
+              Nhận xét
+            </label>
+            <textarea id="comment" name="comment" rows="3" 
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Hãy chia sẻ cảm nhận của bạn về sản phẩm..."></textarea>
+          </div>
+          <button type="submit" 
+            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded">
+            Gửi đánh giá
+          </button>
+        </form>
+      </div>
+
+      <!-- Danh sách đánh giá -->
+      <div>
+        <h3 class="text-xl font-semibold mb-4">Đánh giá từ khách hàng</h3>
+        <div id="reviews-list" class="space-y-6">
+          <!-- Các đánh giá sẽ được thêm vào đây bằng JavaScript -->
+          <div class="text-center py-8 text-gray-500" id="no-reviews">
+            Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá sản phẩm này!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </main>
 
 <script type="module">  
        document.getElementById('target')?.scrollIntoView({ behavior: 'smooth' });
 
-   import { fetchWithTokenRetry } from 'http://127.0.0.1:5501/frontend/js/authFetch.js';
+   import { fetchWithTokenRetry, getTokenData } from 'http://127.0.0.1:5501/frontend/js/authFetch.js';
 
   (() => {
   (async () => {
@@ -195,5 +252,167 @@ document.getElementById("btn-add-to-cart").addEventListener("click", async () =>
   }
 });
 
+
+
+  // Xử lý đánh giá sao
+  const stars = document.querySelectorAll('.fa-star[data-rating]');
+  const ratingInput = document.getElementById('rating');
+  const ratingValue = document.getElementById('rating-value');
+  
+  // Khởi tạo sao đánh giá
+  function updateStars(rating) {
+    stars.forEach(star => {
+      const starRating = parseInt(star.getAttribute('data-rating'));
+      if (starRating <= rating) {
+        star.classList.remove('far');
+        star.classList.add('fas');
+      } else {
+        star.classList.remove('fas');
+        star.classList.add('far');
+      }
+    });
+    ratingInput.value = rating;
+    ratingValue.textContent = rating;
+  }
+
+  // Bắt sự kiện click vào sao
+  stars.forEach(star => {
+    star.addEventListener('click', () => {
+      const rating = parseInt(star.getAttribute('data-rating'));
+      updateStars(rating);
+    });
+
+    // Hiệu ứng hover
+    star.addEventListener('mouseover', () => {
+      const rating = parseInt(star.getAttribute('data-rating'));
+      stars.forEach(s => {
+        const sRating = parseInt(s.getAttribute('data-rating'));
+        if (sRating <= rating) {
+          s.classList.add('text-yellow-500');
+        }
+      });
+    });
+
+    star.addEventListener('mouseout', () => {
+      stars.forEach(s => {
+        s.classList.remove('text-yellow-500');
+      });
+    });
+  });
+
+  // Gửi đánh giá
+  const reviewForm = document.getElementById('review-form');
+  if (reviewForm) {
+    reviewForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const userData = getTokenData();
+      const userId = userData.sub;
+      const productId = localStorage.getItem('selectedProductId');
+      const rating = parseInt(ratingInput.value);
+      const comment = document.getElementById('comment').value.trim();
+      
+      if (!userId) {
+        alert('Vui lòng đăng nhập để đánh giá sản phẩm');
+        return;
+      }
+      
+      if (!comment) {
+        alert('Vui lòng nhập nội dung đánh giá');
+        return;
+      }
+      
+      try {
+        const response = await fetchWithTokenRetry('http://127.0.0.1:8000/api/reviews', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: userId,
+            productId: productId,
+            rating: rating,
+            comment: comment
+          })
+        });
+        
+        if (response.status != true ) {
+          throw new Error(response.message);
+        }
+        // Làm mới danh sách đánh giá
+        await loadReviews();
+        // Reset form
+        document.getElementById('comment').value = '';
+        updateStars(5);
+        alert('Cảm ơn bạn đã đánh giá sản phẩm!');
+      } catch (error) {
+        console.error('Lỗi khi gửi đánh giá:', error);
+        alert(error.message || 'Bạn chưa mua sản phẩm này');
+      }
+    });
+  }
+  
+  // Tải danh sách đánh giá
+  async function loadReviews() {
+    const productId = localStorage.getItem('selectedProductId');
+    if (!productId) return;
+    
+    try {
+      const response = await fetchWithTokenRetry(`http://127.0.0.1:8000/api/reviews/products/${productId}`);
+      
+      const result = await response.json();
+      const reviews = result.data || [];
+      
+      const reviewsList = document.getElementById('reviews-list');
+      const noReviews = document.getElementById('no-reviews');
+      
+      if (reviews.length === 0) {
+        noReviews.style.display = 'block';
+        return;
+      }
+      
+      noReviews.style.display = 'none';
+      reviewsList.innerHTML = '';
+      
+      reviews.forEach(review => {
+        const reviewElement = document.createElement('div');
+        reviewElement.className = 'border-b border-gray-200 pb-4 mb-4';
+        
+        // Tạo HTML cho đánh giá
+        let starsHtml = '';
+        for (let i = 1; i <= 5; i++) {
+          if (i <= review.rating) {
+            starsHtml += '<i class="fas fa-star text-yellow-400"></i>';
+          } else {
+            starsHtml += '<i class="far fa-star text-yellow-400"></i>';
+          }
+        }
+        
+        // Định dạng ngày tháng
+        const reviewDate = new Date(review.createdAt).toLocaleDateString('vi-VN');
+        
+        reviewElement.innerHTML = `
+          <div class="flex justify-between items-start mb-2">
+            <div>
+              <h4 class="font-semibold">User: ${review.user?.name || 'Khách hàng'}</h4>
+              <div class="text-yellow-500 text-sm">
+                ${review.rate}.0 <i class="fas fa-star"></i>
+              </div>
+            </div>
+          </div>
+          <p class="text-gray-700 mt-2">${review.comment}</p>
+        `;
+        
+        reviewsList.appendChild(reviewElement);
+      });
+    } catch (error) {
+      console.error('Lỗi khi tải đánh giá:', error);
+    }
+  }
+  
+  // Tải đánh giá khi trang được tải
+  loadReviews();
 })();
 </script>
+
+

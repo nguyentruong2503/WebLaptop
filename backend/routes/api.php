@@ -19,7 +19,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ThongkeController;
-
+use App\Http\Controllers\RecommendController;
 
 
 /*
@@ -33,6 +33,8 @@ use App\Http\Controllers\ThongkeController;
 |
 */
 
+Route::get('/reviews/products/{id}', [RecommendController::class, 'getRecommend']);
+Route::post('/reviews', [RecommendController::class, 'storeReview']);
 
 Route::post('/upload', [UploadController::class, 'upload']);
 // //Register
