@@ -53,6 +53,67 @@ class Payment_OrderController extends Controller
         return response()->json(['success' => true, 'order_id' => $order->id]);
     }
 
+    public function cod(Request $request)
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'name' => 'required|string',
+            'phone' => 'required|string',
+            'address' => 'required|string',
+            'product_ids' => 'required|array',
+            'product_ids.*' => 'integer|exists:carts,id',
+        ]);
+
+        $productIds = $request->product_ids;
+
+        $cartItems = Cart::where('userID', $user->id)
+            ->whereIn('id', $productIds)
+            ->with('product')
+            ->get();
+
+        if ($cartItems->isEmpty()) {
+            return response()->json(['error' => 'Giỏ hàng trống hoặc sản phẩm đã được xử lý'], 400);
+        }
+
+        $total = $cartItems->sum(fn($item) => $item->product->price * $item->quantity);
+
+        $order = Order::create([
+            'userID' => $user->id,
+            'totalAmount' => $total,
+            'fullName' => $request->name,
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'orderStatus' => 'Pending',
+        ]);
+
+        foreach ($cartItems as $item) {
+            Order_detail::create([
+                'orderID' => $order->id,
+                'productID' => $item->productID,
+                'price' => $item->product->price,
+                'quantity' => $item->quantity,
+            ]);
+        }
+
+        Cart::where('userID', $user->id)
+            ->whereIn('id', $productIds)
+            ->delete();
+
+        // ✅ Trả về JSON có URL redirect
+        return response()->json([
+            'success' => true,
+            'redirect_url' => 'http://127.0.0.1:5501/frontend/client/payment_success.html'
+                . '?order_id=' . $order->id
+                . '&amount=' . $total
+                . '&time=' . urlencode($order->created_at->format('Y-m-d H:i:s'))
+                . '&message=Thanh toán khi nhận hàng'
+                . '&email=' . urlencode($user->email)
+        ]);
+    }
+
+
+
     public function vnpay(Request $request)
     {
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
@@ -175,14 +236,14 @@ class Payment_OrderController extends Controller
                 ->delete();
 
 
-            // ✅ Hiển thị trang kết quả
+            //Thanh toán thành công
             return redirect()->away('http://127.0.0.1:5501/frontend/client/payment_success.html'
-            . '?order_id=' . $order->id
-            . '&amount=' . $total
-            . '&time=' . urlencode($order->created_at->format('Y-m-d H:i:s'))
-            . '&message=VNPay'
-            . '&email=' . urlencode($user->email)
-        );
+                . '?order_id=' . $order->id
+                . '&amount=' . $total
+                . '&time=' . urlencode($order->created_at->format('Y-m-d H:i:s'))
+                . '&message=VNPay'
+                . '&email=' . urlencode($user->email)
+            );
                                     
         }
 

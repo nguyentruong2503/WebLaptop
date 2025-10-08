@@ -64,9 +64,7 @@ Route::middleware('jwt.auth')->group(function () {
     Route::post('/cart/add', [CartController::class, 'addToCart']);
     Route::put('/cart/{cartId}', [CartController::class, 'updateCart']);
     Route::delete('/cart/{cartId}', [CartController::class, 'deleteCart']);
-    Route::post('/buy', [Payment_OrderController::class, 'store']);
-    // Route::post('/payment/vnpay', [Payment_OrderController::class, 'createPayment']);
-    // Route::get('/payment/vnpay-return', [Payment_OrderController::class, 'vnpayReturn']);
+    Route::post('/payment/cod', [Payment_OrderController::class, 'cod']);
     Route::post('/payment/vnpay', [Payment_OrderController::class, 'vnpay']);
 //Tính phí ship   
 //  Route::post('/shipping/fee', [ShippingController::class, 'calculateFee']);

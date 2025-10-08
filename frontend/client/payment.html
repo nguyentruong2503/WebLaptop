@@ -449,7 +449,7 @@
 
             const fullAddress = `${addressDetail}, ${ward}, ${district}, ${city}`;
 
-            // ⚙️ Nếu chọn VNPay
+            // VNPay
             if (selectedPayment === "vnpay") {
               const res = await fetch(
                 "http://127.0.0.1:8000/api/payment/vnpay",
@@ -483,11 +483,29 @@
               }
             }
 
-            // 💵 Nếu chọn COD
+            // COD
             else if (selectedPayment === "cod") {
-              alert("Đặt hàng thành công! Vui lòng thanh toán khi nhận hàng.");
-              // 👉 Có thể redirect về trang 'order.html'
-              window.location.href = "/order.html";
+              const res = await fetch("http://127.0.0.1:8000/api/payment/cod", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                },
+                body: JSON.stringify({
+                  name: name,
+                  phone: phone,
+                  address: fullAddress,
+                  product_ids: items.map((item) => item.id),
+                }),
+              });
+
+              const data = await res.json();
+
+              if (data.success) {
+                window.location.href = data.redirect_url;
+              } else {
+                alert(data.error || "Đặt hàng COD thất bại");
+              }
             }
           } catch (error) {
             console.error("Lỗi khi gọi VNPay API:", error);
@@ -504,7 +522,6 @@
       const districtSelect = document.getElementById("district");
       const wardSelect = document.getElementById("ward");
 
-      // 🏙️ Lấy danh sách tỉnh / thành
       fetch("https://provinces.open-api.vn/api/p/")
         .then((res) => res.json())
         .then((cities) => {
@@ -516,7 +533,6 @@
           });
         });
 
-      // 🏘️ Khi chọn tỉnh -> load quận / huyện
       citySelect.addEventListener("change", () => {
         const cityCode = citySelect.value;
         districtSelect.innerHTML =
@@ -542,7 +558,6 @@
         }
       });
 
-      // 🏡 Khi chọn quận / huyện -> load phường / xã
       districtSelect.addEventListener("change", () => {
         const districtCode = districtSelect.value;
         wardSelect.innerHTML =
