@@ -3,7 +3,7 @@
     class="bg-white rounded-xl shadow-md overflow-hidden p-6 md:p-8 lg:flex gap-8"
   >
     <!-- Product Images -->
-    <div class="lg:w-1/2">
+    <div class="lg:w-1/2 relative">
       <div class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
         <img
           id="product-image"
@@ -11,6 +11,10 @@
           alt="Laptop"
           class="w-full h-96 object-contain"
         />
+        <div
+          id="discount-badge"
+          class="hidden absolute top-2 right-2 bg-red-600 text-white px-3 py-1 text-sm font-bold rounded-full shadow"
+        ></div>
       </div>
     </div>
 
@@ -20,35 +24,39 @@
         Tên sản phẩm
       </h1>
 
-      <div class="mb-6">
-        <span id="product-price" class="text-2xl font-bold text-red-600"
-          >0đ</span
-        >
-      </div>
+      <div class="mb-2" id="product-price"></div>
+      <div id="product-savings" class="text-green-600 font-medium mb-6"></div>
 
- 
       <div class="flex items-center space-x-4 mb-6">
         <div class="flex items-center border border-gray-300 rounded">
-          <button  id="btn-decrease" class="px-3 py-1 text-xl text-gray-600 hover:bg-gray-100">
+          <button
+            id="btn-decrease"
+            class="px-3 py-1 text-xl text-gray-600 hover:bg-gray-100"
+          >
             -
           </button>
           <input
-           id="product-quantity"
+            id="product-quantity"
             type="number"
             value="1"
             min="1"
             class="w-12 text-center border-x border-gray-300 py-1"
           />
-          <button  id="btn-increase" class="px-3 py-1 text-xl text-gray-600 hover:bg-gray-100">
+          <button
+            id="btn-increase"
+            class="px-3 py-1 text-xl text-gray-600 hover:bg-gray-100"
+          >
             +
           </button>
         </div>
-        <button  id="btn-add-to-cart"
+        <button
+          id="btn-add-to-cart"
           class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded flex-1"
         >
           <i class="fas fa-cart-plus mr-2"></i> Thêm vào giỏ hàng
         </button>
       </div>
+
       <div class="border-t border-gray-200 pt-4">
         <div class="flex items-center text-gray-600 mb-2">
           <i class="fas fa-shield-alt text-blue-500 mr-2"></i>
@@ -79,98 +87,126 @@
     </div>
     <div class="p-6">
       <h3 class="text-xl font-semibold mb-4">Mô tả chi tiết</h3>
-      <div id="product-description" class="text-gray-700 space-y-4">
-        <!-- Description will be inserted here -->
-      </div>
+      <div id="product-description" class="text-gray-700 space-y-4"></div>
     </div>
   </div>
 </main>
 
-<script type="module">  
-       document.getElementById('target')?.scrollIntoView({ behavior: 'smooth' });
+<script type="module">
+  import { fetchWithTokenRetry } from "http://127.0.0.1:5501/frontend/js/authFetch.js";
 
-   import { fetchWithTokenRetry } from 'http://127.0.0.1:5501/frontend/js/authFetch.js';
+  document.getElementById("target")?.scrollIntoView({ behavior: "smooth" });
 
-  (() => {
   (async () => {
     const productId = localStorage.getItem("selectedProductId");
     if (!productId) return alert("Không tìm thấy sản phẩm!");
 
     try {
-      const res = await fetchWithTokenRetry(`http://127.0.0.1:8000/api/accessory/${productId}`);
+      const res = await fetchWithTokenRetry(
+        `http://127.0.0.1:8000/api/accessory/${productId}`
+      );
       if (!res.ok) throw new Error("Lỗi khi lấy dữ liệu sản phẩm");
 
       const result = await res.json();
       const data = result.data;
       const product = data.product;
-  localStorage.setItem('selectedProductId', product.id);
 
-      // Thông tin cơ bản
+      localStorage.setItem("selectedProductId", product.id);
+
+      // --- Hiển thị tên & ảnh ---
       document.getElementById("product-name").textContent = product.productName;
-      document.getElementById("product-image").src = product.img;
-      document.getElementById("product-price").textContent =
-        Number(product.price).toLocaleString("vi-VN") + "đ";
+      document.getElementById("product-image").src =
+        product.img || "https://via.placeholder.com/800x600";
 
- 
-    
+      // --- Tính giá & giảm ---
+      const price = Number(product.price);
+      const discounted = product.discounted_price
+        ? Number(product.discounted_price)
+        : price;
+      const hasDiscount = discounted < price;
 
-      // Mô tả
-      document.getElementById(
-        "product-description"
-      ).innerHTML = `<p>${data.des}</p>`;
+      const discountPercent = hasDiscount
+        ? Math.round(((price - discounted) / price) * 100)
+        : 0;
+
+      const productPriceDiv = document.getElementById("product-price");
+      const productSavings = document.getElementById("product-savings");
+      const discountBadge = document.getElementById("discount-badge");
+
+      if (hasDiscount) {
+        productPriceDiv.innerHTML = `
+          <span class="text-gray-400 line-through text-lg mr-2">${price.toLocaleString(
+            "vi-VN"
+          )}đ</span>
+          <span class="text-3xl font-bold text-red-600">${discounted.toLocaleString(
+            "vi-VN"
+          )}đ</span>
+        `;
+        productSavings.textContent = `Tiết kiệm: ${(
+          price - discounted
+        ).toLocaleString("vi-VN")}đ`;
+        discountBadge.textContent = `-${discountPercent}%`;
+        discountBadge.classList.remove("hidden");
+      } else {
+        productPriceDiv.innerHTML = `<span class="text-3xl font-bold text-red-600">${price.toLocaleString(
+          "vi-VN"
+        )}đ</span>`;
+        productSavings.textContent = "";
+        discountBadge.classList.add("hidden");
+      }
+
+      // --- Mô tả ---
+      document.getElementById("product-description").innerHTML = `<p>${
+        data.des || ""
+      }</p>`;
     } catch (err) {
       console.error(err);
       alert("Không thể tải dữ liệu sản phẩm");
     }
   })();
 
+  // === Xử lý tăng giảm số lượng ===
+  const quantityInput = document.getElementById("product-quantity");
 
-  // Sự kiện tăng/giảm số lượng
-const quantityInput = document.getElementById("product-quantity");
+  document.getElementById("btn-increase").addEventListener("click", () => {
+    quantityInput.value = Number(quantityInput.value) + 1;
+  });
 
-document.getElementById("btn-increase").addEventListener("click", () => {
-  quantityInput.value = Number(quantityInput.value) + 1;
-});
-
-document.getElementById("btn-decrease").addEventListener("click", () => {
-  if (Number(quantityInput.value) > 1) {
-    quantityInput.value = Number(quantityInput.value) - 1;
-  }
-});
-
-// Thêm vào giỏ hàng
-document.getElementById("btn-add-to-cart").addEventListener("click", async () => {
-  const quantity = Number(quantityInput.value);
-  const productId = localStorage.getItem("selectedProductId");
-  // Lấy id user từ localStorage
-
-  if (!productId) return alert("Không tìm thấy sản phẩm!");
-  if (quantity < 1) return alert("Số lượng phải lớn hơn hoặc bằng 1!");
-
-  try {
-    const response = await fetchWithTokenRetry("http://127.0.0.1:8000/api/cart/add", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        idProduct: productId,
-        quantity: quantity,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Lỗi khi thêm vào giỏ hàng");
+  document.getElementById("btn-decrease").addEventListener("click", () => {
+    if (Number(quantityInput.value) > 1) {
+      quantityInput.value = Number(quantityInput.value) - 1;
     }
+  });
 
-    const result = await response.json();
-    alert("Thêm vào giỏ hàng thành công!");
-  } catch (error) {
-    console.error(error);
-    alert("Thêm vào giỏ hàng thất bại: " + error.message);
-  }
-});
+  // === Thêm vào giỏ hàng ===
+  document
+    .getElementById("btn-add-to-cart")
+    .addEventListener("click", async () => {
+      const quantity = Number(quantityInput.value);
+      const productId = localStorage.getItem("selectedProductId");
 
-})();
+      if (!productId) return alert("Không tìm thấy sản phẩm!");
+      if (quantity < 1) return alert("Số lượng phải lớn hơn hoặc bằng 1!");
+
+      try {
+        const response = await fetchWithTokenRetry(
+          "http://127.0.0.1:8000/api/cart/add",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idProduct: productId, quantity }),
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Lỗi khi thêm vào giỏ hàng");
+        }
+
+        alert("Thêm vào giỏ hàng thành công!");
+      } catch (error) {
+        console.error(error);
+        alert("Thêm vào giỏ hàng thất bại: " + error.message);
+      }
+    });
 </script>

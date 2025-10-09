@@ -21,6 +21,16 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ThongkeController;
 use App\Http\Controllers\RecommendController;
 
+use App\Http\Controllers\Api\PromotionController;
+
+Route::prefix('promotions')->group(function(){
+    Route::get('/', [PromotionController::class,'index']);          // danh sách
+    Route::get('{promotion}', [PromotionController::class,'show']); // chi tiết
+    Route::post('/', [PromotionController::class,'store']);         // tạo
+    Route::put('{promotion}', [PromotionController::class,'update']); // cập nhật
+    Route::delete('{promotion}', [PromotionController::class,'destroy']); // xóa
+});
+
 
 /*
 |--------------------------------------------------------------------------
@@ -103,5 +113,11 @@ Route::middleware(['jwt.auth','role:admin'])->group(function () {
     Route::put('/admin/orders/{id}/status', [OrderAdminController::class, 'updateStatus']);
 //thongke
     Route::get('/thongke', [ThongkeController::class, 'dashboard']);
+    //promotion
+      Route::get('promotion', [PromotionController::class,'index']);          // danh sách
+    Route::get('promotion/{promotion}', [PromotionController::class,'show']); // chi tiết
+    Route::post('promotion', [PromotionController::class,'store']);         // tạo
+    Route::put('promotion/{promotion}', [PromotionController::class,'update']); // cập nhật
+    Route::delete('promotion/{promotion}', [PromotionController::class,'destroy']); // xóa
 });
 
