@@ -43,21 +43,28 @@
       </div>
       <div class="flex items-center space-x-4 mb-6">
         <div class="flex items-center border border-gray-300 rounded">
-          <button  id="btn-decrease" class="px-3 py-1 text-xl text-gray-600 hover:bg-gray-100">
+          <button
+            id="btn-decrease"
+            class="px-3 py-1 text-xl text-gray-600 hover:bg-gray-100"
+          >
             -
           </button>
           <input
-           id="product-quantity"
+            id="product-quantity"
             type="number"
             value="1"
             min="1"
             class="w-12 text-center border-x border-gray-300 py-1"
           />
-          <button  id="btn-increase" class="px-3 py-1 text-xl text-gray-600 hover:bg-gray-100">
+          <button
+            id="btn-increase"
+            class="px-3 py-1 text-xl text-gray-600 hover:bg-gray-100"
+          >
             +
           </button>
         </div>
-        <button  id="btn-add-to-cart"
+        <button
+          id="btn-add-to-cart"
           class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded flex-1"
         >
           <i class="fas fa-cart-plus mr-2"></i> Thêm vào giỏ hàng
@@ -103,41 +110,72 @@
   <div class="bg-white rounded-xl shadow-md mt-8 overflow-hidden">
     <div class="border-b border-gray-200">
       <nav class="flex -mb-px">
-        <button class="py-4 px-6 text-center border-b-2 font-medium text-blue-600 border-blue-600">
+        <button
+          class="py-4 px-6 text-center border-b-2 font-medium text-blue-600 border-blue-600"
+        >
           Đánh giá sản phẩm
         </button>
       </nav>
     </div>
-    
+
     <div class="p-6">
       <!-- Form đánh giá -->
       <div class="mb-8 p-4 border border-gray-200 rounded-lg">
         <h3 class="text-lg font-semibold mb-4">Gửi đánh giá của bạn</h3>
         <form id="review-form">
           <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-medium mb-2" for="rating">
+            <label
+              class="block text-gray-700 text-sm font-medium mb-2"
+              for="rating"
+            >
               Đánh giá
             </label>
             <div class="flex items-center space-x-1 mb-2">
-              <i class="far fa-star text-2xl cursor-pointer text-yellow-400" data-rating="1"></i>
-              <i class="far fa-star text-2xl cursor-pointer text-yellow-400" data-rating="2"></i>
-              <i class="far fa-star text-2xl cursor-pointer text-yellow-400" data-rating="3"></i>
-              <i class="far fa-star text-2xl cursor-pointer text-yellow-400" data-rating="4"></i>
-              <i class="far fa-star text-2xl cursor-pointer text-yellow-400" data-rating="5"></i>
-              <input type="hidden" id="rating" name="rating" value="5">
-              <span class="ml-2 text-gray-600"><span id="rating-value">5</span>/5</span>
+              <i
+                class="far fa-star text-2xl cursor-pointer text-yellow-400"
+                data-rating="1"
+              ></i>
+              <i
+                class="far fa-star text-2xl cursor-pointer text-yellow-400"
+                data-rating="2"
+              ></i>
+              <i
+                class="far fa-star text-2xl cursor-pointer text-yellow-400"
+                data-rating="3"
+              ></i>
+              <i
+                class="far fa-star text-2xl cursor-pointer text-yellow-400"
+                data-rating="4"
+              ></i>
+              <i
+                class="far fa-star text-2xl cursor-pointer text-yellow-400"
+                data-rating="5"
+              ></i>
+              <input type="hidden" id="rating" name="rating" value="5" />
+              <span class="ml-2 text-gray-600"
+                ><span id="rating-value">5</span>/5</span
+              >
             </div>
           </div>
           <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-medium mb-2" for="comment">
+            <label
+              class="block text-gray-700 text-sm font-medium mb-2"
+              for="comment"
+            >
               Nhận xét
             </label>
-            <textarea id="comment" name="comment" rows="3" 
+            <textarea
+              id="comment"
+              name="comment"
+              rows="3"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Hãy chia sẻ cảm nhận của bạn về sản phẩm..."></textarea>
+              placeholder="Hãy chia sẻ cảm nhận của bạn về sản phẩm..."
+            ></textarea>
           </div>
-          <button type="submit" 
-            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded">
+          <button
+            type="submit"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded"
+          >
             Gửi đánh giá
           </button>
         </form>
@@ -157,244 +195,298 @@
   </div>
 </main>
 
-<script type="module">  
-       document.getElementById('target')?.scrollIntoView({ behavior: 'smooth' });
+<script type="module">
+  document.getElementById("target")?.scrollIntoView({ behavior: "smooth" });
 
-   import { fetchWithTokenRetry, getTokenData } from 'http://127.0.0.1:5501/frontend/js/authFetch.js';
+  import {
+    fetchWithTokenRetry,
+    getTokenData,
+  } from "http://127.0.0.1:5501/frontend/js/authFetch.js";
 
   (() => {
-  (async () => {
-    const productId = localStorage.getItem("selectedProductId");
-    if (!productId) return alert("Không tìm thấy sản phẩm!");
+    (async () => {
+      // === Load thông tin sản phẩm ===
+      const productId = localStorage.getItem("selectedProductId");
+      if (!productId) return alert("Không tìm thấy sản phẩm!");
 
-    try {
-      const res = await fetchWithTokenRetry(`http://127.0.0.1:8000/api/laptops/${productId}`);
-      if (!res.ok) throw new Error("Lỗi khi lấy dữ liệu sản phẩm");
-
-      const result = await res.json();
-      const data = result.data;
-      const product = data.product;
-  localStorage.setItem('selectedProductId', product.id);
-
-      // Thông tin cơ bản
-      document.getElementById("product-name").textContent = product.productName;
-      document.getElementById("product-image").src = product.img;
-      document.getElementById("product-price").textContent =
-        Number(product.price).toLocaleString("vi-VN") + "đ";
-
-      // Thông số kỹ thuật
-      const specs = document.getElementById("product-specs");
-      specs.innerHTML = `
-        <li><span class="font-medium">Màn hình:</span> ${data.screenSpecs}</li>
-        <li><span class="font-medium">CPU:</span> ${data.CPU}</li>
-        <li><span class="font-medium">RAM:</span> ${data.RAM}</li>
-        <li><span class="font-medium">SSD:</span> ${data.SSD}</li>
-        <li><span class="font-medium">GPU:</span> ${data.GPU}</li>
-      `;
-
-      // Mô tả
-      document.getElementById(
-        "product-description"
-      ).innerHTML = `<p>${data.des}</p>`;
-    } catch (err) {
-      console.error(err);
-      alert("Không thể tải dữ liệu sản phẩm");
-    }
-  })();
-
-
-  // Sự kiện tăng/giảm số lượng
-const quantityInput = document.getElementById("product-quantity");
-
-document.getElementById("btn-increase").addEventListener("click", () => {
-  quantityInput.value = Number(quantityInput.value) + 1;
-});
-
-document.getElementById("btn-decrease").addEventListener("click", () => {
-  if (Number(quantityInput.value) > 1) {
-    quantityInput.value = Number(quantityInput.value) - 1;
-  }
-});
-
-// Thêm vào giỏ hàng
-document.getElementById("btn-add-to-cart").addEventListener("click", async () => {
-  const quantity = Number(quantityInput.value);
-  const productId = localStorage.getItem("selectedProductId");
-  const userId = "1"; // Lấy id user từ localStorage
-
-  if (!userId) return alert("Bạn chưa đăng nhập!");
-  if (!productId) return alert("Không tìm thấy sản phẩm!");
-  if (quantity < 1) return alert("Số lượng phải lớn hơn hoặc bằng 1!");
-
-  try {
-    const response = await fetchWithTokenRetry("http://127.0.0.1:8000/api/cart/add", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        idUser: userId,
-        idProduct: productId,
-        quantity: quantity,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Lỗi khi thêm vào giỏ hàng");
-    }
-
-    const result = await response.json();
-    alert("Thêm vào giỏ hàng thành công!");
-  } catch (error) {
-    console.error(error);
-    alert("Thêm vào giỏ hàng thất bại: " + error.message);
-  }
-});
-
-
-
-  // Xử lý đánh giá sao
-  const stars = document.querySelectorAll('.fa-star[data-rating]');
-  const ratingInput = document.getElementById('rating');
-  const ratingValue = document.getElementById('rating-value');
-  
-  // Khởi tạo sao đánh giá
-  function updateStars(rating) {
-    stars.forEach(star => {
-      const starRating = parseInt(star.getAttribute('data-rating'));
-      if (starRating <= rating) {
-        star.classList.remove('far');
-        star.classList.add('fas');
-      } else {
-        star.classList.remove('fas');
-        star.classList.add('far');
-      }
-    });
-    ratingInput.value = rating;
-    ratingValue.textContent = rating;
-  }
-
-  // Bắt sự kiện click vào sao
-  stars.forEach(star => {
-    star.addEventListener('click', () => {
-      const rating = parseInt(star.getAttribute('data-rating'));
-      updateStars(rating);
-    });
-
-    // Hiệu ứng hover
-    star.addEventListener('mouseover', () => {
-      const rating = parseInt(star.getAttribute('data-rating'));
-      stars.forEach(s => {
-        const sRating = parseInt(s.getAttribute('data-rating'));
-        if (sRating <= rating) {
-          s.classList.add('text-yellow-500');
-        }
-      });
-    });
-
-    star.addEventListener('mouseout', () => {
-      stars.forEach(s => {
-        s.classList.remove('text-yellow-500');
-      });
-    });
-  });
-
-  // Gửi đánh giá
-  const reviewForm = document.getElementById('review-form');
-  if (reviewForm) {
-    reviewForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const userData = getTokenData();
-      const userId = userData.sub;
-      const productId = localStorage.getItem('selectedProductId');
-      const rating = parseInt(ratingInput.value);
-      const comment = document.getElementById('comment').value.trim();
-      
-      if (!userId) {
-        alert('Vui lòng đăng nhập để đánh giá sản phẩm');
-        return;
-      }
-      
-      if (!comment) {
-        alert('Vui lòng nhập nội dung đánh giá');
-        return;
-      }
-      
       try {
-        const response = await fetchWithTokenRetry('http://127.0.0.1:8000/api/reviews', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userId: userId,
-            productId: productId,
-            rating: rating,
-            comment: comment
-          })
-        });
-        
-        if (response.status != true ) {
-          throw new Error(response.message);
+        const res = await fetchWithTokenRetry(
+          `http://127.0.0.1:8000/api/laptops/${productId}`
+        );
+        if (!res.ok) throw new Error("Lỗi khi lấy dữ liệu sản phẩm");
+
+        const result = await res.json();
+        const data = result.data;
+        const product = data.product;
+
+        localStorage.setItem("selectedProductId", product.id);
+
+        // --- Xử lý giá giảm ---
+        const hasDiscount =
+          product.discounted_price &&
+          Number(product.discounted_price) < Number(product.price);
+
+        const originalPrice =
+          Number(product.price).toLocaleString("vi-VN") + "đ";
+        const discountedPrice = hasDiscount
+          ? Number(product.discounted_price).toLocaleString("vi-VN") + "đ"
+          : null;
+
+        const discountPercent = hasDiscount
+          ? Math.round((1 - product.discounted_price / product.price) * 100)
+          : null;
+
+        // --- Hiển thị ảnh sản phẩm ---
+        const imgElement = document.getElementById("product-image");
+        imgElement.src = product.img || "https://via.placeholder.com/800x600";
+
+        // Hiển thị badge giảm giá nếu có
+        if (hasDiscount) {
+          const badge = document.createElement("div");
+          badge.className =
+            "absolute top-2 right-2 px-3 py-1 bg-red-600 text-white text-sm font-bold rounded-full shadow";
+          badge.textContent = `-${discountPercent}%`;
+          imgElement.parentElement.style.position = "relative";
+          imgElement.parentElement.appendChild(badge);
         }
-        // Làm mới danh sách đánh giá
-        await loadReviews();
-        // Reset form
-        document.getElementById('comment').value = '';
-        updateStars(5);
-        alert('Cảm ơn bạn đã đánh giá sản phẩm!');
-      } catch (error) {
-        console.error('Lỗi khi gửi đánh giá:', error);
-        alert(error.message || 'Bạn chưa mua sản phẩm này');
+
+        // --- Tên sản phẩm ---
+        document.getElementById("product-name").textContent =
+          product.productName;
+
+        // --- Giá sản phẩm ---
+        const priceElement = document.getElementById("product-price");
+        priceElement.innerHTML = hasDiscount
+          ? `
+      <span class="text-gray-400 line-through mr-2 text-lg">${originalPrice}</span>
+      <span class="text-3xl font-bold text-red-600">${discountedPrice}</span>
+    `
+          : `<span class="text-3xl font-bold text-red-600">${originalPrice}</span>`;
+
+        // --- Thông số kỹ thuật ---
+        const specs = document.getElementById("product-specs");
+        specs.innerHTML = `
+    <li><span class="font-medium">Màn hình:</span> ${data.screenSpecs}</li>
+    <li><span class="font-medium">CPU:</span> ${data.CPU}</li>
+    <li><span class="font-medium">RAM:</span> ${data.RAM}</li>
+    <li><span class="font-medium">SSD:</span> ${data.SSD}</li>
+    <li><span class="font-medium">GPU:</span> ${data.GPU}</li>
+  `;
+
+        // --- Mô tả sản phẩm ---
+        document.getElementById(
+          "product-description"
+        ).innerHTML = `<p>${data.des}</p>`;
+      } catch (err) {
+        console.error(err);
+        alert("Không thể tải dữ liệu sản phẩm");
+      }
+    })();
+
+    // Sự kiện tăng/giảm số lượng
+    const quantityInput = document.getElementById("product-quantity");
+
+    document.getElementById("btn-increase").addEventListener("click", () => {
+      quantityInput.value = Number(quantityInput.value) + 1;
+    });
+
+    document.getElementById("btn-decrease").addEventListener("click", () => {
+      if (Number(quantityInput.value) > 1) {
+        quantityInput.value = Number(quantityInput.value) - 1;
       }
     });
-  }
-  
-  // Tải danh sách đánh giá
-  async function loadReviews() {
-    const productId = localStorage.getItem('selectedProductId');
-    if (!productId) return;
-    
-    try {
-      const response = await fetchWithTokenRetry(`http://127.0.0.1:8000/api/reviews/products/${productId}`);
-      
-      const result = await response.json();
-      const reviews = result.data || [];
-      
-      const reviewsList = document.getElementById('reviews-list');
-      const noReviews = document.getElementById('no-reviews');
-      
-      if (reviews.length === 0) {
-        noReviews.style.display = 'block';
-        return;
-      }
-      
-      noReviews.style.display = 'none';
-      reviewsList.innerHTML = '';
-      
-      reviews.forEach(review => {
-        const reviewElement = document.createElement('div');
-        reviewElement.className = 'border-b border-gray-200 pb-4 mb-4';
-        
-        // Tạo HTML cho đánh giá
-        let starsHtml = '';
-        for (let i = 1; i <= 5; i++) {
-          if (i <= review.rating) {
-            starsHtml += '<i class="fas fa-star text-yellow-400"></i>';
-          } else {
-            starsHtml += '<i class="far fa-star text-yellow-400"></i>';
+
+    // Thêm vào giỏ hàng
+    document
+      .getElementById("btn-add-to-cart")
+      .addEventListener("click", async () => {
+        const quantity = Number(quantityInput.value);
+        const productId = localStorage.getItem("selectedProductId");
+        const userId = "1"; // Lấy id user từ localStorage
+
+        if (!userId) return alert("Bạn chưa đăng nhập!");
+        if (!productId) return alert("Không tìm thấy sản phẩm!");
+        if (quantity < 1) return alert("Số lượng phải lớn hơn hoặc bằng 1!");
+
+        try {
+          const response = await fetchWithTokenRetry(
+            "http://127.0.0.1:8000/api/cart/add",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                idUser: userId,
+                idProduct: productId,
+                quantity: quantity,
+              }),
+            }
+          );
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Lỗi khi thêm vào giỏ hàng");
           }
+
+          const result = await response.json();
+          alert("Thêm vào giỏ hàng thành công!");
+        } catch (error) {
+          console.error(error);
+          alert("Thêm vào giỏ hàng thất bại: " + error.message);
         }
-        
-        // Định dạng ngày tháng
-        const reviewDate = new Date(review.createdAt).toLocaleDateString('vi-VN');
-        
-        reviewElement.innerHTML = `
+      });
+
+    // Xử lý đánh giá sao
+    const stars = document.querySelectorAll(".fa-star[data-rating]");
+    const ratingInput = document.getElementById("rating");
+    const ratingValue = document.getElementById("rating-value");
+
+    // Khởi tạo sao đánh giá
+    function updateStars(rating) {
+      stars.forEach((star) => {
+        const starRating = parseInt(star.getAttribute("data-rating"));
+        if (starRating <= rating) {
+          star.classList.remove("far");
+          star.classList.add("fas");
+        } else {
+          star.classList.remove("fas");
+          star.classList.add("far");
+        }
+      });
+      ratingInput.value = rating;
+      ratingValue.textContent = rating;
+    }
+
+    // Bắt sự kiện click vào sao
+    stars.forEach((star) => {
+      star.addEventListener("click", () => {
+        const rating = parseInt(star.getAttribute("data-rating"));
+        updateStars(rating);
+      });
+
+      // Hiệu ứng hover
+      star.addEventListener("mouseover", () => {
+        const rating = parseInt(star.getAttribute("data-rating"));
+        stars.forEach((s) => {
+          const sRating = parseInt(s.getAttribute("data-rating"));
+          if (sRating <= rating) {
+            s.classList.add("text-yellow-500");
+          }
+        });
+      });
+
+      star.addEventListener("mouseout", () => {
+        stars.forEach((s) => {
+          s.classList.remove("text-yellow-500");
+        });
+      });
+    });
+
+    // Gửi đánh giá
+    const reviewForm = document.getElementById("review-form");
+    if (reviewForm) {
+      reviewForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const userData = getTokenData();
+        const userId = userData.sub;
+        const productId = localStorage.getItem("selectedProductId");
+        const rating = parseInt(ratingInput.value);
+        const comment = document.getElementById("comment").value.trim();
+
+        if (!userId) {
+          alert("Vui lòng đăng nhập để đánh giá sản phẩm");
+          return;
+        }
+
+        if (!comment) {
+          alert("Vui lòng nhập nội dung đánh giá");
+          return;
+        }
+
+        try {
+          const response = await fetchWithTokenRetry(
+            "http://127.0.0.1:8000/api/reviews",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                userId: userId,
+                productId: productId,
+                rating: rating,
+                comment: comment,
+              }),
+            }
+          );
+
+          if (response.status != true) {
+            throw new Error(response.message);
+          }
+          // Làm mới danh sách đánh giá
+          await loadReviews();
+          // Reset form
+          document.getElementById("comment").value = "";
+          updateStars(5);
+          alert("Cảm ơn bạn đã đánh giá sản phẩm!");
+        } catch (error) {
+          console.error("Lỗi khi gửi đánh giá:", error);
+          alert(error.message || "Bạn chưa mua sản phẩm này");
+        }
+      });
+    }
+
+    // Tải danh sách đánh giá
+    async function loadReviews() {
+      const productId = localStorage.getItem("selectedProductId");
+      if (!productId) return;
+
+      try {
+        const response = await fetchWithTokenRetry(
+          `http://127.0.0.1:8000/api/reviews/products/${productId}`
+        );
+
+        const result = await response.json();
+        const reviews = result.data || [];
+
+        const reviewsList = document.getElementById("reviews-list");
+        const noReviews = document.getElementById("no-reviews");
+
+        if (reviews.length === 0) {
+          noReviews.style.display = "block";
+          return;
+        }
+
+        noReviews.style.display = "none";
+        reviewsList.innerHTML = "";
+
+        reviews.forEach((review) => {
+          const reviewElement = document.createElement("div");
+          reviewElement.className = "border-b border-gray-200 pb-4 mb-4";
+
+          // Tạo HTML cho đánh giá
+          let starsHtml = "";
+          for (let i = 1; i <= 5; i++) {
+            if (i <= review.rating) {
+              starsHtml += '<i class="fas fa-star text-yellow-400"></i>';
+            } else {
+              starsHtml += '<i class="far fa-star text-yellow-400"></i>';
+            }
+          }
+
+          // Định dạng ngày tháng
+          const reviewDate = new Date(review.createdAt).toLocaleDateString(
+            "vi-VN"
+          );
+
+          reviewElement.innerHTML = `
           <div class="flex justify-between items-start mb-2">
             <div>
-              <h4 class="font-semibold">User: ${review.user?.name || 'Khách hàng'}</h4>
+              <h4 class="font-semibold">User: ${
+                review.user?.name || "Khách hàng"
+              }</h4>
               <div class="text-yellow-500 text-sm">
                 ${review.rate}.0 <i class="fas fa-star"></i>
               </div>
@@ -402,17 +494,15 @@ document.getElementById("btn-add-to-cart").addEventListener("click", async () =>
           </div>
           <p class="text-gray-700 mt-2">${review.comment}</p>
         `;
-        
-        reviewsList.appendChild(reviewElement);
-      });
-    } catch (error) {
-      console.error('Lỗi khi tải đánh giá:', error);
+
+          reviewsList.appendChild(reviewElement);
+        });
+      } catch (error) {
+        console.error("Lỗi khi tải đánh giá:", error);
+      }
     }
-  }
-  
-  // Tải đánh giá khi trang được tải
-  loadReviews();
-})();
+
+    // Tải đánh giá khi trang được tải
+    loadReviews();
+  })();
 </script>
-
-

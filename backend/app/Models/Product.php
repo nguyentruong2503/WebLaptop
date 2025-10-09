@@ -63,4 +63,69 @@ class Product extends Model
     {
         return $this->hasMany(Review::class, 'id_product');
     }
+//promotion
+public function promotions() {
+    return $this->belongsToMany(Promotion::class, 'promotion_product');
+}
+public function getDiscountedPrice()
+{
+    $now = now();
+
+    // Lấy tất cả khuyến mãi hợp lệ
+    $allPromotions = $this->promotions()
+        ->where('is_active', true)
+        ->whereDate('start_date','<=',$now)
+        ->whereDate('end_date','>=',$now)
+        ->get();
+
+    $brandPromotion = Promotion::where('applied_type','brand')
+        ->where('brand_id', $this->id_branch)
+        ->where('is_active', true)
+        ->whereDate('start_date','<=',$now)
+        ->whereDate('end_date','>=',$now)
+        ->get();
+
+    $categoryPromotion = Promotion::where('applied_type','category')
+        ->where('category_id', $this->id_type)
+        ->where('is_active', true)
+        ->whereDate('start_date','<=',$now)
+        ->whereDate('end_date','>=',$now)
+        ->get();
+
+    $globalPromotion = Promotion::where('applied_type','global')
+        ->where('is_active', true)
+        ->whereDate('start_date','<=',$now)
+        ->whereDate('end_date','>=',$now)
+        ->get();
+
+    $allPromotions = $allPromotions
+        ->merge($brandPromotion)
+        ->merge($categoryPromotion)
+        ->merge($globalPromotion);
+
+    if($allPromotions->isEmpty()) return $this->price;
+
+    $bestPrice = $this->price;
+
+    foreach($allPromotions as $promo){
+        $discounted = $this->price;
+
+        if($promo->discount_percent !== null){
+            $discounted = $this->price * (1 - $promo->discount_percent / 100);
+        }
+
+        if($promo->discount_amount !== null){
+            $discounted = max(0, $discounted - $promo->discount_amount);
+        }
+
+        if($discounted < $bestPrice){
+            $bestPrice = $discounted;
+        }
+    }
+
+    return round($bestPrice, 0);
+}
+    
+
+
 }
