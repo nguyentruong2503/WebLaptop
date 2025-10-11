@@ -27,9 +27,9 @@ return new class extends Migration
             $table->integer('USB_A_ports')->nullable();
             $table->integer('USB_C_ports')->nullable();
             $table->integer('HDMI_ports')->nullable();
-            $table->boolean('LAN_port')->default(false);
+            $table->integer('LAN_port')->nullable();
             $table->integer('Thunderbolt_ports')->nullable();
-            $table->boolean('jack_3_5mm')->default(false);
+            $table->integer('jack_3_5mm')->nullable();
             $table->text('special_features')->nullable();
             $table->string('dimensions')->nullable();
             $table->decimal('weight_kg', 5, 2)->nullable();

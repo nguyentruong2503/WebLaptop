@@ -216,9 +216,6 @@
       <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm..." />
     </div>
     <div>
-      <button onclick="openAddModal()">
-        <i class="fas fa-plus"></i> Thêm sản phẩm
-      </button>
       <button onclick="fetchProducts()">
         <i class="fas fa-sync-alt"></i> Làm mới
       </button>
@@ -246,7 +243,7 @@
     </tbody>
   </table>
 
-  <!-- Modal Thêm/Sửa -->
+  <!-- Modal Sửa -->
   <div id="productModal" class="modal">
     <div class="modal-content">
       <h2 id="modalTitle">Thêm sản phẩm</h2>
@@ -268,21 +265,70 @@
 
         <label for="img">Hình ảnh (URL)</label>
         <input type="text" id="img" readonly onclick="openUploadWindow()" />
-        
+
         <div id="laptopFields" style="display: none">
           <label for="screenSpecs">Màn hình</label>
           <input type="text" id="screenSpecs" />
+
           <label for="CPU">CPU</label>
           <input type="text" id="CPU" />
+
           <label for="RAM">RAM</label>
           <input type="text" id="RAM" />
+
           <label for="SSD">SSD</label>
           <input type="text" id="SSD" />
+
           <label for="GPU">GPU</label>
           <input type="text" id="GPU" />
+
+          <label for="GPU_type">Loại GPU</label>
+          <select id="GPU_type">
+            <option value="">Chọn loại</option>
+            <option value="Tích hợp">Tích hợp</option>
+            <option value="Rời">Rời</option>
+          </select>
+
+          <label for="expandable_slots">Khe mở rộng</label>
+          <input type="text" id="expandable_slots" />
+
+          <label for="battery_capacity_wh">Dung lượng pin (Wh)</label>
+          <input type="number" id="battery_capacity_wh" />
+
+          <label for="charging_watt">Công suất sạc (W)</label>
+          <input type="number" id="charging_watt" />
+
+          <label for="USB_A_ports">Cổng USB-A</label>
+          <input type="number" id="USB_A_ports" />
+
+          <label for="USB_C_ports">Cổng USB-C</label>
+          <input type="number" id="USB_C_ports" />
+
+          <label for="HDMI_ports">Cổng HDMI</label>
+          <input type="number" id="HDMI_ports" />
+
+          <label for="LAN_port">Cổng LAN</label>
+          <input type="number" id="LAN_port" />
+
+          <label for="Thunderbolt_ports">Cổng Thunderbolt</label>
+          <input type="number" id="Thunderbolt_ports" />
+
+          <label for="jack_3_5mm">Jack 3.5mm</label>
+          <input type="number" id="jack_3_5mm" />
+
+          <label for="special_features">Tính năng đặc biệt</label>
+          <textarea id="special_features"></textarea>
+
+          <label for="dimensions">Kích thước</label>
+          <input type="text" id="dimensions" />
+
+          <label for="weight_kg">Trọng lượng (kg)</label>
+          <input type="number" id="weight_kg" step="0.01" />
+
           <label for="laptopDes">Mô tả</label>
           <textarea id="laptopDes"></textarea>
         </div>
+
         <div id="accessoryFields" style="display: none">
           <label for="accessoryDes">Mô tả</label>
           <textarea id="accessoryDes"></textarea>
@@ -295,33 +341,33 @@
 </div>
 
 <script>
-// jwt
- async function fetchWithTokenRetry(url, options = {}) {
-      let token = localStorage.getItem('token');
-      options.headers = { ...options.headers, Authorization: `Bearer ${token}` };
-      let response = await fetch(url, options);
+  // jwt
+  async function fetchWithTokenRetry(url, options = {}) {
+    let token = localStorage.getItem("token");
+    options.headers = { ...options.headers, Authorization: `Bearer ${token}` };
+    let response = await fetch(url, options);
 
-      if (response.status === 401) {
-        const refreshRes = await fetch(`${API_BASE_URL}/refresh`, {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-        });
+    if (response.status === 401) {
+      const refreshRes = await fetch(`${API_BASE_URL}/refresh`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-        if (refreshRes.ok) {
-          const data = await refreshRes.json();
-          localStorage.setItem('token', data.access_token);
-          options.headers['Authorization'] = `Bearer ${data.access_token}`;
-          response = await fetch(url, options);
-        } else {
-          localStorage.removeItem('token');
-          alert('Hết phiên đăng nhập, vui lòng đăng nhập lại.');
-          window.location.href = '/frontend/layouts/login-layout.html';
-        }
+      if (refreshRes.ok) {
+        const data = await refreshRes.json();
+        localStorage.setItem("token", data.access_token);
+        options.headers["Authorization"] = `Bearer ${data.access_token}`;
+        response = await fetch(url, options);
+      } else {
+        localStorage.removeItem("token");
+        alert("Hết phiên đăng nhập, vui lòng đăng nhập lại.");
+        window.location.href = "/frontend/layouts/login-layout.html";
       }
-
-      return response;
     }
-//
+
+    return response;
+  }
+  //
   var currentProductId = null;
 
   // Mở cửa sổ upload
@@ -355,16 +401,16 @@
       const typeFilter = document.getElementById("typeFilter");
       typeSelect.innerHTML = '<option value="">Chọn loại</option>';
       typeFilter.innerHTML = '<option value="">Tất cả loại</option>';
-      const allowedTypes = ['Laptop', 'Phụ kiện'];
+      const allowedTypes = ["Laptop", "Phụ kiện"];
       types.data
-      .filter(type => allowedTypes.includes(type.typeName))
-      .forEach((type) => {
-        const option = document.createElement("option");
-        option.value = type.id;
-        option.textContent = type.typeName;
-        typeSelect.appendChild(option);
-        typeFilter.appendChild(option.cloneNode(true));
-      });
+        .filter((type) => allowedTypes.includes(type.typeName))
+        .forEach((type) => {
+          const option = document.createElement("option");
+          option.value = type.id;
+          option.textContent = type.typeName;
+          typeSelect.appendChild(option);
+          typeFilter.appendChild(option.cloneNode(true));
+        });
 
       const brandSelect = document.getElementById("id_branch");
       const brandFilter = document.getElementById("brandFilter");
@@ -384,43 +430,41 @@
   }
 
   // Lấy danh sách sản phẩm
- async function fetchProducts() {
-  const tbody = document.getElementById("productTableBody");
-  tbody.innerHTML =
-    '<tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr>';
+  async function fetchProducts() {
+    const tbody = document.getElementById("productTableBody");
+    tbody.innerHTML =
+      '<tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr>';
 
-  try {
-    const response = await fetchWithTokenRetry("http://127.0.0.1:8000/api/products");
-    if (!response.ok) throw new Error("Lỗi server: " + response.status);
-    const products = await response.json();
+    try {
+      const response = await fetchWithTokenRetry(
+        "http://127.0.0.1:8000/api/products"
+      );
+      if (!response.ok) throw new Error("Lỗi server: " + response.status);
+      const products = await response.json();
 
-    tbody.innerHTML = "";
-    if (!products || !Array.isArray(products) || products.length === 0) {
-      tbody.innerHTML =
-        '<tr><td colspan="9" class="empty">Không có sản phẩm nào</td></tr>';
-      return;
-    }
+      tbody.innerHTML = "";
+      if (!products || !Array.isArray(products) || products.length === 0) {
+        tbody.innerHTML =
+          '<tr><td colspan="9" class="empty">Không có sản phẩm nào</td></tr>';
+        return;
+      }
 
-    const fragment = document.createDocumentFragment();
-    products.forEach((prod) => {
-      // Chỉ hiển thị sản phẩm có isActive = 1
-      if (prod.isActive === 0) return;
-      
-      const details = prod.laptop || prod.accessory || {};
-      const specs =
-        prod.id_type == 1
-          ? [ 
-              details.des,
-            ]
-              .filter(Boolean)
-              .join(", ")
-          : details.des || "N/A";
-      const tr = document.createElement("tr");
-      // Thoát ký tự đặc biệt trong productName để tránh lỗi XSS
-      const safeProductName = prod.productName
-        ? prod.productName.replace(/'/g, "\\'").replace(/"/g, "")
-        : "Sản phẩm";
-      tr.innerHTML = `
+      const fragment = document.createDocumentFragment();
+      products.forEach((prod) => {
+        // Chỉ hiển thị sản phẩm có isActive = 1
+        if (prod.isActive === 0) return;
+
+        const details = prod.laptop || prod.accessory || {};
+        const specs =
+          prod.id_type == 1
+            ? [details.des].filter(Boolean).join(", ")
+            : details.des || "N/A";
+        const tr = document.createElement("tr");
+        // Thoát ký tự đặc biệt trong productName để tránh lỗi XSS
+        const safeProductName = prod.productName
+          ? prod.productName.replace(/'/g, "\\'").replace(/"/g, "")
+          : "Sản phẩm";
+        tr.innerHTML = `
           <td>${prod.id ?? "N/A"}</td>
           <td>${
             prod.img
@@ -437,21 +481,28 @@
             <button title="Sửa" onclick="openEditModal(${
               prod.id
             }, '${encodeURIComponent(
-        JSON.stringify(prod)
-      )}')"><i class="fas fa-edit"></i></button>
+          JSON.stringify(prod)
+        )}')"><i class="fas fa-edit"></i></button>
             <button class="delete" title="Xóa" onclick="deleteProduct(${
               prod.id
             })"><i class="fas fa-trash-alt"></i></button>
+            ${
+              prod.id_type == 1
+                ? `<button class="view" title="Xem chi tiết" onclick="viewProductDetail(${prod.id})">
+                    <i class="fas fa-eye"></i>
+                  </button>`
+                : ""
+            }
           </td>
         `;
-      fragment.appendChild(tr);
-    });
-    tbody.appendChild(fragment);
-  } catch (error) {
-    console.error("Lỗi khi tải sản phẩm:", error);
-    tbody.innerHTML = `<tr><td colspan="9" class="error">${error.message}<br><small>Vui lòng kiểm tra console</small></td></tr>`;
+        fragment.appendChild(tr);
+      });
+      tbody.appendChild(fragment);
+    } catch (error) {
+      console.error("Lỗi khi tải sản phẩm:", error);
+      tbody.innerHTML = `<tr><td colspan="9" class="error">${error.message}<br><small>Vui lòng kiểm tra console</small></td></tr>`;
+    }
   }
-}
   // Định dạng giá
   function formatPrice(price) {
     const num = parseFloat(price);
@@ -460,26 +511,27 @@
       : num.toLocaleString("vi-VN") + " ₫";
   }
 
-  // Mở modal thêm sản phẩm
-  function openAddModal() {
-    currentProductId = null;
-    document.getElementById("modalTitle").textContent = "Thêm sản phẩm";
-    document.getElementById("productForm").reset();
-    document.getElementById("id_type").value = "";
-    document.getElementById("laptopFields").style.display = "none";
-    document.getElementById("accessoryFields").style.display = "none";
-    document.getElementById("productModal").style.display = "flex";
+  // Mở modal sửa sản phẩm
+  function parseIntOrNull(id) {
+    const val = document.getElementById(id).value;
+    return val !== "" && val !== null ? parseInt(val) : null;
   }
 
-  // Mở modal sửa sản phẩm
+  function parseFloatOrNull(id) {
+    const val = document.getElementById(id).value;
+    return val !== "" && val !== null ? parseFloat(val) : null;
+  }
+
+  //  mở modal sửa sản phẩm
   function openEditModal(id, encodedProduct) {
     try {
       const product = JSON.parse(decodeURIComponent(encodedProduct));
-      console.log("Opening edit modal for product:", product); // Debug log
+
       currentProductId = id;
+      console.log(currentProductId);
       document.getElementById("modalTitle").textContent = "Sửa sản phẩm";
 
-      // Gán giá trị vào form
+      // --- Thông tin chung ---
       document.getElementById("productName").value = product.productName || "";
       document.getElementById("id_type").value = product.id_type || "";
       document.getElementById("id_branch").value = product.id_branch || "";
@@ -489,21 +541,46 @@
 
       const laptopFields = document.getElementById("laptopFields");
       const accessoryFields = document.getElementById("accessoryFields");
+
+      // --- Laptop ---
       if (product.id_type == 1) {
         laptopFields.style.display = "block";
         accessoryFields.style.display = "none";
-        document.getElementById("screenSpecs").value =
-          product.laptop?.screenSpecs || "";
-        document.getElementById("CPU").value = product.laptop?.CPU || "";
-        document.getElementById("RAM").value = product.laptop?.RAM || "";
-        document.getElementById("SSD").value = product.laptop?.SSD || "";
-        document.getElementById("GPU").value = product.laptop?.GPU || "";
-        document.getElementById("laptopDes").value = product.laptop?.des || "";
+
+        const laptop = product.laptop || {};
+
+        document.getElementById("screenSpecs").value = laptop.screenSpecs || "";
+        document.getElementById("CPU").value = laptop.CPU || "";
+        document.getElementById("RAM").value = laptop.RAM || "";
+        document.getElementById("SSD").value = laptop.SSD || "";
+        document.getElementById("GPU").value = laptop.GPU || "";
+        document.getElementById("GPU_type").value = laptop.GPU_type || "";
+        document.getElementById("expandable_slots").value =
+          laptop.expandable_slots || "";
+        document.getElementById("battery_capacity_wh").value =
+          laptop.battery_capacity_wh ?? "";
+        document.getElementById("charging_watt").value =
+          laptop.charging_watt ?? "";
+        document.getElementById("USB_A_ports").value = laptop.USB_A_ports ?? "";
+        document.getElementById("USB_C_ports").value = laptop.USB_C_ports ?? "";
+        document.getElementById("HDMI_ports").value = laptop.HDMI_ports ?? "";
+        document.getElementById("LAN_port").value = laptop.LAN_port ?? "";
+        document.getElementById("Thunderbolt_ports").value =
+          laptop.Thunderbolt_ports ?? "";
+        document.getElementById("jack_3_5mm").value = laptop.jack_3_5mm ?? "";
+        document.getElementById("special_features").value =
+          laptop.special_features || "";
+        document.getElementById("dimensions").value = laptop.dimensions || "";
+        document.getElementById("weight_kg").value = laptop.weight_kg ?? "";
+        document.getElementById("laptopDes").value = laptop.des || "";
+
+        // --- Phụ kiện ---
       } else if (product.id_type == 2) {
         laptopFields.style.display = "none";
         accessoryFields.style.display = "block";
-        document.getElementById("accessoryDes").value =
-          product.accessory?.des || "";
+
+        const accessory = product.accessory || {};
+        document.getElementById("accessoryDes").value = accessory.des || "";
       } else {
         laptopFields.style.display = "none";
         accessoryFields.style.display = "none";
@@ -516,119 +593,127 @@
     }
   }
 
-  // Đóng modal
   function closeModal() {
     document.getElementById("productModal").style.display = "none";
     document.getElementById("productForm").reset();
     currentProductId = null;
   }
 
-  // Xử lý submit form
   document
-  .getElementById("productForm")
-  .addEventListener("submit", async function (e) {
-    e.preventDefault();
-    const data = {
-      productName: document.getElementById("productName").value,
-      id_type: parseInt(document.getElementById("id_type").value),
-      id_branch: parseInt(document.getElementById("id_branch").value),
-      price: parseFloat(document.getElementById("price").value),
-      quality: parseInt(document.getElementById("quality").value),
-      img: document.getElementById("img").value || null,
-      isActive: currentProductId ? undefined : 1, // Chỉ gửi isActive khi thêm mới
-    };
+    .getElementById("productForm")
+    .addEventListener("submit", async function (e) {
+      e.preventDefault();
 
-    if (data.id_type === 1) {
-      data.laptop = {
-        screenSpecs: document.getElementById("screenSpecs").value || null,
-        CPU: document.getElementById("CPU").value || null,
-        RAM: document.getElementById("RAM").value || null,
-        SSD: document.getElementById("SSD").value || null,
-        GPU: document.getElementById("GPU").value || null,
-        des: document.getElementById("laptopDes").value || null,
+      const data = {
+        productName: document.getElementById("productName").value,
+        id_type: parseInt(document.getElementById("id_type").value),
+        id_branch: parseInt(document.getElementById("id_branch").value),
+        price: parseFloatOrNull("price"),
+        quality: parseIntOrNull("quality"),
+        img: document.getElementById("img").value || null,
+        isActive: currentProductId ? undefined : 1, // chỉ thêm khi tạo mới
       };
-      data.accessory = null;
-    } else if (data.id_type === 2) {
-      data.laptop = null;
-      data.accessory = {
-        des: document.getElementById("accessoryDes").value || null,
-      };
-    } else {
-      data.laptop = null;
-      data.accessory = null;
-    }
 
-    try {
-      const url = currentProductId
-        ? `http://127.0.0.1:8000/api/products/${currentProductId}`
-        : "http://127.0.0.1:8000/api/products";
-      const method = currentProductId ? "PUT" : "POST";
-      const response = await fetchWithTokenRetry(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      let errorMessage = "Lỗi server: " + response.status;
-      if (!response.ok) {
-        const contentType = response.headers.get("content-type");
-        if (contentType && contentType.includes("application/json")) {
-          const errorData = await response.json();
-          errorMessage = errorData.message || errorMessage;
-        } else {
-          const text = await response.text();
-          console.error("Phản hồi không phải JSON:", text);
-          errorMessage = "Lỗi server, phản hồi không phải JSON";
-        }
-        throw new Error(errorMessage);
+      if (data.id_type === 1) {
+        data.laptop = {
+          screenSpecs: document.getElementById("screenSpecs").value || null,
+          CPU: document.getElementById("CPU").value || null,
+          RAM: document.getElementById("RAM").value || null,
+          SSD: document.getElementById("SSD").value || null,
+          GPU: document.getElementById("GPU").value || null,
+          GPU_type: document.getElementById("GPU_type").value || null,
+          expandable_slots:
+            document.getElementById("expandable_slots").value || null,
+          battery_capacity_wh: parseIntOrNull("battery_capacity_wh"),
+          charging_watt: parseIntOrNull("charging_watt"),
+          USB_A_ports: parseIntOrNull("USB_A_ports"),
+          USB_C_ports: parseIntOrNull("USB_C_ports"),
+          HDMI_ports: parseIntOrNull("HDMI_ports"),
+          LAN_port: parseIntOrNull("LAN_port"),
+          Thunderbolt_ports: parseIntOrNull("Thunderbolt_ports"),
+          jack_3_5mm: parseIntOrNull("jack_3_5mm"),
+          special_features:
+            document.getElementById("special_features").value || null,
+          dimensions: document.getElementById("dimensions").value || null,
+          weight_kg: parseFloatOrNull("weight_kg"),
+          des: document.getElementById("laptopDes").value || null,
+        };
+        data.accessory = null;
+      } else if (data.id_type === 2) {
+        data.laptop = null;
+        data.accessory = {
+          des: document.getElementById("accessoryDes").value || null,
+        };
+      } else {
+        data.laptop = null;
+        data.accessory = null;
       }
 
-      closeModal();
-      fetchProducts();
-      alert(
-        currentProductId
-          ? "Cập nhật sản phẩm thành công"
-          : "Thêm sản phẩm thành công"
-      );
-    } catch (error) {
-      console.error("Lỗi:", error);
-      alert("Lỗi: " + error.message);
-    }
-  });
+      try {
+        const url = `http://127.0.0.1:8000/api/products/${currentProductId}`;
+        console.log(data);
+        const response = await fetchWithTokenRetry(url, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(data),
+        });
 
+        console.log(url);
+
+        const resData = await response.json();
+        console.log(resData);
+        if (!response.ok) {
+          throw new Error(resData.message || "Không thể lưu sản phẩm");
+        }
+
+        closeModal();
+        fetchProducts();
+        alert("Cập nhật sản phẩm thành công");
+      } catch (error) {
+        console.error("Lỗi:", error);
+        alert("Lỗi: " + error.message);
+      }
+    });
   // Xóa sản phẩm
- // Xóa sản phẩm
-async function deleteProduct(id) {
-  if (confirm("Bạn có chắc muốn xóa sản phẩm này? Sản phẩm sẽ được ẩn thay vì xóa hoàn toàn.")) {
-    try {
-      const response = await fetchWithTokenRetry(`http://127.0.0.1:8000/api/products/${id}`, {
-        method: "DELETE", // Sử dụng DELETE thay vì PUT
-        headers: { "Content-Type": "application/json" },
-        // Không cần body vì destroy không yêu cầu payload
-      });
-      if (!response.ok) {
-        let errorMessage = "Lỗi server: " + response.status;
-        const contentType = response.headers.get("content-type");
-        if (contentType && contentType.includes("application/json")) {
-          const errorData = await response.json();
-          errorMessage = errorData.message || errorMessage;
-        } else {
-          const text = await response.text();
-          console.error("Phản hồi không phải JSON:", text);
-          errorMessage = "Lỗi server, phản hồi không phải JSON: " + text;
+  async function deleteProduct(id) {
+    if (
+      confirm(
+        "Bạn có chắc muốn xóa sản phẩm này? Sản phẩm sẽ được ẩn thay vì xóa hoàn toàn."
+      )
+    ) {
+      try {
+        const response = await fetchWithTokenRetry(
+          `http://127.0.0.1:8000/api/products/${id}`,
+          {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        if (!response.ok) {
+          let errorMessage = "Lỗi server: " + response.status;
+          const contentType = response.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            const errorData = await response.json();
+            errorMessage = errorData.message || errorMessage;
+          } else {
+            const text = await response.text();
+            console.error("Phản hồi không phải JSON:", text);
+            errorMessage = "Lỗi server, phản hồi không phải JSON: " + text;
+          }
+          throw new Error(errorMessage);
         }
-        throw new Error(errorMessage);
+        fetchProducts();
+        alert("Sản phẩm đã được ẩn thành công");
+      } catch (error) {
+        console.error("Lỗi:", error);
+        alert("Lỗi: " + error.message);
       }
-      fetchProducts();
-      alert("Sản phẩm đã được ẩn thành công");
-    } catch (error) {
-      console.error("Lỗi:", error);
-      alert("Lỗi: " + error.message);
     }
   }
-}
 
-  // Lọc và tìm kiếm
   function applyFilters() {
     const typeFilter = document.getElementById("typeFilter").value;
     const brandFilter = document.getElementById("brandFilter").value;
@@ -663,7 +748,6 @@ async function deleteProduct(id) {
     .getElementById("searchInput")
     .addEventListener("input", applyFilters);
 
-  // Hiển thị/ẩn trường theo loại sản phẩm
   document.getElementById("id_type").addEventListener("change", function () {
     const laptopFields = document.getElementById("laptopFields");
     const accessoryFields = document.getElementById("accessoryFields");
@@ -671,7 +755,9 @@ async function deleteProduct(id) {
     accessoryFields.style.display = this.value == "2" ? "block" : "none";
   });
 
-  // Tải dữ liệu ban đầu
+  function viewProductDetail(id) {
+    window.location.href = `../admin/detail_laptop.html?id=${id}`;
+  }
 
   loadFilters();
   fetchProducts();

@@ -38,6 +38,7 @@ class Payment_OrderController extends Controller
             'fullName' => $request->name,
             'phone' => $request->phone,
             'address' => $request->address,
+            'payment_method' => 'COD',
         ]);
 
         foreach ($cartItems as $item) {
@@ -85,6 +86,7 @@ class Payment_OrderController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
             'orderStatus' => 'Pending',
+            'payment_method' => 'COD',
         ]);
 
         foreach ($cartItems as $item) {
@@ -215,9 +217,8 @@ class Payment_OrderController extends Controller
                 'fullName' => $orderInfo['name'] ?? 'Không rõ',
                 'phone' => $orderInfo['phone'] ?? '',
                 'address' => $orderInfo['address'] ?? '',
-                'orderStatus' => 'Pending', // thanh toán thành công
-                'paymentMethod' => 'VNPay',
-                'transactionNo' => $request->vnp_TransactionNo ?? null,
+                'orderStatus' => 'Pending',
+                'payment_method' => 'VNPay',
                 'bankCode' => $request->vnp_BankCode ?? null,
                 'cardType' => $request->vnp_CardType ?? null,
             ]);

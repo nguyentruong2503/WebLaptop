@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('phone');
             $table->string('address');
             $table->enum('orderstatus', ['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'])->default('Pending');
+            $table->string('payment_method');
             $table->timestamps();
 
             $table->foreign('userID')->references('id')->on('users')->onDelete('cascade');

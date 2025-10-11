@@ -14,7 +14,7 @@ class OrderController extends Controller
     {
          
 
-             $user=request()->user();
+        $user=request()->user();
 
         $userId = $user->id;
 

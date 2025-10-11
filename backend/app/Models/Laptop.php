@@ -9,13 +9,10 @@ class Laptop extends Model
 {
     use HasFactory;
     protected $fillable = [
-    'productID', // Thêm trường này
-    'screenSpecs',
-    'CPU',
-    'RAM',
-    'SSD',
-    'GPU',
-    'des'
+    'CPU', 'GPU', 'GPU_type', 'HDMI_ports', 'LAN_port', 'RAM', 'SSD', 
+    'Thunderbolt_ports', 'USB_A_ports', 'USB_C_ports', 'battery_capacity_wh',
+    'charging_watt', 'des', 'dimensions', 'expandable_slots', 'jack_3_5mm',
+    'screenSpecs', 'special_features', 'weight_kg'
 ];
     public function product()
 {

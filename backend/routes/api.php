@@ -89,7 +89,12 @@ Route::middleware(['jwt.auth','role:admin'])->group(function () {
     Route::put('product_types/{id}', [ProductTypesController::class, 'update']);
     Route::delete('product_types/{id}', [ProductTypesController::class, 'destroy']);
 //Sản Phẩm
-    Route::apiResource('products', ProductController::class);
+    Route::get('/products', [ProductController::class, 'index']);
+    Route::get('/products/{id}', [ProductController::class, 'show']);
+    Route::post('/products', [ProductController::class, 'store']);
+    Route::put('/products/{id}', [ProductController::class, 'update']); 
+    Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+    Route::get('/laptop/{id}', [ProductController::class, 'getSpecLaptopByID']);
 //Brands
     Route::get('brands', [BrandsController::class, 'index']);
     Route::post('brands', [BrandsController::class, 'store']);
