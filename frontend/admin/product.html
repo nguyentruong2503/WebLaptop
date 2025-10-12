@@ -216,6 +216,9 @@
       <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm..." />
     </div>
     <div>
+      <button onclick="openImportModal()">
+        <i class="fas fa-file-import"></i> Nhập hàng
+      </button>
       <button onclick="fetchProducts()">
         <i class="fas fa-sync-alt"></i> Làm mới
       </button>
@@ -335,6 +338,22 @@
         </div>
         <button type="submit" class="save">Lưu</button>
         <button type="button" class="cancel" onclick="closeModal()">Hủy</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal nhập hàng -->
+  <div id="importModal" class="modal">
+    <div class="modal-content">
+      <h2>Nhập sản phẩm từ Excel</h2>
+      <form id="importForm">
+        <label for="excelFile">Chọn file Excel (.xlsx)</label>
+        <input type="file" id="excelFile" accept=".xlsx" required />
+
+        <button type="submit" class="save">Tải lên</button>
+        <button type="button" class="cancel" onclick="closeImportModal()">
+          Hủy
+        </button>
       </form>
     </div>
   </div>
@@ -758,6 +777,51 @@
   function viewProductDetail(id) {
     window.location.href = `../admin/detail_laptop.html?id=${id}`;
   }
+
+  // === Modal Nhập hàng ===
+  function openImportModal() {
+    document.getElementById("importModal").style.display = "flex";
+  }
+
+  function closeImportModal() {
+    document.getElementById("importModal").style.display = "none";
+    document.getElementById("importForm").reset();
+  }
+
+  document
+    .getElementById("importForm")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fileInput = document.getElementById("excelFile");
+      const file = fileInput.files[0];
+      if (!file) return alert("Vui lòng chọn file Excel để nhập!");
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const response = await fetchWithTokenRetry(
+          "http://127.0.0.1:8000/api/laptops/import",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Lỗi khi nhập file Excel");
+        }
+
+        alert("Nhập sản phẩm thành công!");
+        closeImportModal();
+        fetchProducts();
+      } catch (error) {
+        console.error("Lỗi khi nhập Excel:", error);
+        alert("Lỗi: " + error.message);
+      }
+    });
 
   loadFilters();
   fetchProducts();

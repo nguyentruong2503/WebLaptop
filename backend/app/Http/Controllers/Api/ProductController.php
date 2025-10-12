@@ -9,8 +9,13 @@ use App\Models\Laptop;
 use App\Models\Accessory;
 use Illuminate\Http\Request;
 
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\LaptopsImport;
+
+
 class ProductController extends Controller
 {
+
     public function index()
     {
         $products = Product::with(['type', 'branch', 'laptop', 'accessory'])
@@ -177,5 +182,43 @@ class ProductController extends Controller
             'success' => true,
             'data' => $laptopData,
         ]);
+    }
+
+    public function import(Request $request)
+    {
+        try {
+            // Kiểm tra có file được gửi lên không
+            if (!$request->hasFile('file')) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Không có file nào được tải lên'
+                ], 400);
+            }
+
+            $file = $request->file('file');
+
+            // Kiểm tra định dạng file hợp lệ
+            $extension = strtolower($file->getClientOriginalExtension());
+            if (!in_array($extension, ['xls', 'xlsx'])) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'File không đúng định dạng Excel (.xls hoặc .xlsx)'
+                ], 400);
+            }
+
+            // Gọi Import class (đã tạo riêng để xử lý)
+            Excel::import(new LaptopsImport, $file);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Import dữ liệu laptop thành công!'
+            ], 200);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Lỗi khi import: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

@@ -33,7 +33,6 @@ use App\Http\Controllers\ThongkeController;
 |
 */
 
-
 Route::post('/upload', [UploadController::class, 'upload']);
 // //Register
 Route::post('/register', [RegisterController::class, 'register']);
@@ -88,6 +87,7 @@ Route::middleware(['jwt.auth','role:admin'])->group(function () {
     Route::get('product_types/{id}', [ProductTypesController::class, 'show']);
     Route::put('product_types/{id}', [ProductTypesController::class, 'update']);
     Route::delete('product_types/{id}', [ProductTypesController::class, 'destroy']);
+    
 //Sản Phẩm
     Route::get('/products', [ProductController::class, 'index']);
     Route::get('/products/{id}', [ProductController::class, 'show']);
@@ -95,6 +95,9 @@ Route::middleware(['jwt.auth','role:admin'])->group(function () {
     Route::put('/products/{id}', [ProductController::class, 'update']); 
     Route::delete('/products/{id}', [ProductController::class, 'destroy']);
     Route::get('/laptop/{id}', [ProductController::class, 'getSpecLaptopByID']);
+
+    Route::post('/laptops/import', [ProductController::class, 'import']);
+
 //Brands
     Route::get('brands', [BrandsController::class, 'index']);
     Route::post('brands', [BrandsController::class, 'store']);
