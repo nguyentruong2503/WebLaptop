@@ -64,9 +64,13 @@ class Payment_OrderController extends Controller
             'address' => 'required|string',
             'product_ids' => 'required|array',
             'product_ids.*' => 'integer|exists:carts,id',
+            'amount' => 'required|numeric|min:0',
+            'voucher_code' => 'nullable|string',
         ]);
 
         $productIds = $request->product_ids;
+        $total = $request->amount;
+        $voucherCode = $request->voucher_code ?? null;
 
         $cartItems = Cart::where('userID', $user->id)
             ->whereIn('id', $productIds)
@@ -77,11 +81,9 @@ class Payment_OrderController extends Controller
             return response()->json(['error' => 'Giỏ hàng trống hoặc sản phẩm đã được xử lý'], 400);
         }
 
-        $total = $cartItems->sum(fn($item) => $item->product->price * $item->quantity);
-
         $order = Order::create([
             'userID' => $user->id,
-            'totalAmount' => $total,
+            'totalAmount' => $total, 
             'fullName' => $request->name,
             'phone' => $request->phone,
             'address' => $request->address,
@@ -102,7 +104,15 @@ class Payment_OrderController extends Controller
             ->whereIn('id', $productIds)
             ->delete();
 
-        // ✅ Trả về JSON có URL redirect
+        if ($voucherCode) {
+            $voucher = \App\Models\Voucher::where('code', $voucherCode)->first();
+            if ($voucher && $voucher->quantity > 0) {
+                $voucher->quantity -= 1;
+                $voucher->save();
+            }
+        }
+
+
         return response()->json([
             'success' => true,
             'redirect_url' => 'http://127.0.0.1:5501/frontend/client/payment_success.html'
@@ -113,6 +123,7 @@ class Payment_OrderController extends Controller
                 . '&email=' . urlencode($user->email)
         ]);
     }
+
 
 
 
@@ -131,6 +142,8 @@ class Payment_OrderController extends Controller
             'address' => $request->address,
             'email' => $request->user()->email,
             'product_ids' => $request->product_ids,
+            'amount' => $request->amount,
+            'voucher_code' => $request->voucher_code ?? null,
         ], JSON_UNESCAPED_UNICODE);
 
         $vnp_OrderType = "billpayment";
@@ -186,9 +199,7 @@ class Payment_OrderController extends Controller
     {
         // Nhận toàn bộ dữ liệu từ VNPay callback
         $inputData = $request->all();
-
         $orderInfo = json_decode($request->vnp_OrderInfo, true);
-
 
         if (!is_array($orderInfo) || !isset($orderInfo['user_id'])) {
             return response()->json(['error' => 'Dữ liệu trả về không hợp lệ'], 400);
@@ -199,17 +210,16 @@ class Payment_OrderController extends Controller
 
         if ($request->vnp_ResponseCode === '00') {
             $productIds = $orderInfo['product_ids'] ?? [];
+            $total = $orderInfo['amount'] ?? 0; 
 
             $cartItems = Cart::where('userID', $userId)
-                ->whereIn('id', $productIds) 
+                ->whereIn('id', $productIds)
                 ->with('product')
                 ->get();
 
             if ($cartItems->isEmpty()) {
                 return response()->json(['error' => 'Giỏ hàng trống hoặc đã xử lý'], 400);
             }
-
-            $total = $cartItems->sum(fn($i) => $i->product->price * $i->quantity);
 
             $order = Order::create([
                 'userID' => $userId,
@@ -236,21 +246,27 @@ class Payment_OrderController extends Controller
                 ->whereIn('id', $productIds)
                 ->delete();
 
+            $voucherCode = $orderInfo['voucher_code'] ?? null;
+            if ($voucherCode) {
+                $voucher = \App\Models\Voucher::where('code', $voucherCode)->first();
+                if ($voucher && $voucher->quantity > 0) {
+                    $voucher->quantity -= 1;
+                    $voucher->save();
+                }
+            }    
 
-            //Thanh toán thành công
-            return redirect()->away('http://127.0.0.1:5501/frontend/client/payment_success.html'
+            return redirect()->away(
+                'http://127.0.0.1:5501/frontend/client/payment_success.html'
                 . '?order_id=' . $order->id
                 . '&amount=' . $total
                 . '&time=' . urlencode($order->created_at->format('Y-m-d H:i:s'))
                 . '&message=VNPay'
                 . '&email=' . urlencode($user->email)
             );
-                                    
         }
 
         return view('payment_fail');
     }
-
 
 
 }

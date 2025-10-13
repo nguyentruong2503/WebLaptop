@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\ProductTypesController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BrandsController;
+use App\Http\Controllers\VoucherController;
 
 
 use App\Http\Controllers\LoginController;
@@ -65,6 +66,9 @@ Route::middleware('jwt.auth')->group(function () {
     Route::delete('/cart/{cartId}', [CartController::class, 'deleteCart']);
     Route::post('/payment/cod', [Payment_OrderController::class, 'cod']);
     Route::post('/payment/vnpay', [Payment_OrderController::class, 'vnpay']);
+
+    Route::post('/voucher/check', [VoucherController::class, 'check']);
+
 //Tính phí ship   
 //  Route::post('/shipping/fee', [ShippingController::class, 'calculateFee']);
 //Cập nhật thông tin cá nhân
