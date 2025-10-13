@@ -7,6 +7,9 @@ use App\Models\Order;
 use App\Models\Order_detail;
 use Illuminate\Http\Request;
 
+use App\Mail\ConfirmOrder;
+use Illuminate\Support\Facades\Mail;
+
 class Payment_OrderController extends Controller
 {
     public function store(Request $request)
@@ -39,6 +42,8 @@ class Payment_OrderController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
         ]);
+
+        // Mail::to('php0908204@gmail.com')->send(new ConfirmOrder());
 
         foreach ($cartItems as $item) {
             Order_detail::create([
@@ -95,6 +100,9 @@ class Payment_OrderController extends Controller
                 'quantity' => $item->quantity,
             ]);
         }
+
+        Mail::to($user->email)->send(new ConfirmOrder($order));
+
 
         Cart::where('userID', $user->id)
             ->whereIn('id', $productIds)
