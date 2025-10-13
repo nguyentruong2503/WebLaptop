@@ -300,58 +300,62 @@ document.getElementById("btn-add-to-cart").addEventListener("click", async () =>
     });
   });
 
-  // Gửi đánh giá
-  const reviewForm = document.getElementById('review-form');
-  if (reviewForm) {
-    reviewForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+// Gửi đánh giá
+const reviewForm = document.getElementById('review-form');
+if (reviewForm) {
+  reviewForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const userData = getTokenData();
+    const userId = userData.sub;
+    const productId = localStorage.getItem('selectedProductId');
+    const rating = parseInt(document.getElementById('rating').value);
+    const comment = document.getElementById('comment').value.trim();
+    
+    if (!userId) {
+      alert('Vui lòng đăng nhập để đánh giá sản phẩm');
+      return;
+    }
+    
+    if (!comment) {
+      alert('Vui lòng nhập nội dung đánh giá');
+      return;
+    }
+    
+    try {
+      const response = await fetchWithTokenRetry('http://127.0.0.1:8000/api/reviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: userId,
+          productId: productId,
+          rating: rating,
+          comment: comment
+        })
+      });
       
-      const userData = getTokenData();
-      const userId = userData.sub;
-      const productId = localStorage.getItem('selectedProductId');
-      const rating = parseInt(ratingInput.value);
-      const comment = document.getElementById('comment').value.trim();
+      const result = await response.json();
       
-      if (!userId) {
-        alert('Vui lòng đăng nhập để đánh giá sản phẩm');
-        return;
+      if (!response.ok) {
+        throw new Error(result.message || 'Có lỗi xảy ra khi gửi đánh giá');
       }
+
+      // Làm mới danh sách đánh giá
+      await loadReviews();
+      // Reset form
+      document.getElementById('comment').value = '';
+      updateStars(5);
       
-      if (!comment) {
-        alert('Vui lòng nhập nội dung đánh giá');
-        return;
-      }
-      
-      try {
-        const response = await fetchWithTokenRetry('http://127.0.0.1:8000/api/reviews', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userId: userId,
-            productId: productId,
-            rating: rating,
-            comment: comment
-          })
-        });
-        
-        if (response.status != true ) {
-          throw new Error(response.message);
-        }
-        // Làm mới danh sách đánh giá
-        await loadReviews();
-        // Reset form
-        document.getElementById('comment').value = '';
-        updateStars(5);
-        alert('Cảm ơn bạn đã đánh giá sản phẩm!');
-      } catch (error) {
-        console.error('Lỗi khi gửi đánh giá:', error);
-        alert(error.message || 'Bạn chưa mua sản phẩm này');
-      }
-    });
-  }
-  
+      // Hiển thị thông báo từ server
+      alert(result.message || 'Cảm ơn bạn đã đánh giá sản phẩm!');
+    } catch (error) {
+      console.error('Lỗi khi gửi đánh giá:', error);
+      alert(error.message || 'Đã xảy ra lỗi khi gửi đánh giá. Vui lòng thử lại sau.');
+    }
+  });
+}
   // Tải danh sách đánh giá
   async function loadReviews() {
     const productId = localStorage.getItem('selectedProductId');

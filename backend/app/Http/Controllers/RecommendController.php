@@ -57,6 +57,17 @@ class RecommendController extends Controller
                 ], 403);
             }
 
+            $hasReview = Review::where('author', $userId)
+                ->where('id_product', $productId)
+                ->exists();
+
+            if ($hasReview) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Bạn đã đánh giá sản phẩm này rồi'
+                ], 403);
+            }
+
             $review = Review::create([
                 'author' => $userId,
                 'id_product' => $productId,
