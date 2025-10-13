@@ -270,33 +270,63 @@
 
   const productList = document.getElementById("product-list");
 
-  // 🧱 Render từng thẻ sản phẩm
-  function renderProductCard(product) {
-     const param = product.id;
-    return `
-      <div onclick="selectProduct(${param})" class="group bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition p-3 cursor-pointer">
-        <img src="${product.img || "https://via.placeholder.com/300"}"
-             alt="${product.productName}"
-             class="transition group-hover:scale-110 object-cover w-full h-48 rounded-md">
-        <div class="mt-3">
-          <h3 class="text-gray-900 font-semibold text-base mb-1 line-clamp-2">${
-            product.productName
-          }</h3>
-          <p class="text-blue-600 font-bold text-lg text-center">
-            ${Number(product.price).toLocaleString("vi-VN")}đ
-          </p>
-        </div>
-        <div class="mt-4 px-4 pb-4 text-center">
-          <button onclick="event.stopPropagation(); addToCompare(${JSON.stringify(
-            product
-          ).replace(/"/g, "&quot;")}, 'accessory')" 
-              class="flex items-center w-full gap-2 px-6 py-3 text-blue-500 transition-colors border-2 border-blue-500 rounded-lg hover:bg-blue-50">
-            <i class="fas fa-exchange-alt"></i>
-            <span>Thêm vào so sánh</span>
-          </button>
-        </div>
-      </div>`;
-  }
+// 🧱 Render từng thẻ sản phẩm
+function renderProductCard(product) {
+  const param = product.id;
+  const hasDiscount =
+    product.discounted_price &&
+    Number(product.discounted_price) < Number(product.price);
+
+  // Định dạng giá
+  const originalPrice = Number(product.price).toLocaleString("vi-VN") + "đ";
+  const discountedPrice =
+    Number(product.discounted_price).toLocaleString("vi-VN") + "đ";
+
+  return `
+    <div onclick="selectProduct(${param})" 
+         class="group bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition p-3 cursor-pointer">
+      
+      <img src="${product.img || "https://via.placeholder.com/300"}"
+           alt="${product.productName}"
+           class="transition group-hover:scale-110 object-cover w-full h-48 rounded-md">
+      
+      <div class="mt-3 text-center">
+        <h3 class="text-gray-900 font-semibold text-base mb-1 line-clamp-2">
+          ${product.productName}
+        </h3>
+        
+        ${
+          hasDiscount
+            ? `
+              <div class="flex flex-col items-center">
+                <span class="text-gray-400 line-through text-sm">
+                  ${originalPrice}
+                </span>
+                <span class="text-red-600 font-bold text-lg">
+                  ${discountedPrice}
+                </span>
+              </div>
+            `
+            : `
+              <p class="text-blue-600 font-bold text-lg">
+                ${originalPrice}
+              </p>
+            `
+        }
+      </div>
+
+      <div class="mt-4 px-4 pb-4 text-center">
+        <button onclick="event.stopPropagation(); addToCompare(${JSON.stringify(
+          product
+        ).replace(/"/g, "&quot;")}, 'laptop')" 
+            class="flex items-center w-full gap-2 px-6 py-3 text-blue-500 transition-colors border-2 border-blue-500 rounded-lg hover:bg-blue-50">
+          <i class="fas fa-exchange-alt"></i>
+          <span>Thêm vào so sánh</span>
+        </button>
+      </div>
+    </div>
+  `;
+}
 
   // 🧩 Render danh sách sản phẩm (có phân trang)
   function renderProductsWithPagination(products) {
