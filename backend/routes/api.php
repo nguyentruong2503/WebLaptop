@@ -102,6 +102,14 @@ Route::middleware(['jwt.auth','role:admin'])->group(function () {
 
     Route::post('/laptops/import', [ProductController::class, 'import']);
 
+//Voucher
+    Route::get('/vouchers', [VoucherController::class, 'index']);
+    Route::get('/vouchers/{id}', [VoucherController::class, 'show']);
+    Route::post('/vouchers', [VoucherController::class, 'store']);
+    Route::put('/vouchers/{id}', [VoucherController::class, 'update']);
+    Route::delete('/vouchers/{id}', [VoucherController::class, 'destroy']);
+    Route::post('/vouchers/find', [VoucherController::class, 'findByCode']);    
+
 //Brands
     Route::get('brands', [BrandsController::class, 'index']);
     Route::post('brands', [BrandsController::class, 'store']);

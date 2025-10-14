@@ -1,0 +1,493 @@
+<head>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #f8fafc;
+    }
+    .sidebar {
+      transition: all 0.3s ease;
+    }
+    .card-shadow {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    .menu-item {
+      transition: all 0.2s ease;
+    }
+    .menu-item.active {
+      background-color: #e0e7ff;
+      color: #6366f1;
+      border-radius: 0.5rem;
+    }
+    .menu-item:hover:not(.active) {
+      background-color: #f1f5f9;
+      border-radius: 0.5rem;
+    }
+    .voucher-card {
+      transition: all 0.3s ease;
+    }
+    .voucher-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex">
+  <div class="flex-1">
+    <header
+      class="bg-white card-shadow py-4 px-8 flex justify-between items-center"
+    >
+      <div>
+        <h2 class="text-2xl font-bold text-gray-800">Quản lý mã giảm giá</h2>
+      </div>
+    </header>
+
+    <div class="p-8">
+      <div class="flex justify-between items-center mb-8">
+        <div class="flex space-x-4">
+          <!-- <div class="relative">
+            <input
+              type="text"
+              placeholder="Search vouchers..."
+              class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+            />
+            <i
+              data-feather="search"
+              class="absolute left-3 top-2.5 text-gray-400"
+            ></i>
+          </div>
+          <select
+            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+          >
+            <option>All Status</option>
+            <option>Active</option>
+            <option>Expired</option>
+            <option>Upcoming</option>
+          </select> -->
+        </div>
+        <button
+          class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition whitespace-nowrap flex items-center gap-2"
+          onclick="openAddVoucherModal()"
+        >
+          + Add Voucher
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </div>
+  </div>
+  <div
+    id="voucherModal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50"
+  >
+    <div class="bg-white rounded-xl card-shadow w-full max-w-md mx-4">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 id="modalTitle" class="text-xl font-bold text-gray-800">
+            Thêm mã giảm giá mới
+          </h3>
+          <button
+            onclick="closeVoucherModal()"
+            class="text-gray-500 hover:text-gray-700"
+          >
+            <i data-feather="x"></i>
+          </button>
+        </div>
+
+        <form id="voucherForm">
+          <input type="hidden" id="voucherId" />
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-medium mb-2"
+              >Mã giảm giá</label
+            >
+            <input
+              type="text"
+              id="voucherCode"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              placeholder="Nhập mã giảm giá"
+            />
+          </div>
+
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-medium mb-2"
+              >Mô tả</label
+            >
+            <input
+              type="text"
+              id="voucherDescription"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              placeholder="Nhập mô tả"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-gray-700 text-sm font-medium mb-2"
+                >Loại giảm giá</label
+              >
+              <select
+                id="discountType"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              >
+                <option value="percent">Phần trăm</option>
+                <option value="amount">Số tiền cố định</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-gray-700 text-sm font-medium mb-2"
+                >Giá trị giảm</label
+              >
+              <input
+                type="text"
+                id="discountValue"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="Nhập giá trị giảm"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-gray-700 text-sm font-medium mb-2"
+                >Đơn hàng tối thiểu</label
+              >
+              <input
+                type="text"
+                id="minOrder"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="0₫"
+              />
+            </div>
+
+            <div>
+              <label class="block text-gray-700 text-sm font-medium mb-2"
+                >Giới hạn sử dụng</label
+              >
+              <input
+                type="text"
+                id="usageLimit"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="Không giới hạn"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div>
+              <label class="block text-gray-700 text-sm font-medium mb-2"
+                >Ngày bắt đầu</label
+              >
+              <input
+                type="date"
+                id="startDate"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label class="block text-gray-700 text-sm font-medium mb-2"
+                >Ngày hết hạn</label
+              >
+              <input
+                type="date"
+                id="expiryDate"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          <div class="flex justify-center space-x-4 mt-6">
+            <button
+              id="btnSaveVoucher"
+              type="submit"
+              class="px-5 py-2 border border-blue-600 text-white font-medium rounded-lg bg-blue-600 hover:bg-blue-700 transition"
+            >
+              Lưu mã
+            </button>
+
+            <button
+              type="button"
+              onclick="closeVoucherModal()"
+              class="px-5 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-100 transition"
+            >
+              Hủy
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    feather.replace();
+
+    const token = localStorage.getItem("token");
+    const voucherGrid = document.querySelector(".grid");
+    const searchInput = document.querySelector(
+      "input[placeholder='Search vouchers...']"
+    );
+    const statusSelect = document.querySelector("select");
+    const modal = document.getElementById("voucherModal");
+    const form = document.getElementById("voucherForm");
+    const modalTitle = document.getElementById("modalTitle");
+
+    async function loadVouchers() {
+      try {
+        const params = new URLSearchParams();
+        if (searchInput?.value) params.append("search", searchInput.value);
+        if (statusSelect?.value && statusSelect.value !== "All Status")
+          params.append("status", statusSelect.value.toLowerCase());
+
+        const res = await fetch(
+          `http://127.0.0.1:8000/api/vouchers?${params.toString()}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await res.json();
+        if (!data.status) {
+          voucherGrid.innerHTML = `<p class="text-red-500">${data.message}</p>`;
+          return;
+        }
+
+        const vouchers = data.data || data;
+        voucherGrid.innerHTML = "";
+
+        vouchers.forEach((v) => {
+          const now = new Date();
+          const start = new Date(v.start_date);
+          const end = new Date(v.end_date);
+
+          let status = "Expired";
+          let statusColor = "bg-red-100 text-red-700";
+          if (v.is_active && now < end && now >= start) {
+            status = "Active";
+            statusColor = "bg-green-100 text-green-800";
+          } else if (now < start) {
+            status = "Upcoming";
+            statusColor = "bg-yellow-100 text-yellow-800";
+          }
+
+          const discount =
+            v.discount_type === "percent"
+              ? `${v.discount_value}%`
+              : `${v.discount_value.toLocaleString()}₫`;
+
+          const card = `
+        <div class="voucher-card bg-white rounded-xl card-shadow p-6">
+          <div class="flex justify-between items-start">
+            <div>
+              <h3 class="text-xl font-bold text-gray-800">${v.code}</h3>
+              <p class="text-gray-600 mt-1">${v.des || ""}</p>
+            </div>
+            <span class="px-3 py-1 ${statusColor} rounded-full text-sm">${status}</span>
+          </div>
+
+          <div class="mt-6">
+            <div class="flex justify-between mb-2">
+              <span class="text-gray-600">Giảm giá</span>
+              <span class="font-medium">${discount}</span>
+            </div>
+            <div class="flex justify-between mb-2">
+              <span class="text-gray-600">Số lượng</span>
+              <span class="font-medium">${v.quantity || "∞"}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Hết hạn</span>
+              <span class="font-medium">${new Date(
+                v.end_date
+              ).toLocaleDateString()}</span>
+            </div>
+          </div>
+
+          <div class="mt-6 flex space-x-3">
+            <button
+              class="flex-1 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center justify-center"
+              onclick='openEditVoucherModal(${JSON.stringify(v)})'>
+              <i data-feather="edit" class="mr-1 w-4 h-4"></i> Sửa
+            </button>
+            <button
+              class="flex-1 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 flex items-center justify-center"
+              onclick="deleteVoucher(${v.id})">
+              <i data-feather="trash-2" class="mr-1 w-4 h-4"></i> Xóa
+            </button>
+          </div>
+        </div>`;
+          voucherGrid.innerHTML += card;
+        });
+
+        feather.replace();
+      } catch (error) {
+        console.error("Error loading vouchers:", error);
+      }
+    }
+
+    function openAddVoucherModal() {
+      modalTitle.textContent = "Thêm mã giảm giá mới";
+      form.reset();
+      document.getElementById("voucherId").value = "";
+      modal.classList.remove("hidden");
+      feather.replace();
+    }
+
+    function openEditVoucherModal(voucher) {
+      modalTitle.textContent = "Cập nhật mã giảm giá";
+      document.getElementById("voucherId").value = voucher.id;
+      document.getElementById("voucherCode").value = voucher.code;
+      document.getElementById("voucherDescription").value = voucher.des || "";
+      document.getElementById("discountType").value = voucher.discount_type;
+      document.getElementById("discountValue").value = voucher.discount_value;
+      document.getElementById("minOrder").value = voucher.min_order_value || 0;
+      document.getElementById("usageLimit").value = voucher.quantity || 0;
+      document.getElementById("startDate").value = voucher.start_date
+        ? voucher.start_date.split(" ")[0]
+        : "";
+
+      document.getElementById("expiryDate").value = voucher.end_date
+        ? voucher.end_date.split(" ")[0]
+        : "";
+
+      modal.classList.remove("hidden");
+      feather.replace();
+    }
+
+    function closeVoucherModal() {
+      modal.classList.add("hidden");
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = document.getElementById("voucherId").value;
+      if (id) {
+        await updateVoucher(id);
+      } else {
+        await addVoucher();
+      }
+    });
+
+    async function addVoucher() {
+      const payload = collectVoucherFormData();
+      if (!payload) return;
+
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/vouchers`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        if (!data.status) {
+          alert(data.message || "Thêm voucher thất bại!");
+          return;
+        }
+
+        alert("Thêm voucher thành công!");
+        closeVoucherModal();
+        loadVouchers();
+      } catch (err) {
+        console.error("Error adding voucher:", err);
+        alert("Lỗi kết nối server khi thêm voucher!");
+      }
+    }
+
+    async function updateVoucher(id) {
+      const payload = collectVoucherFormData();
+      if (!payload) return;
+
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/vouchers/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        if (!data.status) {
+          alert(data.message || "Cập nhật voucher thất bại!");
+          return;
+        }
+
+        alert("Cập nhật voucher thành công!");
+        closeVoucherModal();
+        loadVouchers();
+      } catch (err) {
+        console.error("Error updating voucher:", err);
+        alert("Lỗi kết nối server khi cập nhật voucher!");
+      }
+    }
+
+    async function deleteVoucher(id) {
+      if (!confirm("Bạn có chắc chắn muốn xóa mã giảm giá này?")) return;
+
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/vouchers/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+        if (!data.status) {
+          alert(data.message || "Xóa voucher thất bại!");
+          return;
+        }
+
+        alert("🗑️ Xóa voucher thành công!");
+        loadVouchers();
+      } catch (err) {
+        console.error("Error deleting voucher:", err);
+        alert("Lỗi kết nối server khi xóa voucher!");
+      }
+    }
+
+    function collectVoucherFormData() {
+      const code = document.getElementById("voucherCode").value.trim();
+      const des = document.getElementById("voucherDescription").value.trim();
+      const discount_type = document.getElementById("discountType").value;
+      const discount_value = parseFloat(
+        document.getElementById("discountValue").value
+      );
+      const min_order_value =
+        parseFloat(document.getElementById("minOrder").value) || 0;
+      const quantity =
+        parseInt(document.getElementById("usageLimit").value) || 0;
+      const start_date = document.getElementById("startDate").value;
+      const end_date = document.getElementById("expiryDate").value;
+
+      if (!code || isNaN(discount_value)) {
+        alert("Vui lòng nhập mã và giá trị giảm hợp lệ!");
+        return null;
+      }
+
+      return {
+        code,
+        des,
+        discount_type,
+        discount_value,
+        min_order_value,
+        quantity,
+        start_date,
+        end_date,
+        is_active: true,
+      };
+    }
+    loadVouchers();
+  </script>
+</body>
