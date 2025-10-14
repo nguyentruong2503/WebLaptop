@@ -53,6 +53,7 @@ class Payment_OrderController extends Controller
 
         return response()->json(['success' => true, 'order_id' => $order->id]);
     }
+    
 
     public function cod(Request $request)
     {
@@ -64,12 +65,10 @@ class Payment_OrderController extends Controller
             'address' => 'required|string',
             'product_ids' => 'required|array',
             'product_ids.*' => 'integer|exists:carts,id',
-            'amount' => 'required|numeric|min:0',
             'voucher_code' => 'nullable|string',
         ]);
 
         $productIds = $request->product_ids;
-        $total = $request->amount;
         $voucherCode = $request->voucher_code ?? null;
 
         $cartItems = Cart::where('userID', $user->id)
@@ -81,9 +80,26 @@ class Payment_OrderController extends Controller
             return response()->json(['error' => 'Giỏ hàng trống hoặc sản phẩm đã được xử lý'], 400);
         }
 
+        $originalTotal = $cartItems->sum(fn($item) => $item->product->price * $item->quantity);
+
+        $discountRate = 1;
+        if ($voucherCode) {
+            $voucher = \App\Models\Voucher::where('code', $voucherCode)->first();
+            if ($voucher && $voucher->quantity > 0) {
+                if ($voucher->discount_type === 'percent') {
+                    $discountRate = 1 - ($voucher->discount_value / 100);
+                } elseif ($voucher->discount_type === 'amount') {
+                    $discountRate = max(0, 1 - ($voucher->discount_value / $originalTotal));
+                }
+                $voucher->quantity -= 1;
+                $voucher->save();
+            }
+        }
+
+        // ✅ Tạo đơn hàng (tạm tổng = 0)
         $order = Order::create([
             'userID' => $user->id,
-            'totalAmount' => $total, 
+            'totalAmount' => 0,
             'fullName' => $request->name,
             'phone' => $request->phone,
             'address' => $request->address,
@@ -91,40 +107,39 @@ class Payment_OrderController extends Controller
             'payment_method' => 'COD',
         ]);
 
+        // ✅ Tạo chi tiết đơn hàng sau giảm
+        $finalTotal = 0;
         foreach ($cartItems as $item) {
+            $discountedPrice = round($item->product->price * $discountRate);
+            $lineTotal = $discountedPrice * $item->quantity;
+            $finalTotal += $lineTotal;
+
             Order_detail::create([
                 'orderID' => $order->id,
                 'productID' => $item->productID,
-                'price' => $item->product->price,
+                'price' => $discountedPrice,
                 'quantity' => $item->quantity,
             ]);
         }
 
+        // ✅ Cập nhật tổng đơn hàng thật
+        $order->update(['totalAmount' => $finalTotal]);
+
+        // ✅ Xóa giỏ hàng
         Cart::where('userID', $user->id)
             ->whereIn('id', $productIds)
             ->delete();
-
-        if ($voucherCode) {
-            $voucher = \App\Models\Voucher::where('code', $voucherCode)->first();
-            if ($voucher && $voucher->quantity > 0) {
-                $voucher->quantity -= 1;
-                $voucher->save();
-            }
-        }
-
 
         return response()->json([
             'success' => true,
             'redirect_url' => 'http://127.0.0.1:5501/frontend/client/payment_success.html'
                 . '?order_id=' . $order->id
-                . '&amount=' . $total
+                . '&amount=' . $finalTotal
                 . '&time=' . urlencode($order->created_at->format('Y-m-d H:i:s'))
                 . '&message=Thanh toán khi nhận hàng'
                 . '&email=' . urlencode($user->email)
         ]);
     }
-
-
 
 
     public function vnpay(Request $request)
@@ -197,7 +212,6 @@ class Payment_OrderController extends Controller
 
     public function vnpayReturn(Request $request)
     {
-        // Nhận toàn bộ dữ liệu từ VNPay callback
         $inputData = $request->all();
         $orderInfo = json_decode($request->vnp_OrderInfo, true);
 
@@ -208,65 +222,86 @@ class Payment_OrderController extends Controller
         $userId = $orderInfo['user_id'];
         $user = \App\Models\User::find($userId);
 
-        if ($request->vnp_ResponseCode === '00') {
-            $productIds = $orderInfo['product_ids'] ?? [];
-            $total = $orderInfo['amount'] ?? 0; 
-
-            $cartItems = Cart::where('userID', $userId)
-                ->whereIn('id', $productIds)
-                ->with('product')
-                ->get();
-
-            if ($cartItems->isEmpty()) {
-                return response()->json(['error' => 'Giỏ hàng trống hoặc đã xử lý'], 400);
-            }
-
-            $order = Order::create([
-                'userID' => $userId,
-                'totalAmount' => $total,
-                'fullName' => $orderInfo['name'] ?? 'Không rõ',
-                'phone' => $orderInfo['phone'] ?? '',
-                'address' => $orderInfo['address'] ?? '',
-                'orderStatus' => 'Pending',
-                'payment_method' => 'VNPay',
-                'bankCode' => $request->vnp_BankCode ?? null,
-                'cardType' => $request->vnp_CardType ?? null,
-            ]);
-
-            foreach ($cartItems as $item) {
-                Order_detail::create([
-                    'orderID' => $order->id,
-                    'productID' => $item->productID,
-                    'price' => $item->product->price,
-                    'quantity' => $item->quantity,
-                ]);
-            }
-
-            Cart::where('userID', $userId)
-                ->whereIn('id', $productIds)
-                ->delete();
-
-            $voucherCode = $orderInfo['voucher_code'] ?? null;
-            if ($voucherCode) {
-                $voucher = \App\Models\Voucher::where('code', $voucherCode)->first();
-                if ($voucher && $voucher->quantity > 0) {
-                    $voucher->quantity -= 1;
-                    $voucher->save();
-                }
-            }    
-
-            return redirect()->away(
-                'http://127.0.0.1:5501/frontend/client/payment_success.html'
-                . '?order_id=' . $order->id
-                . '&amount=' . $total
-                . '&time=' . urlencode($order->created_at->format('Y-m-d H:i:s'))
-                . '&message=VNPay'
-                . '&email=' . urlencode($user->email)
-            );
+        if ($request->vnp_ResponseCode !== '00') {
+            return view('payment_fail');
         }
 
-        return view('payment_fail');
+        $productIds = $orderInfo['product_ids'] ?? [];
+        $voucherCode = $orderInfo['voucher_code'] ?? null;
+
+        $cartItems = Cart::where('userID', $userId)
+            ->whereIn('id', $productIds)
+            ->with('product')
+            ->get();
+
+        if ($cartItems->isEmpty()) {
+            return response()->json(['error' => 'Giỏ hàng trống hoặc đã xử lý'], 400);
+        }
+
+        // ✅ Tính tổng gốc
+        $originalTotal = $cartItems->sum(fn($item) => $item->product->price * $item->quantity);
+
+        // ✅ Áp dụng voucher
+        $discountRate = 1;
+        if ($voucherCode) {
+            $voucher = \App\Models\Voucher::where('code', $voucherCode)->first();
+            if ($voucher && $voucher->quantity > 0) {
+                if ($voucher->discount_type === 'percent') {
+                    $discountRate = 1 - ($voucher->discount_value / 100);
+                } elseif ($voucher->discount_type === 'amount') {
+                    $discountRate = max(0, 1 - ($voucher->discount_value / $originalTotal));
+                }
+                $voucher->quantity -= 1;
+                $voucher->save();
+            }
+        }
+
+        // ✅ Tạo đơn hàng (tạm tổng = 0)
+        $order = Order::create([
+            'userID' => $userId,
+            'totalAmount' => 0,
+            'fullName' => $orderInfo['name'] ?? 'Không rõ',
+            'phone' => $orderInfo['phone'] ?? '',
+            'address' => $orderInfo['address'] ?? '',
+            'orderStatus' => 'Pending',
+            'payment_method' => 'VNPay',
+            'bankCode' => $request->vnp_BankCode ?? null,
+            'cardType' => $request->vnp_CardType ?? null,
+        ]);
+
+        // ✅ Lưu chi tiết sản phẩm sau giảm
+        $finalTotal = 0;
+        foreach ($cartItems as $item) {
+            $discountedPrice = round($item->product->price * $discountRate);
+            $lineTotal = $discountedPrice * $item->quantity;
+            $finalTotal += $lineTotal;
+
+            Order_detail::create([
+                'orderID' => $order->id,
+                'productID' => $item->productID,
+                'price' => $discountedPrice,
+                'quantity' => $item->quantity,
+            ]);
+        }
+
+        // ✅ Cập nhật tổng thật
+        $order->update(['totalAmount' => $finalTotal]);
+
+        // ✅ Xóa giỏ hàng
+        Cart::where('userID', $userId)
+            ->whereIn('id', $productIds)
+            ->delete();
+
+        // ✅ Chuyển hướng đến trang thành công
+        return redirect()->away(
+            'http://127.0.0.1:5501/frontend/client/payment_success.html'
+            . '?order_id=' . $order->id
+            . '&amount=' . $finalTotal
+            . '&time=' . urlencode($order->created_at->format('Y-m-d H:i:s'))
+            . '&message=VNPay'
+            . '&email=' . urlencode($user->email)
+        );
     }
 
 
-}
+} 

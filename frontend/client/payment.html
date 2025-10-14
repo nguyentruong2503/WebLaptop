@@ -537,6 +537,9 @@
                 product_ids: items.map((i) => i.id),
                 voucher_code: appliedVoucher?.code || null,
               };
+              // console.log("Checkout payload:", payload);
+
+              // return;
 
               if (selectedPayment === "vnpay") {
                 const res = await fetch(
