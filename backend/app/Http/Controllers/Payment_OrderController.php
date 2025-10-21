@@ -60,94 +60,189 @@ class Payment_OrderController extends Controller
     }
     
 
-    public function cod(Request $request)
-    {
-        $user = $request->user();
+    // public function cod(Request $request)
+    // {
+       
+    //     $user = $request->user();
 
-        $request->validate([
-            'name' => 'required|string',
-            'phone' => 'required|string',
-            'address' => 'required|string',
-            'product_ids' => 'required|array',
-            'product_ids.*' => 'integer|exists:carts,id',
-            'voucher_code' => 'nullable|string',
-        ]);
+    //     $request->validate([
+    //         'name' => 'required|string',
+    //         'phone' => 'required|string',
+    //         'address' => 'required|string',
+    //         'product_ids' => 'required|array',
+    //         'product_ids.*' => 'integer|exists:carts,id',
+    //         'voucher_code' => 'nullable|string',
+    //     ]);
 
-        $productIds = $request->product_ids;
-        $voucherCode = $request->voucher_code ?? null;
+    //     $productIds = $request->product_ids;
+    //     $voucherCode = $request->voucher_code ?? null;
 
-        $cartItems = Cart::where('userID', $user->id)
-            ->whereIn('id', $productIds)
-            ->with('product')
-            ->get();
+    //     $cartItems = Cart::where('userID', $user->id)
+    //         ->whereIn('id', $productIds)
+    //         ->with('product')
+    //         ->get();
 
-        if ($cartItems->isEmpty()) {
-            return response()->json(['error' => 'Giỏ hàng trống hoặc sản phẩm đã được xử lý'], 400);
-        }
+    //     if ($cartItems->isEmpty()) {
+    //         return response()->json(['error' => 'Giỏ hàng trống hoặc sản phẩm đã được xử lý'], 400);
+    //     }
 
-        $originalTotal = $cartItems->sum(fn($item) => $item->product->price * $item->quantity);
+    //     $originalTotal = $cartItems->sum(fn($item) => $item->product->price * $item->quantity);
 
-        $discountRate = 1;
-        if ($voucherCode) {
-            $voucher = \App\Models\Voucher::where('code', $voucherCode)->first();
-            if ($voucher && $voucher->quantity > 0) {
-                if ($voucher->discount_type === 'percent') {
-                    $discountRate = 1 - ($voucher->discount_value / 100);
-                } elseif ($voucher->discount_type === 'amount') {
-                    $discountRate = max(0, 1 - ($voucher->discount_value / $originalTotal));
-                }
-                $voucher->quantity -= 1;
-                $voucher->save();
+    //     $discountRate = 1;
+    //     if ($voucherCode) {
+    //         $voucher = \App\Models\Voucher::where('code', $voucherCode)->first();
+    //         if ($voucher && $voucher->quantity > 0) {
+    //             if ($voucher->discount_type === 'percent') {
+    //                 $discountRate = 1 - ($voucher->discount_value / 100);
+    //             } elseif ($voucher->discount_type === 'amount') {
+    //                 $discountRate = max(0, 1 - ($voucher->discount_value / $originalTotal));
+    //             }
+    //             $voucher->quantity -= 1;
+    //             $voucher->save();
+    //         }
+    //     }
+
+    //     // ✅ Tạo đơn hàng (tạm tổng = 0)
+    //     $order = Order::create([
+    //         'userID' => $user->id,
+    //         'totalAmount' => 0,
+    //         'fullName' => $request->name,
+    //         'phone' => $request->phone,
+    //         'address' => $request->address,
+    //         'orderStatus' => 'Pending',
+    //         'payment_method' => 'COD',
+    //     ]);
+
+    //     // ✅ Tạo chi tiết đơn hàng sau giảm
+    //     $finalTotal = 0;
+    //     foreach ($cartItems as $item) {
+    //         $discountedPrice = round($item->product->price * $discountRate);
+    //         $lineTotal = $discountedPrice * $item->quantity;
+    //         $finalTotal += $lineTotal;
+
+    //         Order_detail::create([
+    //             'orderID' => $order->id,
+    //             'productID' => $item->productID,
+    //             'price' => $discountedPrice,
+    //             'quantity' => $item->quantity,
+    //         ]);
+    //     }
+
+    //     Mail::to($user->email)->send(new ConfirmOrder($order));
+
+
+    //     // ✅ Cập nhật tổng đơn hàng thật
+    //     $order->update(['totalAmount' => $finalTotal]);
+
+    //     // ✅ Xóa giỏ hàng
+    //     Cart::where('userID', $user->id)
+    //         ->whereIn('id', $productIds)
+    //         ->delete();
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'redirect_url' => 'http://127.0.0.1:5501/frontend/client/payment_success.html'
+    //             . '?order_id=' . $order->id
+    //             . '&amount=' . $finalTotal
+    //             . '&time=' . urlencode($order->created_at->format('Y-m-d H:i:s'))
+    //             . '&message=Thanh toán khi nhận hàng'
+    //             . '&email=' . urlencode($user->email)
+    //     ]);
+    // }
+public function cod(Request $request)
+{
+    $user = $request->user();
+
+    $request->validate([
+        'name' => 'required|string',
+        'phone' => 'required|string',
+        'address' => 'required|string',
+        'product_ids' => 'required|array',
+        'product_ids.*' => 'integer|exists:carts,id',
+        'voucher_code' => 'nullable|string',
+    ]);
+
+    $productIds = $request->product_ids;
+    $voucherCode = $request->voucher_code ?? null;
+
+    $cartItems = Cart::where('userID', $user->id)
+        ->whereIn('id', $productIds)
+        ->with('product')
+        ->get();
+
+    if ($cartItems->isEmpty()) {
+        return response()->json(['error' => 'Giỏ hàng trống hoặc sản phẩm đã được xử lý'], 400);
+    }
+
+    // ✅ Tổng gốc (theo giá chưa có voucher, nhưng có giảm sản phẩm)
+    $originalTotal = $cartItems->sum(function ($item) {
+        $discountedPrice = $item->product->getDiscountedPrice() ?? $item->product->price;
+        return $discountedPrice * $item->quantity;
+    });
+
+    // ✅ Áp dụng mã giảm giá (voucher)
+    $discountRate = 1;
+    if ($voucherCode) {
+        $voucher = \App\Models\Voucher::where('code', $voucherCode)->first();
+        if ($voucher && $voucher->quantity > 0) {
+            if ($voucher->discount_type === 'percent') {
+                $discountRate = 1 - ($voucher->discount_value / 100);
+            } elseif ($voucher->discount_type === 'amount') {
+                $discountRate = max(0, 1 - ($voucher->discount_value / $originalTotal));
             }
+            $voucher->decrement('quantity');
         }
+    }
 
-        // ✅ Tạo đơn hàng (tạm tổng = 0)
-        $order = Order::create([
-            'userID' => $user->id,
-            'totalAmount' => 0,
-            'fullName' => $request->name,
-            'phone' => $request->phone,
-            'address' => $request->address,
-            'orderStatus' => 'Pending',
-            'payment_method' => 'COD',
-        ]);
+    // ✅ Tạo đơn hàng
+    $order = Order::create([
+        'userID' => $user->id,
+        'totalAmount' => 0,
+        'fullName' => $request->name,
+        'phone' => $request->phone,
+        'address' => $request->address,
+        'orderStatus' => 'Pending',
+        'payment_method' => 'COD',
+    ]);
 
-        // ✅ Tạo chi tiết đơn hàng sau giảm
-        $finalTotal = 0;
-        foreach ($cartItems as $item) {
-            $discountedPrice = round($item->product->price * $discountRate);
-            $lineTotal = $discountedPrice * $item->quantity;
-            $finalTotal += $lineTotal;
+    // ✅ Chi tiết đơn hàng (đã áp dụng khuyến mãi sản phẩm + voucher)
+    $finalTotal = 0;
+    foreach ($cartItems as $item) {
+        $basePrice = $item->product->getDiscountedPrice() ?? $item->product->price;
+        $finalPrice = round($basePrice * $discountRate);
+        $lineTotal = $finalPrice * $item->quantity;
+        $finalTotal += $lineTotal;
 
-            Order_detail::create([
-                'orderID' => $order->id,
-                'productID' => $item->productID,
-                'price' => $discountedPrice,
-                'quantity' => $item->quantity,
-            ]);
-        }
-
-        Mail::to($user->email)->send(new ConfirmOrder($order));
-
-
-        // ✅ Cập nhật tổng đơn hàng thật
-        $order->update(['totalAmount' => $finalTotal]);
-
-        // ✅ Xóa giỏ hàng
-        Cart::where('userID', $user->id)
-            ->whereIn('id', $productIds)
-            ->delete();
-
-        return response()->json([
-            'success' => true,
-            'redirect_url' => 'http://127.0.0.1:5501/frontend/client/payment_success.html'
-                . '?order_id=' . $order->id
-                . '&amount=' . $finalTotal
-                . '&time=' . urlencode($order->created_at->format('Y-m-d H:i:s'))
-                . '&message=Thanh toán khi nhận hàng'
-                . '&email=' . urlencode($user->email)
+        Order_detail::create([
+            'orderID' => $order->id,
+            'productID' => $item->productID,
+            'price' => $finalPrice,
+            'quantity' => $item->quantity,
         ]);
     }
+
+    // ✅ Gửi mail xác nhận
+    Mail::to($user->email)->send(new ConfirmOrder($order));
+
+    // ✅ Cập nhật tổng tiền thật
+    $order->update(['totalAmount' => $finalTotal]);
+
+    // ✅ Xóa các sản phẩm đã thanh toán khỏi giỏ hàng
+    Cart::where('userID', $user->id)
+        ->whereIn('id', $productIds)
+        ->delete();
+
+    // ✅ Trả về thông tin cho frontend
+    return response()->json([
+        'success' => true,
+        'redirect_url' => 'http://127.0.0.1:5501/frontend/client/payment_success.html'
+            . '?order_id=' . $order->id
+            . '&amount=' . $finalTotal
+            . '&time=' . urlencode($order->created_at->format('Y-m-d H:i:s'))
+            . '&message=Thanh toán khi nhận hàng'
+            . '&email=' . urlencode($user->email),
+    ]);
+}
 
 
     public function vnpay(Request $request)

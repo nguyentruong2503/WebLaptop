@@ -226,15 +226,15 @@
   <script>
     feather.replace();
 
-    const token = localStorage.getItem("token");
-    const voucherGrid = document.querySelector(".grid");
-    const searchInput = document.querySelector(
+    var token = localStorage.getItem("token");
+    var voucherGrid = document.querySelector(".grid");
+    var searchInput = document.querySelector(
       "input[placeholder='Search vouchers...']"
     );
-    const statusSelect = document.querySelector("select");
-    const modal = document.getElementById("voucherModal");
-    const form = document.getElementById("voucherForm");
-    const modalTitle = document.getElementById("modalTitle");
+    var statusSelect = document.querySelector("select");
+    var modal = document.getElementById("voucherModal");
+    var form = document.getElementById("voucherForm");
+    var modalTitle = document.getElementById("modalTitle");
 
     async function loadVouchers() {
       try {

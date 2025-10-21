@@ -1,65 +1,97 @@
-<div id="loginBox" class="w-full max-w-md bg-gray-800 bg-opacity-90 rounded-lg shadow-lg p-8 relative z-10">
-    <h2 class="text-2xl font-bold text-center text-blue-400 mb-6">Đăng nhập tài khoản</h2>
-    <form id="loginForm">
-        <div class="mb-4">
-            <label class="block text-sm font-medium mb-1 text-gray-200">Email</label>
-            <input type="email" id="login-email" class="w-full border border-gray-600 rounded px-3 py-2 bg-gray-700 text-gray-100" required placeholder="Nhập email...">
-        </div>
-        <div class="mb-6">
-            <label class="block text-sm font-medium mb-1 text-gray-200">Mật khẩu</label>
-            <input type="password" id="login-password" class="w-full border border-gray-600 rounded px-3 py-2 bg-gray-700 text-gray-100" required placeholder="Nhập mật khẩu...">
-        </div>
-        <button type="submit" class="w-full bg-gradient-to-r from-blue-700 via-indigo-700 to-gray-700 text-white py-2 rounded font-semibold shadow-md btn-animate">Đăng nhập</button>
-    </form>
-    <div class="mt-4 text-center text-sm text-gray-300">
-        Chưa có tài khoản?
-        <button id="show-register" class="text-blue-400 hover:underline focus:outline-none">Đăng ký ngay</button>
+<div
+  id="loginBox"
+  class="w-full max-w-md bg-gray-800 bg-opacity-90 rounded-lg shadow-lg p-8 relative z-10"
+>
+  <h2 class="text-2xl font-bold text-center text-blue-400 mb-6">
+    Đăng nhập tài khoản
+  </h2>
+  <form id="loginForm">
+    <div class="mb-4">
+      <label class="block text-sm font-medium mb-1 text-gray-200">Email</label>
+      <input
+        type="email"
+        id="login-email"
+        class="w-full border border-gray-600 rounded px-3 py-2 bg-gray-700 text-gray-100"
+        required
+        placeholder="Nhập email..."
+      />
     </div>
+    <div class="mb-6">
+      <label class="block text-sm font-medium mb-1 text-gray-200"
+        >Mật khẩu</label
+      >
+      <input
+        type="password"
+        id="login-password"
+        class="w-full border border-gray-600 rounded px-3 py-2 bg-gray-700 text-gray-100"
+        required
+        placeholder="Nhập mật khẩu..."
+      />
+    </div>
+    <button
+      type="submit"
+      class="w-full bg-gradient-to-r from-blue-700 via-indigo-700 to-gray-700 text-white py-2 rounded font-semibold shadow-md btn-animate"
+    >
+      Đăng nhập
+    </button>
+  </form>
+  <div class="mt-4 text-center text-sm text-gray-300">
+    Chưa có tài khoản?
+    <button
+      id="show-register"
+      class="text-blue-400 hover:underline focus:outline-none"
+    >
+      Đăng ký ngay
+    </button>
+  </div>
 </div>
 
 <script type="module">
-import { fetchWithTokenRetry } from 'http://127.0.0.1:5501/frontend/js/authFetch.js';
+  import { fetchWithTokenRetry } from "http://127.0.0.1:5501/frontend/js/authFetch.js";
 
-document.getElementById('show-register').onclick = function() {
-    loadPage('auth/register.html');
-};
+  document.getElementById("show-register").onclick = function () {
+    loadPage("auth/register.html");
+  };
 
-document.getElementById('loginForm').onsubmit = async function (e) {
-  e.preventDefault();
-  const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
+  document.getElementById("loginForm").onsubmit = async function (e) {
+    e.preventDefault();
+    const email = document.getElementById("login-email").value;
+    const password = document.getElementById("login-password").value;
 
-  try {
-    const res = await fetch('http://127.0.0.1:8000/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (res.ok && data.access_token) {
-      // 🧠 Lưu token vào localStorage
-      localStorage.setItem('token', data.access_token);
+      if (res.ok && data.access_token) {
+        // 🧠 Lưu token vào localStorage
+        localStorage.setItem("token", data.access_token);
 
-      // ✅ Gọi API lấy thông tin user để kiểm tra role
-      const profileRes = await fetchWithTokenRetry('http://127.0.0.1:8000/api/user');
-      const profileData = await profileRes.json();
+        // ✅ Gọi API lấy thông tin user để kiểm tra role
+        const profileRes = await fetchWithTokenRetry(
+          "http://127.0.0.1:8000/api/user"
+        );
+        const profileData = await profileRes.json();
 
-      if (profileData.role === 'admin') {
-        window.location.href = '/frontend/layouts/admin-layout.html';
-      } else if (profileData.role === 'user') {
-        window.location.href = '/frontend/layouts/cliend-layout.html';
+        if (profileData.role === "admin") {
+          window.location.href = "/frontend/layouts/admin-layout.html";
+        } else if (profileData.role === "user") {
+          window.location.href = "/frontend/layouts/cliend-layout.html";
+        } else if (profileData.role === "nhanvien") {
+          window.location.href = "/frontend/layouts/nhanvien-layout.html";
+        } else {
+          alert("Không xác định được quyền truy cập!");
+        }
       } else {
-        alert('Không xác định được quyền truy cập!');
+        alert("Đăng nhập thất bại! Vui lòng kiểm tra email/mật khẩu.");
       }
-
-    } else {
-      alert('Đăng nhập thất bại! Vui lòng kiểm tra email/mật khẩu.');
+    } catch (err) {
+      console.error(err);
+      alert("Lỗi kết nối đến server!");
     }
-  } catch (err) {
-    console.error(err);
-    alert('Lỗi kết nối đến server!');
-  }
-};
+  };
 </script>
