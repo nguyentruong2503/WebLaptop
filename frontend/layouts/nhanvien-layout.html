@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Admin</title>
+    <title>Employee</title>
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
       rel="stylesheet"
@@ -23,20 +23,10 @@
       <div class="w-64 bg-primary p-4 flex flex-col h-full">
         <div class="flex items-center gap-2 mb-8">
           <i class="fas fa-laptop text-2xl"></i>
-          <h1 class="text-xl font-bold">Laptop Admin</h1>
+          <h1 class="text-xl font-bold">Laptop Employee</h1>
         </div>
         <nav>
           <ul class="space-y-2">
-            <li>
-              <button
-                class="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-500"
-                onclick="loadPage('../admin/dashboard.html')"
-                class="mr-2 underline"
-              >
-                <i class="fas fa-home"></i>
-                <span>Dashboard</span>
-              </button>
-            </li>
             <li>
               <button
                 class="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-500"
@@ -44,18 +34,58 @@
                 class="mr-2 underline"
               >
                 <i class="fas fa-box"></i>
-                <span>Nhập Sản phẩm</span>
+                <span>Quản lý Sản phẩm</span>
+              </button>
+            </li>
+            <li>
+              <button
+                class="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-500"
+                onclick="loadPage('../admin/brands.html')"
+                class="mr-2 underline"
+              >
+                <i class="fas fa-box"></i>
+                <span>Quản lý Nhãn Hàng</span>
+              </button>
+            </li>
+            <li>
+              <button
+                class="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-500"
+                onclick="loadPage('../admin/product_types.html')"
+                class="mr-2 underline"
+              >
+                <i class="fas fa-box"></i>
+                <span>Quản lý Loại Sản Phẩm</span>
+              </button>
+            </li>
+            <li>
+              <button
+                class="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-500"
+                onclick="loadPage('../admin/order.html')"
+                class="mr-2 underline"
+              >
+                <i class="fas fa-box"></i>
+                <span>Quản lý Đơn Hàng</span>
               </button>
             </li>
 
             <li>
               <button
                 class="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-500"
-                onclick="loadPage('../admin/customer.html')"
+                onclick="loadPage('../admin/voucher.html')"
                 class="mr-2 underline"
               >
-                <i class="fas fa-users"></i>
-                <span>Quản lý Khách hàng</span>
+                <i class="bi bi-ticket-perforated-fill"></i>
+                <span>Quản lý Mã giảm giá</span>
+              </button>
+            </li>
+            <li>
+              <button
+                class="w-full flex items-center gap-2 p-2 rounded hover:bg-gray-500"
+                onclick="loadPage('../admin/promotion.html')"
+                class="mr-2 underline"
+              >
+                <i class="fas fa-box"></i>
+                <span>Quản lý khuyến mãi</span>
               </button>
             </li>
           </ul>
@@ -81,7 +111,7 @@
 
     <script src="../js/layout.js"></script>
     <script>
-      loadPage("../admin/dashboard.html");
+      loadPage("../admin/product.html");
     </script>
     <script>
       function logoutAdmin() {

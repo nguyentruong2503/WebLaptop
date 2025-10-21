@@ -66,7 +66,9 @@ class Home_client extends Controller
      */
     public function getLaptopById($id)
     {
+        
         $laptop = Laptop::with('product')->where('productID', $id)->first();
+         $laptop->product->discounted_price = (float)$laptop->product->getDiscountedPrice();
 
         if (!$laptop) {
             return response()->json([

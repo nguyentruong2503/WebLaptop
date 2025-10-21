@@ -55,20 +55,27 @@ class CartController extends Controller
     }
     public function getCartByUser(Request $request)
     {
-        $user=request()->user();
-        $cartItems = Cart::with('product')
-            ->where('userID', $user->id)
-            ->get()->map(function ($item) {
-                return [
-                    'id'        => $item->id,
-                    'product_id' => $item->product->id,
-                    'name'      => $item->product->productName,
-                    'image'     => $item->product->img ?? null,
-                    'price'     => $item->product->price,
-                    'quantity'  => $item->quantity,
-                    'total'     => $item->quantity * $item->product->price,
-                ];
-            });
+$user = request()->user();
+
+$cartItems = Cart::with('product')
+    ->where('userID', $user->id)
+    ->get()
+    ->map(function ($item) {
+        $product = $item->product;
+        $price = (float) $product->getDiscountedPrice() ?? $product->price; // lấy giá sau giảm nếu có
+
+        return [
+            'id'         => $item->id,
+            'product_id' => $product->id,
+            'name'       => $product->productName,
+            'image'      => $product->img ?? null,
+            'price'      => $price, // giá hiển thị
+            'original_price' => (float) $product->price, // giá gốc (nếu cần hiển thị gạch ngang)
+            'quantity'   => $item->quantity,
+            'total'      => $item->quantity * $price,
+        ];
+    });
+
 
         return response()->json([
             'status' => 'success',

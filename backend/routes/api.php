@@ -13,7 +13,6 @@ use App\Http\Controllers\Api\ProductTypesController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BrandsController;
-use App\Http\Controllers\VoucherController;
 
 
 use App\Http\Controllers\LoginController;
@@ -23,6 +22,7 @@ use App\Http\Controllers\ThongkeController;
 use App\Http\Controllers\RecommendController;
 
 use App\Http\Controllers\Api\PromotionController;
+use App\Http\Controllers\VoucherController;
 
 Route::prefix('promotions')->group(function(){
     Route::get('/', [PromotionController::class,'index']);          // danh sách
@@ -31,7 +31,10 @@ Route::prefix('promotions')->group(function(){
     Route::put('{promotion}', [PromotionController::class,'update']); // cập nhật
     Route::delete('{promotion}', [PromotionController::class,'destroy']); // xóa
 });
-
+    Route::get('/products_client', [Home_client::class, 'getByLoai']);
+    Route::get('/products_mouse', [Home_client::class, 'getAccessory']);
+    Route::get('/laptops/{id}', [Home_client::class, 'getLaptopById']);
+    Route::get('/accessory/{id}', [Home_client::class, 'getAccessoryById']);
 
 /*
 |--------------------------------------------------------------------------
@@ -43,9 +46,9 @@ Route::prefix('promotions')->group(function(){
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
 Route::get('/reviews/products/{id}', [RecommendController::class, 'getRecommend']);
 Route::post('/reviews', [RecommendController::class, 'storeReview']);
-
 
 Route::post('/upload', [UploadController::class, 'upload']);
 // //Register
@@ -68,10 +71,10 @@ Route::middleware('jwt.auth')->group(function () {
     Route::get('/orders/{id}', [OrderController::class, 'getOrderDetailByOrderId']); 
     Route::put('/orders/{id}', [OrderController::class, 'updateStatus']);
 //Get danh sách sản phẩm
-    Route::get('/products_client', [Home_client::class, 'getByLoai']);
-    Route::get('/products_mouse', [Home_client::class, 'getAccessory']);
-    Route::get('/laptops/{id}', [Home_client::class, 'getLaptopById']);
-    Route::get('/accessory/{id}', [Home_client::class, 'getAccessoryById']);
+    // Route::get('/products_client', [Home_client::class, 'getByLoai']);
+    // Route::get('/products_mouse', [Home_client::class, 'getAccessory']);
+    // Route::get('/laptops/{id}', [Home_client::class, 'getLaptopById']);
+    // Route::get('/accessory/{id}', [Home_client::class, 'getAccessoryById']);
 //Thao tác với giỏ hàng
     Route::get('/cart', [CartController::class, 'getCartByUser']);
     Route::post('/cart/add', [CartController::class, 'addToCart']);
@@ -79,10 +82,8 @@ Route::middleware('jwt.auth')->group(function () {
     Route::delete('/cart/{cartId}', [CartController::class, 'deleteCart']);
     Route::post('/payment/cod', [Payment_OrderController::class, 'cod']);
     Route::post('/payment/vnpay', [Payment_OrderController::class, 'vnpay']);
-
-    Route::post('/voucher/check', [VoucherController::class, 'check']);
-
 //Tính phí ship   
+    Route::post('/voucher/check', [VoucherController::class, 'check']);
 //  Route::post('/shipping/fee', [ShippingController::class, 'calculateFee']);
 //Cập nhật thông tin cá nhân
     Route::put('userClient', [AuthController::class, 'updateMe']);
@@ -91,7 +92,7 @@ Route::middleware('jwt.auth')->group(function () {
 
 //admin
 
-Route::middleware(['jwt.auth','role:admin'])->group(function () {
+Route::middleware(['jwt.auth','role:admin,nhanvien'])->group(function () {
 //Quản lý người dùng
     Route::get('/users', [UserController::class, 'index']);
     Route::get('/users/{id}', [UserController::class, 'show']);
@@ -104,18 +105,15 @@ Route::middleware(['jwt.auth','role:admin'])->group(function () {
     Route::get('product_types/{id}', [ProductTypesController::class, 'show']);
     Route::put('product_types/{id}', [ProductTypesController::class, 'update']);
     Route::delete('product_types/{id}', [ProductTypesController::class, 'destroy']);
-    
 //Sản Phẩm
-    Route::get('/products', [ProductController::class, 'index']);
-    Route::get('/products/{id}', [ProductController::class, 'show']);
-    Route::post('/products', [ProductController::class, 'store']);
-    Route::put('/products/{id}', [ProductController::class, 'update']); 
-    Route::delete('/products/{id}', [ProductController::class, 'destroy']);
-    Route::get('/laptop/{id}', [ProductController::class, 'getSpecLaptopByID']);
-
-    Route::post('/laptops/import', [ProductController::class, 'import']);
-
-//Voucher
+    Route::apiResource('products', ProductController::class);
+//Brands
+    Route::get('brands', [BrandsController::class, 'index']);
+    Route::post('brands', [BrandsController::class, 'store']);
+    Route::get('brands/{id}', [BrandsController::class, 'show']);
+    Route::put('brands/{id}', [BrandsController::class, 'update']);
+    Route::delete('brands/{id}', [BrandsController::class, 'destroy']);
+    //Voucher
     Route::get('/vouchers', [VoucherController::class, 'index']);
     Route::get('/vouchers/{id}', [VoucherController::class, 'show']);
     Route::post('/vouchers', [VoucherController::class, 'store']);
@@ -123,12 +121,6 @@ Route::middleware(['jwt.auth','role:admin'])->group(function () {
     Route::delete('/vouchers/{id}', [VoucherController::class, 'destroy']);
     Route::post('/vouchers/find', [VoucherController::class, 'findByCode']);    
 
-//Brands
-    Route::get('brands', [BrandsController::class, 'index']);
-    Route::post('brands', [BrandsController::class, 'store']);
-    Route::get('brands/{id}', [BrandsController::class, 'show']);
-    Route::put('brands/{id}', [BrandsController::class, 'update']);
-    Route::delete('brands/{id}', [BrandsController::class, 'destroy']);
 //OrderAdmin
     Route::get('/admin/orders', [OrderAdminController::class, 'index']);
     Route::put('/admin/orders/{id}/status', [OrderAdminController::class, 'updateStatus']);

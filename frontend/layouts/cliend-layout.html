@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Laptop8386 - Laptop & Phụ kiện chính hãng</title>
+    <title> Laptop & Phụ kiện chính hãng</title>
     <base target="_self" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link
@@ -148,7 +148,7 @@
          
             <a
               href="#"
-              class="relative p-2 text-gray-600 transition-all hover:text-primary-600"
+              class="hidden_client relative p-2 text-gray-600 transition-all hover:text-primary-600"
               onclick="loadPage('../client/cart.html')"
             >
               <i class="fas fa-shopping-cart"></i>
@@ -156,11 +156,19 @@
             <a
               id="order-next"
               href="../client/order.html"
-              class="relative p-2 text-gray-600 transition-all hover:text-primary-600"
+              class="hidden_client relative p-2 text-gray-600 transition-all hover:text-primary-600"
             >
               <i class="bi bi-box2-fill"></i>
             </a>
-            <div class="relative group">
+             <a
+              id="hidden_login"
+              href="/frontend/layouts/login-layout.html"
+              class="hidden px-6 py-3 font-medium text-white transition-all rounded-lg bg-primary-600 hover:bg-primary-700"  "
+            >
+                 <i class="fas fa-user"></i>
+                 Login
+            </a>
+            <div class=" hidden_client relative group">
               <a
                 href="#"
                 class="p-2 text-gray-600 transition-all hover:text-primary-600"
@@ -185,6 +193,7 @@
                 </button>
               </div>
             </div>
+            
           </div>
         </div>
       </div>
@@ -1033,6 +1042,16 @@
 
       // Khởi tạo khi trang được load
       document.addEventListener("DOMContentLoaded", function () {
+                const token = localStorage.getItem("token");
+              if(token==null){                         const elogin=document.getElementById("hidden_login");
+
+    elogin.classList.remove("hidden"); 
+
+                const els=document.getElementsByClassName("hidden_client");
+           for (let el of els) {
+    el.classList.add("hidden"); // hoặc el.style.display = "none";
+  }
+              }
         // Load danh sách so sánh từ localStorage
         const savedCompare = localStorage.getItem("compareProducts");
         if (savedCompare) {

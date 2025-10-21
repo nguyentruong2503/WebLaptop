@@ -57,7 +57,7 @@ class UserController extends Controller
             'name' => 'sometimes|required|string|max:255',
             'email' => 'sometimes|required|email|unique:users,email,' . $id,
             'password' => 'sometimes|nullable|string|min:6',
-            'role' => 'sometimes|in:user,admin',
+            'role' => 'sometimes|in:user,admin,nhanvien',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:255',
             'yearOfbirth' => 'nullable|integer|min:1900|max:' . date('Y'),
