@@ -1,5 +1,6 @@
 {
   "liveServer.settings.port": 5501,
 
-  "liveServer.settings.wait": 30000
+  "liveServer.settings.wait": 30000,
+  "git.ignoreLimitWarning": true
 }
