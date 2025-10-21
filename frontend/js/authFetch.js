@@ -32,3 +32,36 @@ export async function fetchWithTokenRetry(url, options = {}) {
 
   return response;
 }
+
+/**
+ * Lấy dữ liệu từ JWT token
+ * @returns {Object|null} Trả về payload của token hoặc null nếu không hợp lệ
+ */
+export function getTokenData() {
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+
+  try {
+    // Tách phần payload từ token (phần giữa 2 dấu chấm)
+    const base64Url = token.split('.')[1];
+    if (!base64Url) return null;
+    
+    // Thay thế các ký tự đặc biệt để decode base64
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    console.error('Lỗi khi giải mã token:', error);
+    return null;
+  }
+}
+
+// Cách sử dụng:
+// const tokenData = getTokenData();
+// console.log(tokenData); // {sub: 1, name: "Tên người dùng", iat: 1234567890, exp: 1234567890, ...}

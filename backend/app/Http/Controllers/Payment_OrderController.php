@@ -7,6 +7,9 @@ use App\Models\Order;
 use App\Models\Order_detail;
 use Illuminate\Http\Request;
 
+use App\Mail\ConfirmOrder;
+use Illuminate\Support\Facades\Mail;
+
 class Payment_OrderController extends Controller
 {
     public function store(Request $request)
@@ -40,6 +43,8 @@ class Payment_OrderController extends Controller
             'address' => $request->address,
             'payment_method' => 'COD',
         ]);
+
+        // Mail::to('php0908204@gmail.com')->send(new ConfirmOrder());
 
         foreach ($cartItems as $item) {
             Order_detail::create([
@@ -121,6 +126,9 @@ class Payment_OrderController extends Controller
                 'quantity' => $item->quantity,
             ]);
         }
+
+        Mail::to($user->email)->send(new ConfirmOrder($order));
+
 
         // ✅ Cập nhật tổng đơn hàng thật
         $order->update(['totalAmount' => $finalTotal]);

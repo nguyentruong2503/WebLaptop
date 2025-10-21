@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý Khuyến mãi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .modal {
+        transition: opacity 0.3s ease;
+      }
+      .modal.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .modal-content {
+        transform: translateY(-20px);
+        transition: transform 0.3s ease;
+      }
+      .modal.show .modal-content {
+        transform: translateY(0);
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+      <!-- Header -->
+      <div
+        class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6"
+      >
+        <h1 class="text-2xl font-bold text-gray-800 mb-4 md:mb-0">
+          Quản lý Khuyến mãi
+        </h1>
+        <button
+          id="addPromotionBtn"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl shadow-lg transition duration-200"
+        >
+          Thêm khuyến mãi
+        </button>
+      </div>
+
+      <!-- Table -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  ID
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Tên sản phẩm
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Mức giảm (%)
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Mức giảm cố định (VNĐ)
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Ngày bắt đầu
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Ngày kết thúc
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Trạng thái
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Hành động
+                </th>
+              </tr>
+            </thead>
+            <tbody
+              id="promotionsTable"
+              class="bg-white divide-y divide-gray-200"
+            >
+              <!-- Dữ liệu sẽ được thêm bằng JavaScript -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div
+          class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6"
+        >
+          <div
+            class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between"
+          >
+            <div>
+              <p class="text-sm text-gray-700">
+                Hiển thị
+                <span class="font-medium" id="startIndex">1</span>
+                đến
+                <span class="font-medium" id="endIndex">5</span>
+                của
+                <span class="font-medium" id="totalItems">0</span>
+                kết quả
+              </p>
+            </div>
+            <div>
+              <nav
+                class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+                aria-label="Pagination"
+              >
+                <button
+                  id="prevPage"
+                  class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                >
+                  <span class="sr-only">Previous</span>
+                  <svg
+                    class="h-5 w-5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </button>
+                <div id="pageNumbers" class="flex">
+                  <!-- Page numbers will be generated here -->
+                </div>
+                <button
+                  id="nextPage"
+                  class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                >
+                  <span class="sr-only">Next</span>
+                  <svg
+                    class="h-5 w-5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Thêm/Sửa Khuyến mãi -->
+    <div
+      id="promotionModal"
+      class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 opacity-0 pointer-events-none"
+    >
+      <div
+        class="modal-content bg-white rounded-xl shadow-lg w-full max-w-md transform transition-all"
+      >
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900" id="modalTitle">
+            Thêm khuyến mãi
+          </h3>
+        </div>
+        <form id="promotionForm" class="px-6 py-4">
+          <input type="hidden" id="promotionId" />
+          <div class="mb-4">
+            <label
+              for="productSelect"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Sản phẩm</label
+            >
+            <select
+              id="productSelect"
+              class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Chọn sản phẩm</option>
+              <!-- Options will be populated by JavaScript -->
+            </select>
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Loại giảm giá</label
+            >
+            <div class="flex space-x-4">
+              <div class="flex items-center">
+                <input
+                  type="radio"
+                  id="discountPercent"
+                  name="discountType"
+                  value="percent"
+                  class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                  checked
+                />
+                <label
+                  for="discountPercent"
+                  class="ml-2 block text-sm text-gray-700"
+                  >Phần trăm (%)</label
+                >
+              </div>
+              <div class="flex items-center">
+                <input
+                  type="radio"
+                  id="discountAmount"
+                  name="discountType"
+                  value="amount"
+                  class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                />
+                <label
+                  for="discountAmount"
+                  class="ml-2 block text-sm text-gray-700"
+                  >Số tiền cố định (VNĐ)</label
+                >
+              </div>
+            </div>
+          </div>
+          <div class="mb-4" id="percentDiscountGroup">
+            <label
+              for="discountPercentValue"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Mức giảm (%)</label
+            >
+            <input
+              type="number"
+              id="discountPercentValue"
+              min="0"
+              max="100"
+              class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Nhập phần trăm giảm giá"
+            />
+          </div>
+          <div class="mb-4 hidden" id="amountDiscountGroup">
+            <label
+              for="discountAmountValue"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Mức giảm cố định (VNĐ)</label
+            >
+            <input
+              type="number"
+              id="discountAmountValue"
+              min="0"
+              class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Nhập số tiền giảm giá"
+            />
+          </div>
+          <div class="mb-4">
+            <label
+              for="startDate"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Ngày bắt đầu</label
+            >
+            <input
+              type="date"
+              id="startDate"
+              class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div class="mb-6">
+            <label
+              for="endDate"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Ngày kết thúc</label
+            >
+            <input
+              type="date"
+              id="endDate"
+              class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+        </form>
+        <div
+          class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3"
+        >
+          <button
+            type="button"
+            id="cancelBtn"
+            class="px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition duration-200"
+          >
+            Hủy
+          </button>
+          <button
+            type="button"
+            id="saveBtn"
+            class="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition duration-200"
+          >
+            Lưu
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Dữ liệu mẫu
+      const products = [
+        { id: 1, name: "iPhone 14 Pro" },
+        { id: 2, name: "Samsung Galaxy S23" },
+        { id: 3, name: "MacBook Air M2" },
+        { id: 4, name: "Dell XPS 13" },
+        { id: 5, name: "Sony WH-1000XM5" },
+        { id: 6, name: "iPad Pro 12.9" },
+        { id: 7, name: "Apple Watch Series 8" },
+        { id: 8, name: "AirPods Pro 2" },
+      ];
+
+      let promotions = [
+        {
+          id: 1,
+          product_id: 1,
+          discount_percent: 10,
+          discount_amount: 0,
+          start_date: "2023-10-01",
+          end_date: "2023-10-31",
+          is_active: true,
+        },
+        {
+          id: 2,
+          product_id: 3,
+          discount_percent: 0,
+          discount_amount: 5000000,
+          start_date: "2023-09-15",
+          end_date: "2023-09-30",
+          is_active: false,
+        },
+        {
+          id: 3,
+          product_id: 5,
+          discount_percent: 15,
+          discount_amount: 0,
+          start_date: "2023-11-01",
+          end_date: "2023-11-30",
+          is_active: true,
+        },
+        {
+          id: 4,
+          product_id: 2,
+          discount_percent: 0,
+          discount_amount: 2000000,
+          start_date: "2023-10-15",
+          end_date: "2023-11-15",
+          is_active: true,
+        },
+        {
+          id: 5,
+          product_id: 7,
+          discount_percent: 20,
+          discount_amount: 0,
+          start_date: "2023-08-01",
+          end_date: "2023-08-31",
+          is_active: false,
+        },
+      ];
+
+      // Biến toàn cục
+      let currentPage = 1;
+      const itemsPerPage = 5;
+      let editingPromotionId = null;
+
+      // DOM Elements
+      const promotionsTable = document.getElementById("promotionsTable");
+      const addPromotionBtn = document.getElementById("addPromotionBtn");
+      const promotionModal = document.getElementById("promotionModal");
+      const promotionForm = document.getElementById("promotionForm");
+      const productSelect = document.getElementById("productSelect");
+      const discountPercent = document.getElementById("discountPercent");
+      const discountAmount = document.getElementById("discountAmount");
+      const percentDiscountGroup = document.getElementById(
+        "percentDiscountGroup"
+      );
+      const amountDiscountGroup = document.getElementById(
+        "amountDiscountGroup"
+      );
+      const discountPercentValue = document.getElementById(
+        "discountPercentValue"
+      );
+      const discountAmountValue = document.getElementById(
+        "discountAmountValue"
+      );
+      const startDate = document.getElementById("startDate");
+      const endDate = document.getElementById("endDate");
+      const saveBtn = document.getElementById("saveBtn");
+      const cancelBtn = document.getElementById("cancelBtn");
+      const modalTitle = document.getElementById("modalTitle");
+      const promotionId = document.getElementById("promotionId");
+      const prevPage = document.getElementById("prevPage");
+      const nextPage = document.getElementById("nextPage");
+      const pageNumbers = document.getElementById("pageNumbers");
+      const startIndex = document.getElementById("startIndex");
+      const endIndex = document.getElementById("endIndex");
+      const totalItems = document.getElementById("totalItems");
+
+      // Format date từ YYYY-MM-DD sang dd/mm/yyyy
+      function formatDate(dateString) {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+        const day = date.getDate().toString().padStart(2, "0");
+        const month = (date.getMonth() + 1).toString().padStart(2, "0");
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+      }
+
+      // Format số tiền VNĐ
+      function formatCurrency(amount) {
+        if (!amount) return "";
+        return new Intl.NumberFormat("vi-VN").format(amount) + " VNĐ";
+      }
+
+      // Kiểm tra trạng thái khuyến mãi
+      function checkPromotionStatus(endDateString) {
+        const today = new Date();
+        const endDate = new Date(endDateString);
+        return endDate >= today;
+      }
+
+      // Render bảng khuyến mãi
+      function renderPromotionsTable() {
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const currentPromotions = promotions.slice(start, end);
+
+        promotionsTable.innerHTML = "";
+
+        if (currentPromotions.length === 0) {
+          promotionsTable.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="px-6 py-4 text-center text-gray-500">
+                            Không có khuyến mãi nào
+                        </td>
+                    </tr>
+                `;
+          return;
+        }
+
+        currentPromotions.forEach((promotion) => {
+          const product = products.find((p) => p.id === promotion.product_id);
+          const isActive = checkPromotionStatus(promotion.end_date);
+
+          const row = document.createElement("tr");
+          row.className = "hover:bg-gray-50";
+          row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${
+                      promotion.id
+                    }</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${
+                      product ? product.name : "Không xác định"
+                    }</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${
+                      promotion.discount_percent
+                        ? promotion.discount_percent + "%"
+                        : "-"
+                    }</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${
+                      promotion.discount_amount
+                        ? formatCurrency(promotion.discount_amount)
+                        : "-"
+                    }</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatDate(
+                      promotion.start_date
+                    )}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatDate(
+                      promotion.end_date
+                    )}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          isActive
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }">
+                            ${isActive ? "Đang hoạt động" : "Hết hạn"}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button class="text-blue-600 hover:text-blue-900 edit-btn mr-3" data-id="${
+                          promotion.id
+                        }">Sửa</button>
+                        <button class="text-red-600 hover:text-red-900 delete-btn" data-id="${
+                          promotion.id
+                        }">Xóa</button>
+                    </td>
+                `;
+          promotionsTable.appendChild(row);
+        });
+
+        // Cập nhật thông tin phân trang
+        updatePaginationInfo();
+
+        // Gắn sự kiện cho các nút sửa và xóa
+        document.querySelectorAll(".edit-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const id = parseInt(this.getAttribute("data-id"));
+            editPromotion(id);
+          });
+        });
+
+        document.querySelectorAll(".delete-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const id = parseInt(this.getAttribute("data-id"));
+            deletePromotion(id);
+          });
+        });
+      }
+
+      // Cập nhật thông tin phân trang
+      function updatePaginationInfo() {
+        const start = (currentPage - 1) * itemsPerPage + 1;
+        const end = Math.min(currentPage * itemsPerPage, promotions.length);
+
+        startIndex.textContent = start;
+        endIndex.textContent = end;
+        totalItems.textContent = promotions.length;
+
+        // Cập nhật nút phân trang
+        updatePaginationButtons();
+      }
+
+      // Cập nhật nút phân trang
+      function updatePaginationButtons() {
+        const totalPages = Math.ceil(promotions.length / itemsPerPage);
+
+        // Cập nhật trạng thái nút Previous
+        prevPage.disabled = currentPage === 1;
+        prevPage.classList.toggle("opacity-50", currentPage === 1);
+        prevPage.classList.toggle("cursor-not-allowed", currentPage === 1);
+
+        // Cập nhật trạng thái nút Next
+        nextPage.disabled = currentPage === totalPages || totalPages === 0;
+        nextPage.classList.toggle(
+          "opacity-50",
+          currentPage === totalPages || totalPages === 0
+        );
+        nextPage.classList.toggle(
+          "cursor-not-allowed",
+          currentPage === totalPages || totalPages === 0
+        );
+
+        // Tạo các nút số trang
+        pageNumbers.innerHTML = "";
+
+        for (let i = 1; i <= totalPages; i++) {
+          const pageBtn = document.createElement("button");
+          pageBtn.className = `relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+            i === currentPage
+              ? "z-10 bg-blue-50 border-blue-500 text-blue-600"
+              : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+          }`;
+          pageBtn.textContent = i;
+          pageBtn.addEventListener("click", () => {
+            currentPage = i;
+            renderPromotionsTable();
+          });
+          pageNumbers.appendChild(pageBtn);
+        }
+      }
+
+      // Populate sản phẩm vào dropdown
+      function populateProductSelect() {
+        productSelect.innerHTML = '<option value="">Chọn sản phẩm</option>';
+        products.forEach((product) => {
+          const option = document.createElement("option");
+          option.value = product.id;
+          option.textContent = product.name;
+          productSelect.appendChild(option);
+        });
+      }
+
+      // Hiển thị modal
+      function showModal() {
+        promotionModal.classList.add("show");
+      }
+
+      // Ẩn modal
+      function hideModal() {
+        promotionModal.classList.remove("show");
+        resetForm();
+      }
+
+      // Reset form
+      function resetForm() {
+        promotionForm.reset();
+        promotionId.value = "";
+        editingPromotionId = null;
+        modalTitle.textContent = "Thêm khuyến mãi";
+        percentDiscountGroup.classList.remove("hidden");
+        amountDiscountGroup.classList.add("hidden");
+        discountPercent.checked = true;
+      }
+
+      // Thêm khuyến mãi mới
+      function addPromotion() {
+        const productId = parseInt(productSelect.value);
+        const discountType = document.querySelector(
+          'input[name="discountType"]:checked'
+        ).value;
+        const discountPercentVal =
+          discountType === "percent" ? parseInt(discountPercentValue.value) : 0;
+        const discountAmountVal =
+          discountType === "amount" ? parseInt(discountAmountValue.value) : 0;
+        const startDateVal = startDate.value;
+        const endDateVal = endDate.value;
+
+        if (
+          !productId ||
+          (!discountPercentVal && !discountAmountVal) ||
+          !startDateVal ||
+          !endDateVal
+        ) {
+          alert("Vui lòng điền đầy đủ thông tin");
+          return;
+        }
+
+        const newPromotion = {
+          id:
+            promotions.length > 0
+              ? Math.max(...promotions.map((p) => p.id)) + 1
+              : 1,
+          product_id: productId,
+          discount_percent: discountPercentVal,
+          discount_amount: discountAmountVal,
+          start_date: startDateVal,
+          end_date: endDateVal,
+          is_active: checkPromotionStatus(endDateVal),
+        };
+
+        promotions.push(newPromotion);
+        renderPromotionsTable();
+        hideModal();
+      }
+
+      // Sửa khuyến mãi
+      function editPromotion(id) {
+        const promotion = promotions.find((p) => p.id === id);
+        if (!promotion) return;
+
+        editingPromotionId = id;
+        promotionId.value = id;
+        productSelect.value = promotion.product_id;
+
+        if (promotion.discount_percent > 0) {
+          discountPercent.checked = true;
+          percentDiscountGroup.classList.remove("hidden");
+          amountDiscountGroup.classList.add("hidden");
+          discountPercentValue.value = promotion.discount_percent;
+        } else {
+          discountAmount.checked = true;
+          percentDiscountGroup.classList.add("hidden");
+          amountDiscountGroup.classList.remove("hidden");
+          discountAmountValue.value = promotion.discount_amount;
+        }
+
+        startDate.value = promotion.start_date;
+        endDate.value = promotion.end_date;
+
+        modalTitle.textContent = "Sửa khuyến mãi";
+        showModal();
+      }
+
+      // Cập nhật khuyến mãi
+      function updatePromotion() {
+        const promotionIndex = promotions.findIndex(
+          (p) => p.id === editingPromotionId
+        );
+        if (promotionIndex === -1) return;
+
+        const productId = parseInt(productSelect.value);
+        const discountType = document.querySelector(
+          'input[name="discountType"]:checked'
+        ).value;
+        const discountPercentVal =
+          discountType === "percent" ? parseInt(discountPercentValue.value) : 0;
+        const discountAmountVal =
+          discountType === "amount" ? parseInt(discountAmountValue.value) : 0;
+        const startDateVal = startDate.value;
+        const endDateVal = endDate.value;
+
+        if (
+          !productId ||
+          (!discountPercentVal && !discountAmountVal) ||
+          !startDateVal ||
+          !endDateVal
+        ) {
+          alert("Vui lòng điền đầy đủ thông tin");
+          return;
+        }
+
+        promotions[promotionIndex] = {
+          ...promotions[promotionIndex],
+          product_id: productId,
+          discount_percent: discountPercentVal,
+          discount_amount: discountAmountVal,
+          start_date: startDateVal,
+          end_date: endDateVal,
+          is_active: checkPromotionStatus(endDateVal),
+        };
+
+        renderPromotionsTable();
+        hideModal();
+      }
+
+      // Xóa khuyến mãi
+      function deletePromotion(id) {
+        if (confirm("Bạn có chắc chắn muốn xóa khuyến mãi này?")) {
+          promotions = promotions.filter((p) => p.id !== id);
+          // Điều chỉnh trang hiện tại nếu cần
+          const totalPages = Math.ceil(promotions.length / itemsPerPage);
+          if (currentPage > totalPages && totalPages > 0) {
+            currentPage = totalPages;
+          }
+          renderPromotionsTable();
+        }
+      }
+
+      // Khởi tạo
+      function init() {
+        populateProductSelect();
+        renderPromotionsTable();
+
+        // Sự kiện cho nút Thêm khuyến mãi
+        addPromotionBtn.addEventListener("click", () => {
+          resetForm();
+          showModal();
+        });
+
+        // Sự kiện cho nút Lưu
+        saveBtn.addEventListener("click", () => {
+          if (editingPromotionId) {
+            updatePromotion();
+          } else {
+            addPromotion();
+          }
+        });
+
+        // Sự kiện cho nút Hủy
+        cancelBtn.addEventListener("click", hideModal);
+
+        // Sự kiện cho radio button loại giảm giá
+        discountPercent.addEventListener("change", function () {
+          if (this.checked) {
+            percentDiscountGroup.classList.remove("hidden");
+            amountDiscountGroup.classList.add("hidden");
+          }
+        });
+
+        discountAmount.addEventListener("change", function () {
+          if (this.checked) {
+            percentDiscountGroup.classList.add("hidden");
+            amountDiscountGroup.classList.remove("hidden");
+          }
+        });
+
+        // Sự kiện cho nút phân trang
+        prevPage.addEventListener("click", () => {
+          if (currentPage > 1) {
+            currentPage--;
+            renderPromotionsTable();
+          }
+        });
+
+        nextPage.addEventListener("click", () => {
+          const totalPages = Math.ceil(promotions.length / itemsPerPage);
+          if (currentPage < totalPages) {
+            currentPage++;
+            renderPromotionsTable();
+          }
+        });
+
+        // Đóng modal khi click bên ngoài
+        promotionModal.addEventListener("click", (e) => {
+          if (e.target === promotionModal) {
+            hideModal();
+          }
+        });
+      }
+
+      // Khởi chạy ứng dụng
+      document.addEventListener("DOMContentLoaded", init);
+    </script>
+  </body>
+</html>
