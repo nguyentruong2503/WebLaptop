@@ -12,11 +12,11 @@ class Order_detail extends Model
         'orderID',
         'productID',
         'quantity',
-          'price',
-       
+        'price',
     ];
 
     public function product() {
         return $this->belongsTo(Product::class, 'productID');
     }
+
 }

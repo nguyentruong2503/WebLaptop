@@ -22,10 +22,7 @@ class ConfirmOrder extends Mailable
 
     public function build()
     {
-        return $this->subject('Xác nhận đơn hàng')
-                    ->view('mails.confirmOrder')
-                    ->with([
-                        'order' => $this->order,
-                    ]);
+        return $this->subject('Xác nhận đơn hàng #' . $this->order->id)
+                   ->view('mails.confirmOrder');
     }
 }

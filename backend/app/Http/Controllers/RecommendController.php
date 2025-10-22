@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Accessory;
-use App\Models\Laptop;
 use App\Models\Order_detail;
 use App\Models\Order;
-use App\Models\Product;
 use App\Models\Review;
 use Illuminate\Http\Request;
+use App\Http\Requests\ReviewRequest;
 
 
 class RecommendController extends Controller
@@ -36,13 +34,21 @@ class RecommendController extends Controller
             $rating = $request->rating;
             $comment = $request->comment;
 
+            //kiểm tra số lượng kí tự không quá 1000 kí tự
+            if (strlen($comment) > 1000) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Nội dung đánh giá không được vượt quá 1000 kí tự'
+                ], 400);
+            }
+            
             $order = Order::where('userID', $userId)
                 ->pluck('id');
 
             if ($order->isEmpty()) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Bạn chưa có đơn hàng nào'
+                    'message' => 'Bạn chưa có đơn hàng nào',
                 ], 403);
             }
 

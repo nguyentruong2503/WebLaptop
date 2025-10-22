@@ -355,6 +355,7 @@
       e.preventDefault();
 
       const userData = getTokenData();
+      const userId = userData.sub;
 
       const productId = localStorage.getItem("selectedProductId");
       const rating = parseInt(ratingInput.value);

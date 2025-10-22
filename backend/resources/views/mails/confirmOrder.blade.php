@@ -54,6 +54,19 @@
             font-weight: bold;
             color: #e74c3c;
         }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
     </style>
 </head>
 <body>
@@ -67,16 +80,63 @@
         
         <div class="order-info">
             <h3>Thông tin đơn hàng #{{ $order->id }}</h3>
-            <p><strong>Ngày đặt hàng:</strong> {{ $order->created_at->format('d/m/Y H:i') }}</p>
-            <p><strong>Trạng thái:</strong> <span class="status">{{ $order->orderStatus }}</span></p>
+            <p><strong>Ngày đặt hàng:</strong> {{ \Carbon\Carbon::parse($order->created_at)->format('d/m/Y H:i') }}</p>
+            <p><strong>Trạng thái:</strong> <span class="status">Chờ xác nhận</span></p>
             
             <h4>Thông tin giao hàng</h4>
             <p><strong>Họ tên:</strong> {{ $order->fullName }}</p>
             <p><strong>Điện thoại:</strong> {{ $order->phone }}</p>
             <p><strong>Địa chỉ:</strong> {{ $order->address }}</p>
+            <p><strong>Phương thức thanh toán:</strong> 
+                {{ $order->payment_method === 'COD' ? 'Thanh toán khi nhận hàng (COD)' : 'Chuyển khoản ngân hàng' }}
+            </p>
             
-            <h4>Tổng cộng</h4>
-            <p class="total-amount">{{ number_format($order->totalAmount, 0, ',', '.') }} VNĐ</p>
+            <h4>Chi tiết đơn hàng</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th style="text-align: right;">Số lượng</th>
+                        <th style="text-align: right;">Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if($order->orderDetails && count($order->orderDetails) > 0)
+                        @php $subtotal = 0; @endphp
+                        @foreach($order->orderDetails as $item)
+                            @php 
+                                $itemTotal = $item->price * $item->quantity;
+                                $subtotal += $itemTotal;
+                            @endphp
+                            <tr>
+                                <td>{{ $item->product->name ?? 'Sản phẩm #' . $item->productID }}</td>
+                                <td style="text-align: right;">{{ $item->quantity }}</td>
+                                <td style="text-align: right;">{{ number_format($itemTotal, 0, ',', '.') }} VNĐ</td>
+                            </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td colspan="3" style="text-align: center;">Không có sản phẩm nào trong đơn hàng</td>
+                        </tr>
+                    @endif
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2" style="text-align: right;"><strong>Tạm tính:</strong></td>
+                        <td style="text-align: right;">{{ number_format($subtotal ?? 0, 0, ',', '.') }} VNĐ</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: right;"><strong>Phí vận chuyển:</strong></td>
+                        <td style="text-align: right;">0 VNĐ</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: right;"><strong>Tổng cộng:</strong></td>
+                        <td style="text-align: right;" class="total-amount">
+                            {{ number_format($order->totalAmount, 0, ',', '.') }} VNĐ
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
         </div>
         
         <p>Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất để xác nhận đơn hàng.</p>

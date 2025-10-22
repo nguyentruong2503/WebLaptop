@@ -54,6 +54,11 @@ class Payment_OrderController extends Controller
                 'quantity' => $item->quantity,
             ]);
         }
+
+        $order->load(['orderDetails.product']);
+
+        Mail::to($user->email)->send(new ConfirmOrder($order));
+
         Cart::where('userID', $user->id)->delete();
 
         return response()->json(['success' => true, 'order_id' => $order->id]);
@@ -371,6 +376,8 @@ public function cod(Request $request)
             'bankCode' => $request->vnp_BankCode ?? null,
             'cardType' => $request->vnp_CardType ?? null,
         ]);
+
+        Mail::to($user->email)->send(new ConfirmOrder($order));
 
         // ✅ Lưu chi tiết sản phẩm sau giảm
         $finalTotal = 0;

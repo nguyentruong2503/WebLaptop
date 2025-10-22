@@ -380,9 +380,10 @@
       reviewForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const userData = getTokenData();
         const token = localStorage.getItem("token");
-
+        const userData = getTokenData();
+        const userId = userData.sub;
+        
         const productId = localStorage.getItem("selectedProductId");
         const rating = parseInt(document.getElementById("rating").value);
         const comment = document.getElementById("comment").value.trim();
@@ -409,6 +410,7 @@
                 productId: productId,
                 rating: rating,
                 comment: comment,
+                userId: userId,
               }),
             }
           );
